@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { router, type Href } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { PrimaryButton } from "@/components/ui/nwc-ui";
+import { PrimaryButton, SecondaryButton } from "@/components/ui/nwc-ui";
 import { nwcColors } from "@/lib/nwc-theme";
 
 export default function WelcomeScreen() {
@@ -10,7 +10,7 @@ export default function WelcomeScreen() {
     <SafeAreaView style={styles.screen}>
       <View style={styles.header}>
         <Image
-          accessibilityLabel="New WorldCargo"
+          accessibilityLabel="Newworld Cargo"
           source={require("../../assets/images/new-world-cargo-logo.png")}
           resizeMode="contain"
           style={styles.logo}
@@ -19,9 +19,17 @@ export default function WelcomeScreen() {
 
       <View style={styles.message}>
         <Text style={styles.title}>Move your Katundu with confidence.</Text>
-        <Text style={styles.detail}>International shipping, local deliveries and cargo tracking, all in one place.</Text>
+        <Text style={styles.detail}>
+          International shipping, local deliveries and cargo tracking, all in
+          one place.
+        </Text>
       </View>
 
+      <SecondaryButton
+        label="Track a shipment"
+        icon="barcode-scan"
+        onPress={() => router.push("/tracking" as Href)}
+      />
       <PrimaryButton
         label="Continue"
         accessibilityHint="Continue to app permissions"

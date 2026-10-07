@@ -1,16 +1,46 @@
-import type { AuthSession, ChangePasswordInput, OtpChallenge, PasswordResetInput, PasswordResetRequestInput, RegisterCustomerInput, SignInInput, VerifyOtpInput } from "@/lib/domain/auth";
+import type {
+  AuthSession,
+  ChangePasswordInput,
+  OtpChallenge,
+  PasswordResetInput,
+  PasswordResetRequestInput,
+  RegisterCustomerInput,
+  SignInInput,
+  VerifyOtpInput,
+} from "@/lib/domain/auth";
 import type { CustomerProfile } from "@/lib/domain/customer";
-import type { ConfirmInvoicePaymentInput, ConfirmInvoicePaymentResult, CustomerInvoice, PaymentMethod, SavedPaymentMethod, WalletSnapshot } from "@/lib/domain/billing";
-import type { BookingDraftSummary, BookingSubmissionInput, BookingSubmissionResult } from "@/lib/domain/booking";
+import type {
+  ConfirmInvoicePaymentInput,
+  ConfirmInvoicePaymentResult,
+  CustomerInvoice,
+  PaymentMethod,
+  SavedPaymentMethod,
+  WalletSnapshot,
+} from "@/lib/domain/billing";
+import type {
+  BookingDraftSummary,
+  BookingSubmissionInput,
+  BookingSubmissionResult,
+} from "@/lib/domain/booking";
 import type { AccountSettingsSnapshot } from "@/lib/domain/account-settings";
 import type { Pickup } from "@/lib/domain/pickup";
-import type { ReturnRequest, SubmitReturnRequestInput } from "@/lib/domain/return-request";
+import type {
+  ReturnRequest,
+  SubmitReturnRequestInput,
+} from "@/lib/domain/return-request";
 import type { CustomerShipment, ShipmentAction } from "@/lib/domain/shipment";
 import type { CreateSupportCaseInput, SupportCase } from "@/lib/domain/support";
 import type { TrackingResult } from "@/lib/domain/tracking";
 import type { UploadedDocument, UploadFile } from "@/lib/domain/upload";
-import type { AddressBookItem, AddressBookKind } from "@/lib/domain/address-book";
-import type { CustomerNotification, NotificationPreferenceSnapshot, NotificationPreferences } from "@/lib/domain/notifications";
+import type {
+  AddressBookItem,
+  AddressBookKind,
+} from "@/lib/domain/address-book";
+import type {
+  CustomerNotification,
+  NotificationPreferenceSnapshot,
+  NotificationPreferences,
+} from "@/lib/domain/notifications";
 
 export type AuthRepository = {
   signIn(input: SignInInput): Promise<AuthSession>;
@@ -26,7 +56,11 @@ export type AuthRepository = {
 
 export type CustomerRepository = {
   getProfile(): Promise<CustomerProfile>;
-  updateProfile(input: Partial<Pick<CustomerProfile, "name" | "phone" | "city" | "avatarUrl">>): Promise<CustomerProfile>;
+  updateProfile(
+    input: Partial<
+      Pick<CustomerProfile, "name" | "phone" | "email" | "city" | "avatarUrl">
+    >,
+  ): Promise<CustomerProfile>;
 };
 
 export type ShipmentRepository = {
@@ -47,12 +81,22 @@ export type BillingRepository = {
 
 export type BillingActionsRepository = {
   listPaymentMethods(): Promise<SavedPaymentMethod[]>;
-  savePaymentMethod(method: Exclude<PaymentMethod, "wallet">): Promise<SavedPaymentMethod>;
+  savePaymentMethod(
+    method: Exclude<PaymentMethod, "wallet">,
+    details?: import("@/lib/domain/billing").MobileMoneyDetails,
+  ): Promise<SavedPaymentMethod>;
   removePaymentMethod(methodId: string): Promise<void>;
   setDefaultPaymentMethod(methodId: string): Promise<SavedPaymentMethod[]>;
   getWallet(): Promise<WalletSnapshot>;
-  topUpWallet(amount: number): Promise<WalletSnapshot>;
-  confirmInvoicePayment(input: ConfirmInvoicePaymentInput): Promise<ConfirmInvoicePaymentResult>;
+  topUpWallet(
+    amount: number,
+    details?: import("@/lib/domain/billing").MobileMoneyDetails,
+    depositId?: string,
+    requestId?: string,
+  ): Promise<import("@/lib/domain/billing").WalletTopUpResult>;
+  confirmInvoicePayment(
+    input: ConfirmInvoicePaymentInput,
+  ): Promise<ConfirmInvoicePaymentResult>;
   setInvoiceReminder(invoiceId: string, enabled: boolean): Promise<void>;
   disputeInvoice(invoiceId: string): Promise<CustomerInvoice["resolution"]>;
 };
@@ -62,13 +106,18 @@ export type BookingRepository = {
   /** Persists an unfinished booking so it survives leaving the flow. */
   saveDraft(input: BookingSubmissionInput): Promise<BookingDraftSummary>;
   deleteDraft?(id: string): Promise<void>;
-  submitBooking(input: BookingSubmissionInput): Promise<BookingSubmissionResult>;
+  submitBooking(
+    input: BookingSubmissionInput,
+  ): Promise<BookingSubmissionResult>;
 };
 
 export type AddressBookRepository = {
   listRecipients(): Promise<AddressBookItem[]>;
   listSavedPlaces(): Promise<AddressBookItem[]>;
-  saveDirectoryItem(kind: AddressBookKind, item: Omit<AddressBookItem, "id"> & { id?: string }): Promise<AddressBookItem>;
+  saveDirectoryItem(
+    kind: AddressBookKind,
+    item: Omit<AddressBookItem, "id"> & { id?: string },
+  ): Promise<AddressBookItem>;
   removeDirectoryItem(kind: AddressBookKind, id: string): Promise<void>;
 };
 
@@ -101,7 +150,9 @@ export type AccountSettingsRepository = {
 
 export type NotificationPreferencesRepository = {
   getPreferences(): Promise<NotificationPreferenceSnapshot>;
-  updatePreferences(input: Partial<NotificationPreferences>): Promise<NotificationPreferenceSnapshot>;
+  updatePreferences(
+    input: Partial<NotificationPreferences>,
+  ): Promise<NotificationPreferenceSnapshot>;
   registerPushToken(): Promise<NotificationPreferenceSnapshot>;
   revokePushToken(): Promise<void>;
 };

@@ -18,6 +18,8 @@ export type SignInInput = {
 
 export type RegisterCustomerInput = {
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   phone: string;
   city: string;

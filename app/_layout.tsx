@@ -1,8 +1,13 @@
-import { Skeleton, SkeletonGroup } from "@/components/ui/skeleton";
 import { CustomerDataProvider } from "@/lib/data/customer-data-provider";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { Poppins_500Medium, Poppins_600SemiBold, Poppins_700Bold, Poppins_800ExtraBold, useFonts } from "@expo-google-fonts/poppins";
+import {
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  Poppins_800ExtraBold,
+  useFonts,
+} from "@expo-google-fonts/poppins";
 import { StatusBar } from "expo-status-bar";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Image, Platform, StyleSheet, View } from "react-native";
@@ -22,7 +27,12 @@ import { AppToastProvider } from "@/components/ui/app-toast";
 
 assertProductionEnvReady();
 
-const poppinsFonts = { Poppins_500Medium, Poppins_600SemiBold, Poppins_700Bold, Poppins_800ExtraBold };
+const poppinsFonts = {
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  Poppins_800ExtraBold,
+};
 
 export default function RootLayout() {
   if (shouldLoadBundledPoppins(Platform.OS)) return <NativeFontRoot />;
@@ -41,24 +51,76 @@ function AppRoot() {
   useEffect(() => {
     analytics.track("app_opened");
     if (Platform.OS !== "web") {
-      void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch((error) => {
-        if (__DEV__) console.warn("[NWC UI] Could not lock screen orientation", error);
+      void ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP,
+      ).catch((error) => {
+        if (__DEV__)
+          console.warn("[NWC UI] Could not lock screen orientation", error);
       });
     }
-    const timer = setTimeout(() => setShowSplash(false), 1200);
+    const timer = setTimeout(() => setShowSplash(false), 1800);
     return () => clearTimeout(timer);
   }, []);
 
-  return <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider><AppToastProvider><ThemeProvider><AppStartupProvider><CustomerAuthProvider><CustomerDataProvider><CustomerPermissionProvider><CustomerBillingAccountProvider><NotificationPreferenceProvider><BookingDraftProvider><StatusBar style={showSplash ? "light" : "dark"} /><Stack screenOptions={{ headerShown: false, animation: "fade" }} /></BookingDraftProvider></NotificationPreferenceProvider></CustomerBillingAccountProvider></CustomerPermissionProvider></CustomerDataProvider></CustomerAuthProvider></AppStartupProvider></ThemeProvider></AppToastProvider></SafeAreaProvider>{showSplash ? <LaunchSplash /> : null}</GestureHandlerRootView>;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <AppToastProvider>
+          <ThemeProvider>
+            <AppStartupProvider>
+              <CustomerAuthProvider>
+                <CustomerDataProvider>
+                  <CustomerPermissionProvider>
+                    <CustomerBillingAccountProvider>
+                      <NotificationPreferenceProvider>
+                        <BookingDraftProvider>
+                          <StatusBar style={showSplash ? "light" : "dark"} />
+                          <Stack
+                            screenOptions={{
+                              headerShown: false,
+                              animation: "fade",
+                            }}
+                          />
+                        </BookingDraftProvider>
+                      </NotificationPreferenceProvider>
+                    </CustomerBillingAccountProvider>
+                  </CustomerPermissionProvider>
+                </CustomerDataProvider>
+              </CustomerAuthProvider>
+            </AppStartupProvider>
+          </ThemeProvider>
+        </AppToastProvider>
+      </SafeAreaProvider>
+      {showSplash ? <LaunchSplash /> : null}
+    </GestureHandlerRootView>
+  );
 }
 
 function LaunchSplash() {
-  return <View accessibilityLabel="New WorldCargo is loading" accessibilityRole="progressbar" style={styles.splash}><View style={styles.splashContent}><Image source={require("../assets/images/new-world-cargo-logo-light.png")} resizeMode="contain" style={styles.splashLogo} /><SkeletonGroup style={styles.splashLoader}><Skeleton style={{width:120,height:5,backgroundColor:"#FFC83D"}} /></SkeletonGroup></View></View>;
+  return (
+    <View accessibilityLabel="Newworld Cargo" style={styles.splash}>
+      <Image
+        source={require("../assets/images/new-world-cargo-logo-light.png")}
+        resizeMode="contain"
+        style={styles.splashLogo}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  splash: { ...StyleSheet.absoluteFillObject, zIndex: 1000, alignItems: "center", justifyContent: "center", backgroundColor: "#012642" },
+  splash: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1000,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFC83D",
+  },
   splashContent: { alignItems: "center", justifyContent: "center" },
-  splashLogo: { width: 240, height: 96 },
-  splashLoader: { marginTop: 24 },
+  splashLogo: {
+    width: "64%",
+    maxWidth: 300,
+    height: 120,
+    tintColor: "#012642",
+  },
 });

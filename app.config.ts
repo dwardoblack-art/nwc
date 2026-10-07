@@ -1,7 +1,8 @@
 import "./scripts/load-env.js";
 import type { ExpoConfig } from "expo/config";
 
-const rawBundleId = process.env.EXPO_PUBLIC_APP_ID ?? "com.newworldcargo.mobile";
+const rawBundleId =
+  process.env.EXPO_PUBLIC_APP_ID ?? "com.newworldcargo.mobile";
 const googleMapsApiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 const bundleId = rawBundleId
   .replace(/[-_]/g, ".")
@@ -11,16 +12,20 @@ const bundleId = rawBundleId
   .toLowerCase();
 
 const env = {
-  appName: process.env.EXPO_PUBLIC_APP_NAME ?? "New WorldCargo",
+  appName: process.env.EXPO_PUBLIC_APP_NAME ?? "Newworld Cargo",
   appSlug: process.env.EXPO_PUBLIC_APP_SLUG ?? "new-world-cargo-mobile",
   scheme: process.env.EXPO_PUBLIC_APP_SCHEME ?? "newworldcargo",
   version: process.env.EXPO_PUBLIC_APP_VERSION ?? "1.0.0",
   runtimeVersion: process.env.EXPO_PUBLIC_RUNTIME_VERSION ?? "1.0.0",
   iosBuildNumber: process.env.EXPO_PUBLIC_IOS_BUILD_NUMBER ?? "1",
-  androidVersionCode: Number(process.env.EXPO_PUBLIC_ANDROID_VERSION_CODE ?? "1"),
+  androidVersionCode: Number(
+    process.env.EXPO_PUBLIC_ANDROID_VERSION_CODE ?? "1",
+  ),
   iosBundleId: bundleId,
   androidPackage: bundleId,
-  expoProjectId: process.env.EXPO_PUBLIC_EXPO_PROJECT_ID ?? "702dd433-05f9-4c44-b178-eaccf2e43403",
+  expoProjectId:
+    process.env.EXPO_PUBLIC_EXPO_PROJECT_ID ??
+    "702dd433-05f9-4c44-b178-eaccf2e43403",
 };
 
 const config: ExpoConfig = {
@@ -29,7 +34,7 @@ const config: ExpoConfig = {
   version: env.version,
   runtimeVersion: env.runtimeVersion,
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
+  icon: "./assets/images/launcher-yellow.png",
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
@@ -40,23 +45,38 @@ const config: ExpoConfig = {
     config: googleMapsApiKey ? { googleMapsApiKey } : undefined,
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
-      NSCameraUsageDescription: "Allow New WorldCargo to attach cargo evidence photos.",
-      NSPhotoLibraryUsageDescription: "Allow New WorldCargo to select profile photos and support evidence.",
-      NSLocationWhenInUseUsageDescription: "Allow New WorldCargo to help choose pickup and delivery locations.",
-      NSContactsUsageDescription: "Allow New WorldCargo to fill delivery contact details from your phone contacts.",
+      NSCameraUsageDescription:
+        "Allow Newworld Cargo to attach cargo evidence photos.",
+      NSPhotoLibraryUsageDescription:
+        "Allow Newworld Cargo to select profile photos and support evidence.",
+      NSLocationWhenInUseUsageDescription:
+        "Allow Newworld Cargo to help choose pickup and delivery locations.",
+      NSContactsUsageDescription:
+        "Allow Newworld Cargo to fill delivery contact details from your phone contacts.",
     },
   },
   android: {
     adaptiveIcon: {
-      backgroundColor: "#012642",
-      foregroundImage: "./assets/images/android-icon-foreground.png",
+      backgroundColor: "#FFC83D",
+      foregroundImage: "./assets/images/launcher-foreground.png",
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
-    versionCode: Number.isFinite(env.androidVersionCode) && env.androidVersionCode > 0 ? env.androidVersionCode : 1,
-    config: googleMapsApiKey ? { googleMaps: { apiKey: googleMapsApiKey } } : undefined,
-    permissions: ["POST_NOTIFICATIONS", "CAMERA", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "READ_CONTACTS"],
+    versionCode:
+      Number.isFinite(env.androidVersionCode) && env.androidVersionCode > 0
+        ? env.androidVersionCode
+        : 1,
+    config: googleMapsApiKey
+      ? { googleMaps: { apiKey: googleMapsApiKey } }
+      : undefined,
+    permissions: [
+      "POST_NOTIFICATIONS",
+      "CAMERA",
+      "ACCESS_FINE_LOCATION",
+      "ACCESS_COARSE_LOCATION",
+      "READ_CONTACTS",
+    ],
     intentFilters: [
       {
         action: "VIEW",
@@ -78,7 +98,14 @@ const config: ExpoConfig = {
     eas: env.expoProjectId ? { projectId: env.expoProjectId } : undefined,
   },
   plugins: [
-    ["expo-image-picker", { cameraPermission: "Allow New WorldCargo to scan shipment labels and attach cargo evidence.", microphonePermission: false }],
+    [
+      "expo-image-picker",
+      {
+        cameraPermission:
+          "Allow Newworld Cargo to scan shipment labels and attach cargo evidence.",
+        microphonePermission: false,
+      },
+    ],
     "@react-native-community/datetimepicker",
     "expo-router",
     "expo-font",
@@ -89,22 +116,28 @@ const config: ExpoConfig = {
       "expo-secure-store",
       {
         configureAndroidBackup: true,
-        faceIDPermission: "Allow $(PRODUCT_NAME) to securely access your New WorldCargo account.",
+        faceIDPermission:
+          "Allow $(PRODUCT_NAME) to securely access your Newworld Cargo account.",
       },
     ],
     [
       "expo-splash-screen",
       {
-        image: "./assets/images/new-world-cargo-logo-light.png",
-        imageWidth: 240,
+        image: "./assets/images/launcher-foreground.png",
+        imageWidth: 360,
         resizeMode: "contain",
-        backgroundColor: "#012642",
-        dark: { backgroundColor: "#012642" },
+        backgroundColor: "#FFC83D",
+        dark: { backgroundColor: "#FFC83D" },
       },
     ],
     [
       "expo-build-properties",
-      { android: { buildArchs: ["armeabi-v7a", "arm64-v8a"], minSdkVersion: 24 } },
+      {
+        android: {
+          buildArchs: ["armeabi-v7a", "arm64-v8a"],
+          minSdkVersion: 24,
+        },
+      },
     ],
   ],
   experiments: { typedRoutes: true, reactCompiler: true },

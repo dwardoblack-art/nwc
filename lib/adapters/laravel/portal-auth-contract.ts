@@ -31,18 +31,18 @@ export type PortalAuthUser = {
 };
 
 export function splitPortalName(name: string) {
-  const [firstName = "", rest = ""] = name.trim().split(/\s+/, 2);
+  const [firstName = "", ...rest] = name.trim().split(/\s+/);
   return {
     firstName: firstName || name.trim() || "Customer",
-    lastName: rest,
+    lastName: rest.join(" "),
   };
 }
 
 export function portalRegisterPayload(input: RegisterCustomerInput) {
   const name = splitPortalName(input.name);
   return {
-    firstName: name.firstName,
-    lastName: name.lastName,
+    firstName: input.firstName?.trim() ?? name.firstName,
+    lastName: input.lastName?.trim() ?? name.lastName,
     email: input.email.trim().toLowerCase(),
     phone: input.phone.trim(),
     password: input.password,
@@ -65,7 +65,7 @@ export function mapPortalCustomer(user: PortalAuthUser): CustomerProfile {
     .trim();
   return {
     id: String(user.id),
-    name: displayName || user.email || "New WorldCargo customer",
+    name: displayName || user.email || "Newworld Cargo customer",
     phone: user.phone || "",
     ...(user.email ? { email: user.email } : {}),
     city: "Lusaka",

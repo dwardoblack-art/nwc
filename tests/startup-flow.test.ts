@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { startupDestination, startupScenarioLabel } from "../lib/startup-flow";
 
-describe("New WorldCargo startup and recovery states", () => {
+describe("Newworld Cargo startup and recovery states", () => {
   it("routes normal startup to the correct signed-in or signed-out destination", () => {
     expect(startupDestination("normal", false)).toBe("/auth/welcome");
     expect(startupDestination("normal", false, true)).toBe("/auth/phone");

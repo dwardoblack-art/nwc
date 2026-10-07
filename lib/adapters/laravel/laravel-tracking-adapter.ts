@@ -1,4 +1,5 @@
-import { apiClient } from "@/lib/api/client";
+import { createApiClient } from "@/lib/api/client";
+import { mobileEnv } from "@/lib/config/env";
 import { MobileApiError } from "@/lib/api/errors";
 import type { CustomerShipment } from "@/lib/domain/shipment";
 import type { TrackingEvent, TrackingResult } from "@/lib/domain/tracking";
@@ -14,6 +15,7 @@ type PortalTrackingEvent = {
   displayTime?: string | null;
   complete?: boolean;
   completed?: boolean;
+  current?: boolean;
 };
 
 type PortalTrackingShipment = PortalShipment & {
@@ -26,11 +28,13 @@ function mapEvent(event: PortalTrackingEvent, index: number): TrackingEvent {
     label: event.label ?? "Tracking update",
     ...(event.detail ? { detail: event.detail } : {}),
     ...(event.occurredAt ? { happenedAt: event.occurredAt } : {}),
-    completed: event.completed ?? event.complete ?? false,
+    completed: event.completed ?? event.complete ?? Boolean(event.occurredAt),
   };
 }
 
-function mapTracking(response: { data: PortalTrackingShipment }): TrackingResult {
+function mapTracking(response: {
+  data: PortalTrackingShipment;
+}): TrackingResult {
   return {
     kind: "found",
     shipment: mapPortalShipment(response.data),
@@ -41,13 +45,27 @@ function mapTracking(response: { data: PortalTrackingShipment }): TrackingResult
 export const laravelTrackingRepository: TrackingRepository = {
   async trackByCode(code) {
     try {
-      const response = await apiClient.get<{ data: PortalTrackingShipment }>(`/api/v1/public/tracking/${encodeURIComponent(code)}`, { auth: false });
+      const client = createApiClient({
+        baseUrl: mobileEnv.publicTrackingBaseUrl,
+      });
+      const response = await client.get<{ data: PortalTrackingShipment }>(
+        `/api/v1/public/tracking/${encodeURIComponent(code)}`,
+        { auth: false, credentials: "omit" },
+      );
       return mapTracking(response);
     } catch (error) {
       if (error instanceof MobileApiError && error.code === "NOT_FOUND") {
-        return { kind: "not-found", message: "We could not find that tracking number. Check it and try again." };
+        return {
+          kind: "not-found",
+          message:
+            "We could not find that tracking number. Check it and try again.",
+        };
       }
-      return { kind: "unavailable", message: "Tracking is temporarily unavailable. Please try again.", retryable: true };
+      return {
+        kind: "unavailable",
+        message: "Tracking is temporarily unavailable. Please try again.",
+        retryable: true,
+      };
     }
   },
 };

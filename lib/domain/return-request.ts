@@ -53,7 +53,7 @@ export const returnReasons: { id: ReturnReason; label: string; detail: string }[
 
 export const returnHandovers: { id: ReturnHandover; label: string; detail: string }[] = [
   { id: "courier-pickup", label: "Courier pickup", detail: "We will confirm an eligible collection window." },
-  { id: "collection-point", label: "Drop at collection point", detail: "Take your cargo to a New WorldCargo point." },
+  { id: "collection-point", label: "Drop at collection point", detail: "Take your cargo to a Newworld Cargo point." },
 ];
 
 export function isReturnEligible(shipment: { status: ShipmentStatus }) {

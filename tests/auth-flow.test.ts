@@ -1,7 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { firstName, isValidFrontendOtp, isValidPhoneInput, normaliseZambianPhone } from "../lib/auth-flow";
+import {
+  firstName,
+  isValidFrontendOtp,
+  isValidInternationalMobile,
+  isValidPhoneInput,
+  normaliseZambianPhone,
+} from "../lib/auth-flow";
 
-describe("New WorldCargo frontend authentication", () => {
+describe("Newworld Cargo frontend authentication", () => {
+  it("requires an explicit plus and exactly twelve digits for registration", () => {
+    expect(isValidInternationalMobile("+260971234567")).toBe(true);
+    for (const phone of [
+      "260971234567",
+      "0971234567",
+      "+26097123456",
+      "+2609712345678",
+      "+260 971234567",
+      "+000971234567",
+      "+26097123456a",
+    ]) {
+      expect(isValidInternationalMobile(phone)).toBe(false);
+    }
+  });
   it("normalises standard Zambian mobile number formats", () => {
     expect(normaliseZambianPhone("0971 234 567")).toBe("+260971234567");
     expect(normaliseZambianPhone("260971234567")).toBe("+260971234567");

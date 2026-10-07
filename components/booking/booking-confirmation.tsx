@@ -83,7 +83,7 @@ export function BookingConfirmation({ icon, title, detail, onReset, confirmation
               <Text style={styles.codeHidden}>••••••</Text>
             )}
             <Text style={styles.cardHint}>
-              Give this code to the New WorldCargo team member at collection. Only you and New WorldCargo have it.
+              Give this code to the Newworld Cargo team member at collection. Only you and Newworld Cargo have it.
             </Text>
             <TouchableOpacity
               accessibilityRole="button"

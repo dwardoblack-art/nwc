@@ -17,7 +17,7 @@ export const mockSupportRepository: SupportRepository = {
       updatedAt: "Just now",
       events: [
         { label: "Request created", detail: "Your request is ready for a future support connection.", time: "Just now" },
-        { label: "New WorldCargo review", detail: "A support update will appear here.", time: "Next update pending" },
+        { label: "Newworld Cargo review", detail: "A support update will appear here.", time: "Next update pending" },
       ],
     };
     cases.unshift(created);

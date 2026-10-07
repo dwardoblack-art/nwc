@@ -1,40 +1,508 @@
+import { MobileInput } from "@/components/ui/mobile-input";
+import { CustomerBottomDrawer } from "@/components/ui/customer-bottom-drawer";
 import { ListSkeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { router } from "expo-router";
 import { AppIcon } from "@/components/ui/app-icon";
 import { EvidenceAttachmentDrawer } from "@/components/support/evidence-attachment-drawer";
-import { Card, IconButton, PrimaryButton, Screen, StatusBadge } from "@/components/ui/nwc-ui";
-import { supportStatusLabel, supportStatusTone, type SupportCase } from "@/lib/domain/support";
+import {
+  Card,
+  IconButton,
+  PrimaryButton,
+  Screen,
+  StatusBadge,
+} from "@/components/ui/nwc-ui";
+import {
+  supportStatusLabel,
+  supportStatusTone,
+  type SupportCase,
+} from "@/lib/domain/support";
 import { nwcColors } from "@/lib/nwc-theme";
 import { useSupportCases } from "@/lib/use-cases/use-support-cases";
 
 const topics = ["Shipment question", "Bill or payment", "Other support"];
 
 export default function SupportScreen() {
-  const { cases, createCase, errorMessage, refresh, status } = useSupportCases();
+  const { cases, createCase, errorMessage, refresh, status } =
+    useSupportCases();
   const [selectedCase, setSelectedCase] = useState<SupportCase | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [evidenceCase, setEvidenceCase] = useState<SupportCase | null>(null);
   const [evidenceName, setEvidenceName] = useState<string | null>(null);
+  const [topic, setTopic] = useState(topics[0]);
+  const [requestDetail, setRequestDetail] = useState("");
   const loading = status === "submitting";
 
   const create = async (topic: string) => {
-    const created = await createCase({ topic, detail: "New WorldCargo customer request" });
+    if (loading || requestDetail.trim().length < 10) return;
+    const created = await createCase({ topic, detail: requestDetail.trim() });
     if (!created) return;
     setSelectedCase(created);
     setIsCreating(false);
+    setRequestDetail("");
   };
 
-  return <Screen><View style={styles.page}><View style={styles.header}><IconButton label="Go back" icon="arrow-left" onPress={() => router.back()} /><Text style={styles.headerTitle}>Support</Text><View style={styles.headerSpacer} /></View><ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}><View style={styles.titleBlock}><Text style={styles.title}>How can we help?</Text><Text style={styles.detail}>View your open requests or start one. We are here to help with your cargo.</Text></View>{selectedCase ? <CaseDetail item={selectedCase} evidenceName={evidenceName} onAddEvidence={() => setEvidenceCase(selectedCase)} onBack={() => setSelectedCase(null)} /> : null}<View style={styles.caseHeader}><Text style={styles.caseHeaderText}>Your requests</Text><TouchableOpacity accessibilityRole="button" accessibilityLabel="Start a support request" onPress={() => setIsCreating((open) => !open)} style={styles.newAction}><Text style={styles.newActionText}>{isCreating ? "Close" : "New request"}</Text></TouchableOpacity></View>{errorMessage ? <TouchableOpacity accessibilityRole="button" accessibilityLabel="Retry support requests" onPress={refresh} style={styles.errorCard}><AppIcon name="alert-circle-outline" size={18} color={nwcColors.error} /><Text style={styles.errorText}>{errorMessage}</Text><Text style={styles.retryText}>Retry</Text></TouchableOpacity> : null}{isCreating ? <Card style={styles.topicCard}><Text style={styles.topicTitle}>Choose a topic</Text>{topics.map((topic) => <TouchableOpacity key={topic} accessibilityRole="button" accessibilityLabel={topic} disabled={loading} onPress={() => void create(topic)} style={styles.topic}><Text style={styles.topicText}>{topic}</Text><AppIcon name="chevron-right" size={18} color={nwcColors.muted} /></TouchableOpacity>)}</Card> : null}{status === "loading" && !cases.length ? <ListSkeleton /> : null}<View style={styles.list}>{cases.map((item) => <TouchableOpacity key={item.id} accessibilityRole="button" accessibilityLabel={`Open support case ${item.title}`} onPress={() => setSelectedCase(item)} activeOpacity={0.74}><Card style={styles.case}><View style={styles.caseIcon}><AppIcon name="headset" size={20} color={nwcColors.primaryInk} /></View><View style={styles.caseCopy}><View style={styles.caseTitleLine}><Text style={styles.caseTitle}>{item.title}</Text><StatusBadge label={supportStatusLabel(item.status)} tone={supportStatusTone(item.status)} /></View><Text style={styles.caseDetail}>{item.detail}</Text></View><Text style={styles.caseTime}>{item.updatedAt}</Text></Card></TouchableOpacity>)}</View>{!cases.length && !loading && status !== "loading" && status !== "error" ? <Card style={styles.empty}><Text style={styles.emptyTitle}>No support requests yet</Text><Text style={styles.emptyDetail}>Start one when you need help with a shipment, bill, payment, or account.</Text></Card> : null}<PrimaryButton label={loading ? "Loading support..." : "Start a support request"} icon="plus" disabled={loading} onPress={() => setIsCreating(true)} /></ScrollView><EvidenceAttachmentDrawer visible={Boolean(evidenceCase)} caseId={evidenceCase?.id} caseTitle={evidenceCase?.title ?? "support request"} onDismiss={() => setEvidenceCase(null)} onAttached={(name) => setEvidenceName(name)} /></View></Screen>;
+  return (
+    <Screen>
+      <View style={styles.page}>
+        <View style={styles.header}>
+          <IconButton
+            label="Go back"
+            icon="arrow-left"
+            onPress={() => router.back()}
+          />
+          <Text style={styles.headerTitle}>Support</Text>
+          <View style={styles.headerSpacer} />
+        </View>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>How can we help?</Text>
+            <Text style={styles.detail}>
+              View your open requests or start one. We are here to help with
+              your cargo.
+            </Text>
+          </View>
+          {selectedCase ? (
+            <CaseDetail
+              item={selectedCase}
+              evidenceName={evidenceName}
+              onAddEvidence={() => setEvidenceCase(selectedCase)}
+              onBack={() => setSelectedCase(null)}
+            />
+          ) : null}
+          <View style={styles.caseHeader}>
+            <Text style={styles.caseHeaderText}>Your requests</Text>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Start a support request"
+              onPress={() => setIsCreating((open) => !open)}
+              style={styles.newAction}
+            >
+              <Text style={styles.newActionText}>
+                {isCreating ? "Close" : "New request"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {errorMessage ? (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Retry support requests"
+              onPress={refresh}
+              style={styles.errorCard}
+            >
+              <AppIcon
+                name="alert-circle-outline"
+                size={18}
+                color={nwcColors.error}
+              />
+              <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.retryText}>Retry</Text>
+            </TouchableOpacity>
+          ) : null}
+          {status === "loading" && !cases.length ? <ListSkeleton /> : null}
+          <View style={styles.list}>
+            {cases.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Open support case ${item.title}`}
+                onPress={() => setSelectedCase(item)}
+                activeOpacity={0.74}
+              >
+                <Card style={styles.case}>
+                  <View style={styles.caseIcon}>
+                    <AppIcon
+                      name="headset"
+                      size={20}
+                      color={nwcColors.primaryInk}
+                    />
+                  </View>
+                  <View style={styles.caseCopy}>
+                    <View style={styles.caseTitleLine}>
+                      <Text style={styles.caseTitle}>{item.title}</Text>
+                      <StatusBadge
+                        label={supportStatusLabel(item.status)}
+                        tone={supportStatusTone(item.status)}
+                      />
+                    </View>
+                    <Text style={styles.caseDetail}>{item.detail}</Text>
+                  </View>
+                  <Text style={styles.caseTime}>{item.updatedAt}</Text>
+                </Card>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {!cases.length &&
+          !loading &&
+          status !== "loading" &&
+          status !== "error" ? (
+            <Card style={styles.empty}>
+              <Text style={styles.emptyTitle}>No support requests yet</Text>
+              <Text style={styles.emptyDetail}>
+                Start one when you need help with a shipment, bill, payment, or
+                account.
+              </Text>
+            </Card>
+          ) : null}
+          <PrimaryButton
+            label={loading ? "Loading support..." : "Start a support request"}
+            icon="plus"
+            disabled={loading}
+            onPress={() => setIsCreating(true)}
+          />
+        </ScrollView>
+        <CustomerBottomDrawer
+          visible={isCreating}
+          title="Start a support request"
+          detail="Choose a topic and tell us how we can help."
+          initialSnap="expanded"
+          onDismiss={() => {
+            if (!loading) setIsCreating(false);
+          }}
+          footer={
+            <PrimaryButton
+              label="Submit request"
+              loading={loading}
+              disabled={loading || requestDetail.trim().length < 10}
+              onPress={() => void create(topic)}
+            />
+          }
+        >
+          {topics.map((item) => (
+            <TouchableOpacity
+              key={item}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: topic === item }}
+              onPress={() => setTopic(item)}
+              style={styles.topic}
+            >
+              <Text style={styles.topicText}>{item}</Text>
+              <AppIcon
+                name={topic === item ? "radiobox-marked" : "radiobox-blank"}
+                size={20}
+                color={nwcColors.brandNavy}
+              />
+            </TouchableOpacity>
+          ))}
+          <MobileInput
+            label="Request details"
+            placeholder="Describe the issue, including any shipment or invoice number (at least 10 characters)."
+            value={requestDetail}
+            onChangeText={setRequestDetail}
+            multiline
+            maxLength={4000}
+            style={{ minHeight: 140, textAlignVertical: "top" }}
+          />
+          {errorMessage ? (
+            <Text accessibilityRole="alert" style={styles.errorText}>
+              {errorMessage}
+            </Text>
+          ) : null}
+        </CustomerBottomDrawer>
+        <EvidenceAttachmentDrawer
+          visible={Boolean(evidenceCase)}
+          caseId={evidenceCase?.id}
+          caseTitle={evidenceCase?.title ?? "support request"}
+          onDismiss={() => setEvidenceCase(null)}
+          onAttached={(name) => setEvidenceName(name)}
+        />
+      </View>
+    </Screen>
+  );
 }
 
-function CaseDetail({ item, evidenceName, onAddEvidence, onBack }: { item: SupportCase; evidenceName: string | null; onAddEvidence: () => void; onBack: () => void }) {
-  return <Card style={styles.detailCard}><View style={styles.detailHeader}><View><Text style={styles.detailTitle}>{item.title}</Text><Text style={styles.detailSub}>{item.detail}</Text></View><TouchableOpacity accessibilityRole="button" accessibilityLabel="Close support case detail" onPress={onBack} style={styles.closeAction}><AppIcon name="close-circle-outline" size={19} color={nwcColors.muted} /></TouchableOpacity></View>{item.events.map((event) => <View key={event.label} style={styles.event}><View style={styles.eventDot} /><View style={styles.eventCopy}><Text style={styles.eventTitle}>{event.label}</Text><Text style={styles.eventDetail}>{event.detail}</Text><Text style={styles.eventTime}>{event.time}</Text></View></View>)}<TouchableOpacity accessibilityRole="button" accessibilityLabel="Attach support evidence" onPress={onAddEvidence} style={styles.evidenceAction}><AppIcon name={evidenceName ? "check-circle" : "paperclip"} size={18} color={evidenceName ? nwcColors.success : nwcColors.info} /><Text style={styles.evidenceText}>{evidenceName ? `Attached: ${evidenceName}` : "Attach evidence"}</Text><AppIcon name="chevron-right" size={18} color={nwcColors.muted} /></TouchableOpacity></Card>;
+function CaseDetail({
+  item,
+  evidenceName,
+  onAddEvidence,
+  onBack,
+}: {
+  item: SupportCase;
+  evidenceName: string | null;
+  onAddEvidence: () => void;
+  onBack: () => void;
+}) {
+  return (
+    <Card style={styles.detailCard}>
+      <View style={styles.detailHeader}>
+        <View>
+          <Text style={styles.detailTitle}>{item.title}</Text>
+          <Text style={styles.detailSub}>{item.detail}</Text>
+        </View>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Close support case detail"
+          onPress={onBack}
+          style={styles.closeAction}
+        >
+          <AppIcon
+            name="close-circle-outline"
+            size={19}
+            color={nwcColors.muted}
+          />
+        </TouchableOpacity>
+      </View>
+      {item.events.map((event) => (
+        <View key={event.label} style={styles.event}>
+          <View style={styles.eventDot} />
+          <View style={styles.eventCopy}>
+            <Text style={styles.eventTitle}>{event.label}</Text>
+            <Text style={styles.eventDetail}>{event.detail}</Text>
+            <Text style={styles.eventTime}>{event.time}</Text>
+          </View>
+        </View>
+      ))}
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel="Attach support evidence"
+        onPress={onAddEvidence}
+        style={styles.evidenceAction}
+      >
+        <AppIcon
+          name={evidenceName ? "check-circle" : "paperclip"}
+          size={18}
+          color={evidenceName ? nwcColors.success : nwcColors.info}
+        />
+        <Text style={styles.evidenceText}>
+          {evidenceName ? `Attached: ${evidenceName}` : "Attach evidence"}
+        </Text>
+        <AppIcon name="chevron-right" size={18} color={nwcColors.muted} />
+      </TouchableOpacity>
+    </Card>
+  );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, paddingTop: 16, paddingHorizontal: 20, backgroundColor: nwcColors.background }, header: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, headerTitle: { color: nwcColors.brandNavy, fontSize: 15, lineHeight: 20, fontFamily: "Poppins_800ExtraBold" }, headerSpacer: { width: 44, height: 44 }, content: { paddingTop: 24, paddingBottom: 42, gap: 15 }, titleBlock: { gap: 4 }, title: { color: nwcColors.foreground, fontSize: 29, lineHeight: 37, letterSpacing: -0.5, fontFamily: "Poppins_800ExtraBold" }, detail: { color: nwcColors.muted, fontSize: 13, lineHeight: 19, fontFamily: "Poppins_500Medium" }, caseHeader: { minHeight: 33, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, caseHeaderText: { color: nwcColors.foreground, fontSize: 16, lineHeight: 22, fontFamily: "Poppins_800ExtraBold" }, newAction: { minHeight: 33, paddingHorizontal: 4, justifyContent: "center" }, newActionText: { color: nwcColors.info, fontSize: 11, lineHeight: 15, fontFamily: "Poppins_800ExtraBold" }, errorCard: { minHeight: 45, paddingHorizontal: 11, borderRadius: 14, flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "#FFF0EF" }, errorText: { flex: 1, color: nwcColors.error, fontSize: 11, lineHeight: 16, fontFamily: "Poppins_700Bold" }, retryText: { color: nwcColors.brandNavy, fontSize: 11, lineHeight: 15, fontFamily: "Poppins_800ExtraBold" },
-  topicCard: { paddingVertical: 6 }, topicTitle: { paddingHorizontal: 7, paddingTop: 6, color: nwcColors.muted, fontSize: 10, lineHeight: 14, fontFamily: "Poppins_700Bold", textTransform: "uppercase", letterSpacing: 0.5 }, topic: { minHeight: 50, paddingHorizontal: 7, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderTopWidth: 1, borderTopColor: "#E8EEEF" }, topicText: { color: nwcColors.foreground, fontSize: 13, lineHeight: 18, fontFamily: "Poppins_700Bold" }, list: { gap: 9 }, case: { minHeight: 72, padding: 12, flexDirection: "row", alignItems: "flex-start", gap: 10 }, caseIcon: { width: 40, height: 40, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: nwcColors.primary }, caseCopy: { minWidth: 0, flex: 1, gap: 2 }, caseTitleLine: { flexDirection: "row", alignItems: "center", gap: 6 }, caseTitle: { flexShrink: 1, color: nwcColors.foreground, fontSize: 13, lineHeight: 18, fontFamily: "Poppins_800ExtraBold" }, caseDetail: { color: nwcColors.muted, fontSize: 10, lineHeight: 14, fontFamily: "Poppins_500Medium" }, caseTime: { color: nwcColors.muted, fontSize: 10, lineHeight: 14, fontFamily: "Poppins_600SemiBold" }, empty: { alignItems: "center", gap: 5, paddingVertical: 24 }, emptyTitle: { color: nwcColors.foreground, fontSize: 15, lineHeight: 21, fontFamily: "Poppins_800ExtraBold" }, emptyDetail: { color: nwcColors.muted, maxWidth: 260, textAlign: "center", fontSize: 11, lineHeight: 16, fontFamily: "Poppins_500Medium" },
-  detailCard: { gap: 11, backgroundColor: "#F2F7F8" }, detailHeader: { flexDirection: "row", gap: 10, alignItems: "flex-start", justifyContent: "space-between" }, detailTitle: { color: nwcColors.foreground, fontSize: 14, lineHeight: 19, fontFamily: "Poppins_800ExtraBold" }, detailSub: { marginTop: 2, color: nwcColors.muted, fontSize: 11, lineHeight: 16, fontFamily: "Poppins_500Medium" }, closeAction: { width: 28, height: 28, alignItems: "center", justifyContent: "center" }, event: { flexDirection: "row", gap: 9 }, eventDot: { width: 9, height: 9, marginTop: 4, borderRadius: 5, backgroundColor: nwcColors.primary }, eventCopy: { flex: 1, gap: 1 }, eventTitle: { color: nwcColors.foreground, fontSize: 12, lineHeight: 17, fontFamily: "Poppins_700Bold" }, eventDetail: { color: nwcColors.muted, fontSize: 10, lineHeight: 14, fontFamily: "Poppins_500Medium" }, eventTime: { color: nwcColors.muted, fontSize: 9, lineHeight: 13, fontFamily: "Poppins_600SemiBold" }, evidenceAction: { minHeight: 42, paddingHorizontal: 9, borderRadius: 13, alignItems: "center", flexDirection: "row", gap: 7, backgroundColor: nwcColors.surfaceElevated }, evidenceText: { flex: 1, color: nwcColors.info, fontSize: 11, lineHeight: 15, fontFamily: "Poppins_800ExtraBold" },
+  page: {
+    flex: 1,
+    paddingTop: 16,
+    paddingHorizontal: 20,
+    backgroundColor: nwcColors.background,
+  },
+  header: {
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerTitle: {
+    color: nwcColors.brandNavy,
+    fontSize: 15,
+    lineHeight: 20,
+    fontFamily: "Poppins_800ExtraBold",
+  },
+  headerSpacer: { width: 44, height: 44 },
+  content: { paddingTop: 24, paddingBottom: 42, gap: 15 },
+  titleBlock: { gap: 4 },
+  title: {
+    color: nwcColors.foreground,
+    fontSize: 29,
+    lineHeight: 37,
+    letterSpacing: -0.5,
+    fontFamily: "Poppins_800ExtraBold",
+  },
+  detail: {
+    color: nwcColors.muted,
+    fontSize: 13,
+    lineHeight: 19,
+    fontFamily: "Poppins_500Medium",
+  },
+  caseHeader: {
+    minHeight: 33,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  caseHeaderText: {
+    color: nwcColors.foreground,
+    fontSize: 16,
+    lineHeight: 22,
+    fontFamily: "Poppins_800ExtraBold",
+  },
+  newAction: { minHeight: 33, paddingHorizontal: 4, justifyContent: "center" },
+  newActionText: {
+    color: nwcColors.info,
+    fontSize: 11,
+    lineHeight: 15,
+    fontFamily: "Poppins_800ExtraBold",
+  },
+  errorCard: {
+    minHeight: 45,
+    paddingHorizontal: 11,
+    borderRadius: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#FFF0EF",
+  },
+  errorText: {
+    flex: 1,
+    color: nwcColors.error,
+    fontSize: 11,
+    lineHeight: 16,
+    fontFamily: "Poppins_700Bold",
+  },
+  retryText: {
+    color: nwcColors.brandNavy,
+    fontSize: 11,
+    lineHeight: 15,
+    fontFamily: "Poppins_800ExtraBold",
+  },
+  topicCard: { paddingVertical: 6 },
+  topicTitle: {
+    paddingHorizontal: 7,
+    paddingTop: 6,
+    color: nwcColors.muted,
+    fontSize: 10,
+    lineHeight: 14,
+    fontFamily: "Poppins_700Bold",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  topic: {
+    minHeight: 50,
+    paddingHorizontal: 7,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderTopWidth: 1,
+    borderTopColor: "#E8EEEF",
+  },
+  topicText: {
+    color: nwcColors.foreground,
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: "Poppins_700Bold",
+  },
+  list: { gap: 9 },
+  case: {
+    minHeight: 72,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+  },
+  caseIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: nwcColors.primary,
+  },
+  caseCopy: { minWidth: 0, flex: 1, gap: 2 },
+  caseTitleLine: { flexDirection: "row", alignItems: "center", gap: 6 },
+  caseTitle: {
+    flexShrink: 1,
+    color: nwcColors.foreground,
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: "Poppins_800ExtraBold",
+  },
+  caseDetail: {
+    color: nwcColors.muted,
+    fontSize: 10,
+    lineHeight: 14,
+    fontFamily: "Poppins_500Medium",
+  },
+  caseTime: {
+    color: nwcColors.muted,
+    fontSize: 10,
+    lineHeight: 14,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  empty: { alignItems: "center", gap: 5, paddingVertical: 24 },
+  emptyTitle: {
+    color: nwcColors.foreground,
+    fontSize: 15,
+    lineHeight: 21,
+    fontFamily: "Poppins_800ExtraBold",
+  },
+  emptyDetail: {
+    color: nwcColors.muted,
+    maxWidth: 260,
+    textAlign: "center",
+    fontSize: 11,
+    lineHeight: 16,
+    fontFamily: "Poppins_500Medium",
+  },
+  detailCard: { gap: 11, backgroundColor: "#F2F7F8" },
+  detailHeader: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+  },
+  detailTitle: {
+    color: nwcColors.foreground,
+    fontSize: 14,
+    lineHeight: 19,
+    fontFamily: "Poppins_800ExtraBold",
+  },
+  detailSub: {
+    marginTop: 2,
+    color: nwcColors.muted,
+    fontSize: 11,
+    lineHeight: 16,
+    fontFamily: "Poppins_500Medium",
+  },
+  closeAction: {
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  event: { flexDirection: "row", gap: 9 },
+  eventDot: {
+    width: 9,
+    height: 9,
+    marginTop: 4,
+    borderRadius: 5,
+    backgroundColor: nwcColors.primary,
+  },
+  eventCopy: { flex: 1, gap: 1 },
+  eventTitle: {
+    color: nwcColors.foreground,
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: "Poppins_700Bold",
+  },
+  eventDetail: {
+    color: nwcColors.muted,
+    fontSize: 10,
+    lineHeight: 14,
+    fontFamily: "Poppins_500Medium",
+  },
+  eventTime: {
+    color: nwcColors.muted,
+    fontSize: 9,
+    lineHeight: 13,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  evidenceAction: {
+    minHeight: 42,
+    paddingHorizontal: 9,
+    borderRadius: 13,
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 7,
+    backgroundColor: nwcColors.surfaceElevated,
+  },
+  evidenceText: {
+    flex: 1,
+    color: nwcColors.info,
+    fontSize: 11,
+    lineHeight: 15,
+    fontFamily: "Poppins_800ExtraBold",
+  },
 });

@@ -39,7 +39,7 @@ function mapNotification(raw: LaravelNotification): CustomerNotification {
   const normalizedType: CustomerNotification["type"] = ["progress", "arrival", "payment", "exception"].includes(type) ? type as CustomerNotification["type"] : "general";
   return {
     id: String(raw.id ?? `${raw.title ?? "notification"}-${raw.displayTime ?? Date.now()}`),
-    title: raw.title || "New WorldCargo update",
+    title: raw.title || "Newworld Cargo update",
     detail: raw.body || "Open this update for more details.",
     type: normalizedType,
     tone: toneFor(normalizedType),

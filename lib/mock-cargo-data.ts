@@ -3,7 +3,7 @@ import type { Address, Shipment, ShipmentStatus } from "@/types/cargo";
 export const savedPlaces: Address[] = [
   { label: "Home", city: "Lusaka", area: "Roma", detail: "Plot 27, Great East Road" },
   { label: "Work", city: "Lusaka", area: "Longacres", detail: "Cairo Road business district" },
-  { label: "Branch", city: "Lusaka", area: "Kabwata", detail: "New WorldCargo collection point" },
+  { label: "Branch", city: "Lusaka", area: "Kabwata", detail: "Newworld Cargo collection point" },
 ];
 
 export const shipments: Shipment[] = [
@@ -13,12 +13,12 @@ export const shipments: Shipment[] = [
     service: "import",
     status: "in_transit",
     title: "International cargo",
-    pickup: { city: "China", area: "Guangzhou", detail: "New WorldCargo origin warehouse" },
-    destination: { city: "Zambia", area: "Lusaka", detail: "New WorldCargo collection branch" },
+    pickup: { city: "China", area: "Guangzhou", detail: "Newworld Cargo origin warehouse" },
+    destination: { city: "Zambia", area: "Lusaka", detail: "Newworld Cargo collection branch" },
     eta: "Estimated 14 Sep",
     dateLabel: "In transit",
     actionLabel: "Track shipment",
-    trackingContact: { name: "Naomi Phiri", role: "New WorldCargo shipment agent", phone: "+260 970 020 190", rating: "4.8", verified: true },
+    trackingContact: { name: "Naomi Phiri", role: "Newworld Cargo shipment agent", phone: "+260 970 020 190", rating: "4.8", verified: true },
     trackingProgress: { distanceLabel: "International transit", pickupTime: "30 Aug", arrivalTime: "14 Sep", fraction: 0.54, mapLabel: "Guangzhou to Lusaka route", stages: ["Origin warehouse", "Exported", "International transit", "Zambia warehouse"] },
   },
   {
@@ -27,7 +27,7 @@ export const shipments: Shipment[] = [
     service: "intercity",
     status: "delivered",
     title: "Two cartons",
-    pickup: { city: "Lusaka", area: "Kabwata", detail: "New WorldCargo collection point" },
+    pickup: { city: "Lusaka", area: "Kabwata", detail: "Newworld Cargo collection point" },
     destination: { city: "Johannesburg", area: "Gauteng", detail: "Receiver delivery address" },
     eta: "Delivered 28 Aug",
     dateLabel: "Delivered",
@@ -38,11 +38,11 @@ export const shipments: Shipment[] = [
     service: "import",
     status: "pending",
     title: "Homeware order",
-    pickup: { city: "Dubai", area: "Jebel Ali", detail: "New WorldCargo consolidation point" },
+    pickup: { city: "Dubai", area: "Jebel Ali", detail: "Newworld Cargo consolidation point" },
     destination: { city: "Lusaka", area: "Kabwata", detail: "Collection branch" },
     eta: "Pending confirmation",
     dateLabel: "Pending",
-    trackingContact: { name: "Import support", role: "New WorldCargo support agent", phone: "+260 970 020 190", verified: true },
+    trackingContact: { name: "Import support", role: "Newworld Cargo support agent", phone: "+260 970 020 190", verified: true },
     trackingProgress: { distanceLabel: "Confirmation pending", pickupTime: "Awaiting", arrivalTime: "To confirm", fraction: 0.12, mapLabel: "Dubai to Lusaka route", stages: ["Order confirmed", "Supplier received", "International transit", "Lusaka branch"] },
   },
   {

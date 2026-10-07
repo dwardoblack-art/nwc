@@ -1,6 +1,17 @@
 import { CustomerMap } from "@/components/map/customer-map";
+import { trackingRouteOverview } from "@/lib/maps/tracking-route";
 import type { Shipment } from "@/types/cargo";
 
 export function LiveTrackingMap({ shipment }: { shipment: Shipment }) {
-  return <CustomerMap mode={shipment.service === "import" ? "international" : "live-local"} deliveryService={shipment.service} shipment={shipment} routeProgress={shipment.trackingProgress?.fraction ?? 0} />;
+  const route = trackingRouteOverview(shipment);
+  return (
+    <CustomerMap
+      pickup={route.pickup}
+      destination={route.destination}
+      mode={shipment.service === "import" ? "international" : "route-preview"}
+      deliveryService={shipment.service}
+      shipment={shipment}
+      routeProgress={shipment.trackingProgress?.fraction ?? 0}
+    />
+  );
 }

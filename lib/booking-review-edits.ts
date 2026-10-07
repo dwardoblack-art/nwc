@@ -14,7 +14,7 @@ export const localScheduleEditChoices: readonly BookingQuickEditChoice<"as_soon_
 ];
 
 export const intercityFulfilmentEditChoices: readonly BookingQuickEditChoice<"collection" | "door_delivery">[] = [
-  { id: "collection", title: "Collection point", detail: "Use a New WorldCargo branch handover.", icon: "storefront-outline" },
+  { id: "collection", title: "Collection point", detail: "Use a Newworld Cargo branch handover.", icon: "storefront-outline" },
   { id: "door_delivery", title: "Door delivery", detail: "Arrange collection or delivery to the supplied address.", icon: "home-variant-outline" },
 ];
 

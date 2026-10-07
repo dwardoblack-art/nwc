@@ -4,14 +4,93 @@ import { mockPaymentPresentation } from "@/lib/mock-billing";
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
 
 export default function PaymentStatusScreen() {
-  const { paymentState, setPaymentState, confirmSelectedInvoicePayment } = useCustomerBillingAccount();
-  const state = mockPaymentPresentation(paymentState);
+  const {
+    paymentState,
+    actionError,
+    setPaymentState,
+    confirmSelectedInvoicePayment,
+  } = useCustomerBillingAccount();
+  const presentation = mockPaymentPresentation(paymentState);
+  const state = {
+    ...presentation,
+    detail:
+      paymentState === "failed" && actionError
+        ? actionError
+        : presentation.detail,
+  };
   const goToBill = () => router.replace("/bills" as Href);
-  if (paymentState === "pending") return <AppStateScreen {...state} loading primaryLabel="Check payment status" onPrimary={confirmSelectedInvoicePayment} secondaryLabel="Cancel payment" onSecondary={() => setPaymentState("cancelled")} />;
-  if (paymentState === "confirmed") return <AppStateScreen {...state} primaryLabel="View receipt" onPrimary={() => router.replace("/bills/receipt" as Href)} secondaryLabel="Back to Bills" onSecondary={goToBill} />;
-  if (paymentState === "failed") return <AppStateScreen {...state} primaryLabel="Try payment again" onPrimary={() => { setPaymentState("ready"); router.replace("/bills/payment" as Href); }} secondaryLabel="Back to Bills" onSecondary={goToBill} />;
-  if (paymentState === "cancelled") return <AppStateScreen {...state} primaryLabel="Return to invoice" onPrimary={() => { setPaymentState("ready"); router.replace("/bills/payment" as Href); }} secondaryLabel="Back to Bills" onSecondary={goToBill} />;
-  if (paymentState === "delayed") return <AppStateScreen {...state} primaryLabel="Check confirmation again" onPrimary={confirmSelectedInvoicePayment} secondaryLabel="Back to Bills" onSecondary={goToBill} />;
-  if (paymentState === "refunded") return <AppStateScreen {...state} primaryLabel="Back to Bills" onPrimary={goToBill} />;
-  return <AppStateScreen {...state} primaryLabel="Review invoice" onPrimary={() => router.replace("/bills/payment" as Href)} secondaryLabel="Back to Bills" onSecondary={goToBill} />;
+  if (paymentState === "pending")
+    return (
+      <AppStateScreen
+        {...state}
+        loading
+        primaryLabel="Check payment status"
+        onPrimary={confirmSelectedInvoicePayment}
+        secondaryLabel="Cancel payment"
+        onSecondary={() => setPaymentState("cancelled")}
+      />
+    );
+  if (paymentState === "confirmed")
+    return (
+      <AppStateScreen
+        {...state}
+        primaryLabel="View receipt"
+        onPrimary={() => router.replace("/bills/receipt" as Href)}
+        secondaryLabel="Back to Bills"
+        onSecondary={goToBill}
+      />
+    );
+  if (paymentState === "failed")
+    return (
+      <AppStateScreen
+        {...state}
+        primaryLabel="Try payment again"
+        onPrimary={() => {
+          setPaymentState("ready");
+          router.replace("/bills/payment" as Href);
+        }}
+        secondaryLabel="Back to Bills"
+        onSecondary={goToBill}
+      />
+    );
+  if (paymentState === "cancelled")
+    return (
+      <AppStateScreen
+        {...state}
+        primaryLabel="Return to invoice"
+        onPrimary={() => {
+          setPaymentState("ready");
+          router.replace("/bills/payment" as Href);
+        }}
+        secondaryLabel="Back to Bills"
+        onSecondary={goToBill}
+      />
+    );
+  if (paymentState === "delayed")
+    return (
+      <AppStateScreen
+        {...state}
+        primaryLabel="Check confirmation again"
+        onPrimary={confirmSelectedInvoicePayment}
+        secondaryLabel="Back to Bills"
+        onSecondary={goToBill}
+      />
+    );
+  if (paymentState === "refunded")
+    return (
+      <AppStateScreen
+        {...state}
+        primaryLabel="Back to Bills"
+        onPrimary={goToBill}
+      />
+    );
+  return (
+    <AppStateScreen
+      {...state}
+      primaryLabel="Review invoice"
+      onPrimary={() => router.replace("/bills/payment" as Href)}
+      secondaryLabel="Back to Bills"
+      onSecondary={goToBill}
+    />
+  );
 }

@@ -7,7 +7,7 @@ export type MockPickup = Pickup;
 export const mockPickupSlots = pickupSlots;
 
 export const mockPickups: MockPickup[] = [
-  { shipmentId: "nwc-23990", shipmentReference: "NWC-784089", location: "New WorldCargo consolidation point, Jebel Ali", collectionPoint: "Supplier handover · Dubai", scheduledSlotId: "today-pm", status: "scheduled" },
+  { shipmentId: "nwc-23990", shipmentReference: "NWC-784089", location: "Newworld Cargo consolidation point, Jebel Ali", collectionPoint: "Supplier handover · Dubai", scheduledSlotId: "today-pm", status: "scheduled" },
 ];
 
 export { pickupSlotFor, pickupStatusLabel };

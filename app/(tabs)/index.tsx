@@ -1,5 +1,4 @@
 import { ListSkeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -10,14 +9,16 @@ import {
 import { router, type Href } from "expo-router";
 import { CustomerHomeHeader } from "@/components/home/customer-home-header";
 import { DeliverySnapshot } from "@/components/home/delivery-snapshot";
-import { TrackingLookupOverlay } from "@/components/tracking/tracking-lookup";
 import { HomeServiceTile } from "@/components/home/home-service-tile";
 import { MyOrderRow } from "@/components/home/my-order-row";
 import { useCustomerContentInsets } from "@/components/layout/customer-screen-layout";
 import { AppIcon } from "@/components/ui/app-icon";
 import { Card, Screen } from "@/components/ui/nwc-ui";
 import { toUiShipments } from "@/lib/mappers/shipment-ui-mapper";
-import { firstActiveShipment, shipmentDestination } from "@/lib/shipment-navigation";
+import {
+  firstActiveShipment,
+  shipmentDestination,
+} from "@/lib/shipment-navigation";
 import { nwcColors } from "@/lib/nwc-theme";
 import { useCustomerShipments } from "@/lib/use-cases/use-customer-shipments";
 import { useCustomerAuth } from "@/stores/customer-auth";
@@ -25,8 +26,9 @@ import { useCustomerAuth } from "@/stores/customer-auth";
 export default function HomeScreen() {
   const { customer } = useCustomerAuth();
   const shipmentState = useCustomerShipments();
-  const [trackingOpen, setTrackingOpen] = useState(false);
-  const contentInsets = useCustomerContentInsets();
+  const contentInsets = useCustomerContentInsets({
+    hasFloatingNavigation: true,
+  });
   const shipments = toUiShipments(shipmentState.shipments);
   const activeShipment = firstActiveShipment(shipments);
   const orders = shipments.slice(0, 2);
@@ -39,36 +41,38 @@ export default function HomeScreen() {
         >
           <CustomerHomeHeader
             customerName={customer?.name}
-            onTracking={() => setTrackingOpen(true)}
+            onTracking={() => router.push("/tracking" as Href)}
             onNotifications={() => router.push("/notifications" as Href)}
             onAccount={() => router.push("/account" as Href)}
           />
-          {activeShipment ? <View style={styles.activeSection}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Track your shipment</Text>
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel="View active shipment"
+          {activeShipment ? (
+            <View style={styles.activeSection}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Track your shipment</Text>
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityLabel="View active shipment"
+                  onPress={() =>
+                    router.push(shipmentDestination(activeShipment) as Href)
+                  }
+                  style={styles.sectionAction}
+                >
+                  <Text style={styles.sectionActionText}>Open</Text>
+                  <AppIcon
+                    name="chevron-right"
+                    size={18}
+                    color={nwcColors.info}
+                  />
+                </TouchableOpacity>
+              </View>
+              <DeliverySnapshot
+                shipment={activeShipment}
                 onPress={() =>
                   router.push(shipmentDestination(activeShipment) as Href)
                 }
-                style={styles.sectionAction}
-              >
-                <Text style={styles.sectionActionText}>Open</Text>
-                <AppIcon
-                  name="chevron-right"
-                  size={18}
-                  color={nwcColors.info}
-                />
-              </TouchableOpacity>
+              />
             </View>
-            <DeliverySnapshot
-              shipment={activeShipment}
-              onPress={() =>
-                router.push(shipmentDestination(activeShipment) as Href)
-              }
-            />
-          </View> : null}
+          ) : null}
           <View style={styles.servicesSection}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Where are you sending?</Text>
@@ -110,7 +114,6 @@ export default function HomeScreen() {
           <View style={styles.ordersSection}>
             <View style={styles.sectionHeader}>
               <View>
-              
                 <Text style={styles.sectionTitle}>Your shipments</Text>
               </View>
               <TouchableOpacity
@@ -149,10 +152,6 @@ export default function HomeScreen() {
             )}
           </View>
         </ScrollView>
-        <TrackingLookupOverlay
-          visible={trackingOpen}
-          onDismiss={() => setTrackingOpen(false)}
-        />
       </View>
     </Screen>
   );
@@ -170,15 +169,12 @@ function HomeStateCard({
   onRetry: () => void;
 }) {
   const isError = status === "error";
-  if (status === "idle" || status === "loading") return <ListSkeleton count={2} />;
-  const title =
-     isError
-        ? "Shipments could not load"
-        : "No shipments yet";
-  const detail =
-     isError
-        ? message || "Try again when your connection is stable."
-        : "When you book or receive cargo, it will appear here.";
+  if (status === "idle" || status === "loading")
+    return <ListSkeleton count={2} />;
+  const title = isError ? "Shipments could not load" : "No shipments yet";
+  const detail = isError
+    ? message || "Try again when your connection is stable."
+    : "When you book or receive cargo, it will appear here.";
   return (
     <Card style={[styles.stateCard, compact && styles.stateCardCompact]}>
       <View style={styles.stateIcon}>
@@ -232,7 +228,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.7,
     textTransform: "uppercase",
   },
-  sectionTitle: { 
+  sectionTitle: {
     color: nwcColors.foreground,
     fontSize: 20,
     lineHeight: 26,

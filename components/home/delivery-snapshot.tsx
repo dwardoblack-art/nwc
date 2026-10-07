@@ -1,4 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { trackingRouteOverview } from "@/lib/maps/tracking-route";
 import { NativeMapSurface } from "@/components/map/native-map-surface";
 import { AppIcon } from "@/components/ui/app-icon";
 import { nwcColors } from "@/lib/nwc-theme";
@@ -19,8 +20,9 @@ export function DeliverySnapshot({
   shipment: Shipment;
   onPress: () => void;
 }) {
-  const origin = point(shipment.pickup),
-    destination = point(shipment.destination);
+  const route = trackingRouteOverview(shipment);
+  const origin = point(route.pickup),
+    destination = point(route.destination);
   return (
     <View style={styles.card}>
       <NativeMapSurface
@@ -43,7 +45,9 @@ export function DeliverySnapshot({
           <Text style={styles.reference}>{shipment.reference}</Text>
           <Text style={styles.detail}>
             {origin || destination
-              ? "View shipment tracking"
+              ? route.approximate
+                ? "Route overview · View tracking"
+                : "View shipment tracking"
               : "Shipment locations not yet available"}
           </Text>
         </View>

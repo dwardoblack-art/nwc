@@ -4,7 +4,7 @@ import { readSecureSession, writeSecureSession } from "@/lib/storage/secure-sess
 
 const fallbackCustomer: CustomerProfile = {
   id: "mock-customer",
-  name: "New WorldCargo customer",
+  name: "Newworld Cargo customer",
   phone: "+260971234567",
   city: "Lusaka",
   portalEnabled: true,

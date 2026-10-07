@@ -76,3 +76,6 @@ credentials/
 # APK plus adb/platform-tools that the build servers never use. Excluding this
 # cuts the upload tarball from ~146MB to ~33MB.
 .tools/
+
+# Local validation packages and exported previews.
+.tmp/

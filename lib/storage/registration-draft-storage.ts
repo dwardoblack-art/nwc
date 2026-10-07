@@ -1,15 +1,24 @@
-import { readJsonStorage, removeJsonStorage, writeJsonStorage } from "./json-storage";
+import {
+  readJsonStorage,
+  removeJsonStorage,
+  writeJsonStorage,
+} from "./json-storage";
 import { storageKeys } from "./storage-keys";
 
 export type RegistrationDraft = {
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   phone: string;
   city: string;
 };
 
 export function readRegistrationDraft() {
-  return readJsonStorage<RegistrationDraft>(storageKeys.registrationDraft, "secure");
+  return readJsonStorage<RegistrationDraft>(
+    storageKeys.registrationDraft,
+    "secure",
+  );
 }
 
 export function writeRegistrationDraft(draft: RegistrationDraft) {

@@ -9,9 +9,9 @@ export type AddressSearchResult = Address & {
 export const addressSearchResults: AddressSearchResult[] = [
   { id: "longacres-cairo", label: "Cairo Road business district", city: "Lusaka", area: "Longacres", detail: "Cairo Road, Longacres", type: "address", landmark: "Near the central business district" },
   { id: "roma-plot27", label: "Home", city: "Lusaka", area: "Roma", detail: "Plot 27, Great East Road", type: "address", landmark: "Great East Road corridor" },
-  { id: "kabwata-branch", label: "New WorldCargo branch", city: "Lusaka", area: "Kabwata", detail: "New WorldCargo collection point", type: "branch", landmark: "Kabwata collection point" },
+  { id: "kabwata-branch", label: "Newworld Cargo branch", city: "Lusaka", area: "Kabwata", detail: "Newworld Cargo collection point", type: "branch", landmark: "Kabwata collection point" },
   { id: "woodlands", label: "Woodlands office", city: "Lusaka", area: "Woodlands", detail: "Mosi-o-Tunya Road", type: "address", landmark: "Near Woodlands Stadium" },
-  { id: "nwc-warehouse", label: "New WorldCargo warehouse", city: "Lusaka", area: "Makeni", detail: "Makeni logistics area", type: "warehouse", landmark: "Warehouse receiving gate" },
+  { id: "nwc-warehouse", label: "Newworld Cargo warehouse", city: "Lusaka", area: "Makeni", detail: "Makeni logistics area", type: "warehouse", landmark: "Warehouse receiving gate" },
 ];
 
 export function searchMockAddresses(query: string) {

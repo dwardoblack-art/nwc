@@ -41,7 +41,7 @@ function mapSupportCase(raw: LaravelSupportCaseResponse): SupportCase {
   return {
     id: String(raw.id ?? raw.title ?? raw.topic ?? ""),
     title: raw.title ?? raw.subject ?? raw.topic ?? "Support request",
-    detail: raw.detail ?? raw.message ?? "New WorldCargo support request",
+    detail: raw.detail ?? raw.message ?? "Newworld Cargo support request",
     status: normalizeStatus(raw.status),
     updatedAt: raw.updatedAt ?? raw.updated_at ?? raw.displayCreatedAt ?? raw.createdAt ?? "Recently",
     events: events.map((event) => ({

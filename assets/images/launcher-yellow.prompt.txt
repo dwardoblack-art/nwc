@@ -1,0 +1,3 @@
+Built-in imagegen edit of assets/images/new-world-cargo-logo.png.
+
+Edit target: existing NEWWORLD CARGO wordmark. Make a square 1024x1024 mobile launcher icon: flat solid yellow background #FFC83D, centered existing exact wordmark in solid dark navy blue #012642. Preserve the distinctive letter shapes exactly; NEWWORLD stays joined as one word, CARGO spaced below. Fit whole logo inside center 64% of square width with generous yellow margins for adaptive icon cropping. No package illustration, no border, no shadows, no gradients, no additional text. Save the resulting project asset.

@@ -59,13 +59,13 @@ export function recordMockSubmittedBooking(result: BookingSubmissionResult, draf
     service === "import"
       ? { city: importDraft.originCountry || "Origin", area: importDraft.originCity || "International office", detail: "Awaiting intake confirmation" }
       : service === "intercity"
-        ? { city: intercityDraft.originCity || "Origin city", area: "New WorldCargo branch", detail: "Awaiting branch confirmation" }
+        ? { city: intercityDraft.originCity || "Origin city", area: "Newworld Cargo branch", detail: "Awaiting branch confirmation" }
         : addressOrFallback(localDraft.pickup, { city: "Lusaka", area: "Pickup", detail: "Awaiting pickup confirmation" });
   const destination =
     service === "import"
-      ? { city: "Zambia", area: importDraft.destinationCity || "Lusaka", detail: "New WorldCargo destination branch" }
+      ? { city: "Zambia", area: importDraft.destinationCity || "Lusaka", detail: "Newworld Cargo destination branch" }
       : service === "intercity"
-        ? { city: intercityDraft.destinationCity || "Destination city", area: "New WorldCargo branch", detail: "Awaiting destination confirmation" }
+        ? { city: intercityDraft.destinationCity || "Destination city", area: "Newworld Cargo branch", detail: "Awaiting destination confirmation" }
         : addressOrFallback(localDraft.destination, { city: "Lusaka", area: "Destination", detail: "Awaiting delivery confirmation" });
 
   submittedShipments.unshift({

@@ -13,7 +13,7 @@ export type AccountSettingsSnapshot = {
 };
 
 export const accountPolicySummaries = [
-  { id: "terms", title: "Terms of service", detail: "How New WorldCargo services and customer responsibilities work." },
+  { id: "terms", title: "Terms of service", detail: "How Newworld Cargo services and customer responsibilities work." },
   { id: "privacy", title: "Privacy policy", detail: "How account, route, and shipment information is handled." },
   { id: "payments", title: "Payment and refund policy", detail: "Billing, wallet, proof, refund, and dispute information." },
 ];

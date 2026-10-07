@@ -50,7 +50,7 @@ export default function ShipmentManagementScreen() {
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.lead}>
             <Text style={styles.title}>Manage delivery</Text>
-            <Text style={styles.detail}>Review your cargo and take any action New WorldCargo has made available.</Text>
+            <Text style={styles.detail}>Review your cargo and take any action Newworld Cargo has made available.</Text>
           </View>
           <Card style={styles.summary}>
             <View style={styles.summaryHead}>
@@ -90,7 +90,7 @@ export default function ShipmentManagementScreen() {
         <CustomerConfirmationDialog
           visible={confirmingCancel}
           title="Cancel this shipment?"
-          detail="New WorldCargo will stop this cargo request. This cannot be undone."
+          detail="Newworld Cargo will stop this cargo request. This cannot be undone."
           approveLabel={cancelling ? "Cancelling..." : "Cancel shipment"}
           tone="danger"
           onDismiss={() => setConfirmingCancel(false)}

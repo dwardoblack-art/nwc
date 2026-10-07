@@ -37,7 +37,7 @@ export default function VerifyScreen() {
     const completedRegistration = pendingAuth?.mode === "register";
     const verified = await completeVerification(code);
     if (verified) {
-      if (completedRegistration) toast.success("Account verified. Welcome to New WorldCargo.");
+      if (completedRegistration) toast.success("Account verified. Welcome to Newworld Cargo.");
       router.dismissAll();
       router.replace("/(tabs)" as Href);
     }

@@ -9,6 +9,23 @@ import {
 } from "../lib/adapters/laravel/portal-auth-contract";
 
 describe("mobile Laravel auth contract", () => {
+  it("preserves separately entered names and compound surnames", () => {
+    expect(
+      portalRegisterPayload({
+        name: "Mary Jane van der Merwe",
+        firstName: "Mary Jane",
+        lastName: "van der Merwe",
+        email: "mary@example.com",
+        phone: "+260971234567",
+        city: "Lusaka",
+        password: "password123",
+      }),
+    ).toMatchObject({ firstName: "Mary Jane", lastName: "van der Merwe" });
+    expect(splitPortalName("Chanda John Mwila")).toEqual({
+      firstName: "Chanda",
+      lastName: "John Mwila",
+    });
+  });
   it("maps the CustomerPortalApi auth envelope into the mobile session model", () => {
     const session = mapPortalSession({
       data: {
@@ -48,14 +65,16 @@ describe("mobile Laravel auth contract", () => {
   });
 
   it("rejects login responses that do not contain a mobile bearer token", () => {
-    expect(() => mapPortalLoginSession({
-      data: {
-        id: "1",
-        firstName: "George",
-        email: "george@example.com",
-        verified: true,
-      },
-    })).toThrow("The server did not create a mobile session");
+    expect(() =>
+      mapPortalLoginSession({
+        data: {
+          id: "1",
+          firstName: "George",
+          email: "george@example.com",
+          verified: true,
+        },
+      }),
+    ).toThrow("The server did not create a mobile session");
   });
 
   it("builds Laravel register payloads from the mobile domain input", () => {

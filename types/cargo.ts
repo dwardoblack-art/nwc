@@ -3,7 +3,12 @@ export type ShippingMethod = "air" | "sea";
 // Imported and re-exported so the UI and the domain can never diverge again.
 import type { ShipmentStatus } from "@/lib/domain/shipment";
 export type { ShipmentStatus };
-export type BookingStep = "route" | "parcel" | "contacts" | "schedule" | "review";
+export type BookingStep =
+  | "route"
+  | "parcel"
+  | "contacts"
+  | "schedule"
+  | "review";
 export type LocalDeliveryVehicle = "scooter" | "small_van" | "cargo_van";
 
 export type BookingQuote = {
@@ -121,7 +126,12 @@ export type LocalDeliveryDraft = {
 };
 
 export type ImportBookingDraft = {
-  supplier?: PersonContact & { company?: string; email?: string; notes?: string };
+  destinationAddress?: Address;
+  supplier?: PersonContact & {
+    company?: string;
+    email?: string;
+    notes?: string;
+  };
   service: "import";
   method?: ShippingMethod;
   originCountry?: string;
@@ -144,6 +154,8 @@ export type ImportBookingDraft = {
 };
 
 export type IntercityBookingDraft = {
+  originAddress?: Address;
+  destinationAddress?: Address;
   service: "intercity";
   originCity?: string;
   originBranchId?: string;

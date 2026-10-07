@@ -22,7 +22,7 @@ export default function ReturnsScreen() {
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.lead}>
             <Text style={styles.title}>Your returns</Text>
-            <Text style={styles.detail}>Track every return you have asked New WorldCargo to handle.</Text>
+            <Text style={styles.detail}>Track every return you have asked Newworld Cargo to handle.</Text>
           </View>
 
           {status === "loading" ? <ListSkeleton count={3} /> : null}

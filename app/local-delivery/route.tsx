@@ -195,7 +195,7 @@ export default function LocalDeliveryRouteScreen() {
 
   return (
     <Screen>
-      {adjustingTarget && localCity ? <LocalLocationPicker city={localCity} target={adjustingTarget} initial={localDraft[adjustingTarget]} onClose={() => setAdjustingTarget(null)} onConfirm={(address) => { updateLocalDraft({ [adjustingTarget]: address, quote: undefined }); setAdjustingTarget(null); }} /> : null}
+      {adjustingTarget && localCity ? <LocalLocationPicker city={localCity} startAtCurrentLocation target={adjustingTarget} initial={localDraft[adjustingTarget]} onClose={() => setAdjustingTarget(null)} onConfirm={(address) => { updateLocalDraft({ [adjustingTarget]: address, quote: undefined }); setAdjustingTarget(null); }} /> : null}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={styles.page}
@@ -414,7 +414,7 @@ function RoutePreview({
         <Text style={styles.quoteArrival}>
           {quote.expiresAt
             ? `Valid until ${new Date(quote.expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-            : "Final price is confirmed by New WorldCargo before payment."}
+            : "Final price is confirmed by Newworld Cargo before payment."}
         </Text>
         <View style={styles.pinLinks}>
           <TouchableOpacity
@@ -713,7 +713,6 @@ const vehicleCapacity: Record<LocalDeliveryVehicle, string> = {
   small_van: "Up to 50 kg",
   cargo_van: "Up to 300 kg",
 };
-
 
 
 

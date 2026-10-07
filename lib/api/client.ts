@@ -203,7 +203,7 @@ export function createApiClient(options: ApiClientOptions = {}) {
         throw new MobileApiError("TIMEOUT", "The request took too long. Please try again.", { retryable: true });
       }
       logApiActivity("error", { method, url, auth: requiresAuth, durationMs: Date.now() - startedAt, code: "NETWORK_UNAVAILABLE", message: error instanceof Error ? error.message : "Network request failed." });
-      throw new MobileApiError("NETWORK_UNAVAILABLE", "We could not reach New WorldCargo. Check your connection and try again.", { retryable: true });
+      throw new MobileApiError("NETWORK_UNAVAILABLE", "We could not reach Newworld Cargo. Check your connection and try again.", { retryable: true });
     } finally {
       clearTimeout(timeout);
     }

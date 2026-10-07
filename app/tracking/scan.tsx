@@ -16,18 +16,14 @@ import {
   PrimaryButton,
   Screen,
 } from "@/components/ui/nwc-ui";
-import { toUiShipment } from "@/lib/mappers/shipment-ui-mapper";
-import { shipmentDestination } from "@/lib/shipment-navigation";
 import { nwcColors } from "@/lib/nwc-theme";
-import { useCustomerShipments } from "@/lib/use-cases/use-customer-shipments";
 import { usePublicTracking } from "@/lib/use-cases/use-public-tracking";
 
 export default function ScanTrackingScreen() {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const tracking = usePublicTracking();
-  const shipmentState = useCustomerShipments();
-  const demoCode = shipmentState.shipments[0]?.code ?? "EXP-LUN10001";
+  const demoCode = "EXP-LUN06501";
   const submit = async () => {
     const result = await tracking.track(code);
     if (!result) {
@@ -41,7 +37,10 @@ export default function ScanTrackingScreen() {
       setMessage(result.message);
       return;
     }
-    router.replace(shipmentDestination(toUiShipment(result.shipment)) as Href);
+    router.replace({
+      pathname: "/tracking",
+      params: { code: result.shipment.code },
+    } as Href);
   };
   const useDemo = () => {
     setCode(demoCode);

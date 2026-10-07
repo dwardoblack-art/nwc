@@ -7,7 +7,7 @@ export default function CustomConfirmationScreen() {
     <BookingConfirmation
       icon="check"
       title="Custom request received"
-      detail="A New WorldCargo team member will review your route and request, then share the right next step."
+      detail="A Newworld Cargo team member will review your route and request, then share the right next step."
       onReset={resetCustomDraft}
     />
   );

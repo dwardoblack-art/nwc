@@ -5,8 +5,8 @@ import eas from "../eas.json";
 import pkg from "../package.json";
 
 describe("mobile release configuration", () => {
-  it("uses New WorldCargo production-ready identifiers by default", () => {
-    expect(config.name).toBe("New WorldCargo");
+  it("uses Newworld Cargo production-ready identifiers by default", () => {
+    expect(config.name).toBe("Newworld Cargo");
     expect(config.slug).toBe("new-world-cargo-mobile");
     expect(config.scheme).toBe("newworldcargo");
     expect(config.version).toBe("1.0.0");
@@ -21,23 +21,46 @@ describe("mobile release configuration", () => {
     expect(config.ios?.infoPlist).toMatchObject({
       NSCameraUsageDescription: expect.stringContaining("cargo evidence"),
       NSPhotoLibraryUsageDescription: expect.stringContaining("profile photos"),
-      NSLocationWhenInUseUsageDescription: expect.stringContaining("pickup and delivery"),
+      NSLocationWhenInUseUsageDescription: expect.stringContaining(
+        "pickup and delivery",
+      ),
     });
-    expect(config.android?.permissions).toEqual(expect.arrayContaining(["POST_NOTIFICATIONS", "CAMERA", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]));
+    expect(config.android?.permissions).toEqual(
+      expect.arrayContaining([
+        "POST_NOTIFICATIONS",
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+      ]),
+    );
   });
 
   it("passes the configured Google Maps key to both native platforms", () => {
     if (!process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY) return;
-    expect(config.ios?.config?.googleMapsApiKey).toBe(process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY);
-    expect(config.android?.config?.googleMaps?.apiKey).toBe(process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY);
+    expect(config.ios?.config?.googleMapsApiKey).toBe(
+      process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+    );
+    expect(config.android?.config?.googleMaps?.apiKey).toBe(
+      process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+    );
   });
 
   it("keeps every build profile on live Laravel services", () => {
-    for (const profile of [eas.build.preview, eas.build.staging, eas.build.production]) {
+    for (const profile of [
+      eas.build.preview,
+      eas.build.staging,
+      eas.build.production,
+    ]) {
       expect(profile.env.EXPO_PUBLIC_API_MODE).toBe("laravel");
-      expect(profile.env.EXPO_PUBLIC_API_BASE_URL).toBe("https://api.newworldcargo.com/api/v1/");
-      expect(profile.env.EXPO_PUBLIC_PUBLIC_TRACKING_BASE_URL).toBe("https://api.newworldcargo.com/api/v1/");
-      expect(profile.env.EXPO_PUBLIC_ADMIN_API_BASE_URL).toBe("https://admin.newworldcargo.com/api/v1/");
+      expect(profile.env.EXPO_PUBLIC_API_BASE_URL).toBe(
+        "https://api.newworldcargo.com/api/v1/",
+      );
+      expect(profile.env.EXPO_PUBLIC_PUBLIC_TRACKING_BASE_URL).toBe(
+        "https://api.newworldcargo.com/api/v1/",
+      );
+      expect(profile.env.EXPO_PUBLIC_ADMIN_API_BASE_URL).toBe(
+        "https://admin.newworldcargo.com/api/v1/",
+      );
       expect(profile.env.EXPO_PUBLIC_MAPS_PROVIDER).toBe("native");
       expect(profile.env.EXPO_PUBLIC_PAYMENTS_PROVIDER).toBe("laravel");
     }
@@ -45,11 +68,21 @@ describe("mobile release configuration", () => {
 
   it("exposes standard build and audit scripts", () => {
     expect(pkg.scripts.quality).toBe("node scripts/mobile-quality.mjs");
-    expect(pkg.scripts["release:audit"]).toBe("node scripts/mobile-release-audit.mjs");
-    expect(pkg.scripts["build:preview:android"]).toBe("eas build --profile preview --platform android");
-    expect(pkg.scripts["build:staging:android"]).toBe("eas build --profile staging --platform android");
-    expect(pkg.scripts["build:production:android"]).toBe("eas build --profile production --platform android");
-    expect(pkg.scripts["build:production:ios"]).toBe("eas build --profile production --platform ios");
+    expect(pkg.scripts["release:audit"]).toBe(
+      "node scripts/mobile-release-audit.mjs",
+    );
+    expect(pkg.scripts["build:preview:android"]).toBe(
+      "eas build --profile preview --platform android",
+    );
+    expect(pkg.scripts["build:staging:android"]).toBe(
+      "eas build --profile staging --platform android",
+    );
+    expect(pkg.scripts["build:production:android"]).toBe(
+      "eas build --profile production --platform android",
+    );
+    expect(pkg.scripts["build:production:ios"]).toBe(
+      "eas build --profile production --platform ios",
+    );
   });
 
   it("does not keep unused Expo template artwork in release assets", () => {

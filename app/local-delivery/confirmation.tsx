@@ -18,7 +18,7 @@ export default function LocalDeliveryConfirmationScreen() {
     <BookingConfirmation
       icon="check"
       title="Your Local Delivery request was received."
-      detail="New WorldCargo will confirm availability, price, and the next step before collection."
+      detail="Newworld Cargo will confirm availability, price, and the next step before collection."
       onReset={resetLocalDraft}
     >
       <Card style={styles.card}>

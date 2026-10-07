@@ -38,7 +38,7 @@ export default function PermissionWelcomeScreen() {
     <SafeAreaView style={styles.screen}>
       <View style={styles.header}>
         <Image
-          accessibilityLabel="New WorldCargo"
+          accessibilityLabel="Newworld Cargo"
           source={require("../../assets/images/new-world-cargo-logo.png")}
           resizeMode="contain"
           style={styles.logo}
@@ -52,7 +52,7 @@ export default function PermissionWelcomeScreen() {
 
       <PrimaryButton
         label="Allow permissions"
-        accessibilityHint="Request the device permissions used by New WorldCargo"
+        accessibilityHint="Request the device permissions used by Newworld Cargo"
         onPress={requestPermissions}
         style={styles.continueButton}
       />

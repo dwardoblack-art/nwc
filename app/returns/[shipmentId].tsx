@@ -58,7 +58,7 @@ function ReviewCard({ reason, handover }: { reason: typeof returnReasons[number]
 
 function SubmittedState({ requestLabel, handover, onBack }: { requestLabel: string; handover: ReturnHandover; onBack: () => void }) {
   const label = handover === "courier-pickup" ? "Courier pickup requested" : "Collection-point return requested";
-  return <View style={styles.submitted}><View style={styles.successIcon}><Text style={styles.successIconText}>✓</Text></View><Text style={styles.title}>Return requested</Text><Text style={styles.detail}>Your request is submitted for review. The next update will explain the handover step.</Text><Card style={styles.statusCard}><StatusBadge label="Submitted" tone="info" /><Text style={styles.statusTitle}>{label}</Text><Text style={styles.statusDetail}>Requested {requestLabel} · New WorldCargo review pending</Text></Card><PrimaryButton label="Back to shipment" icon="arrow-left" onPress={onBack} /></View>;
+  return <View style={styles.submitted}><View style={styles.successIcon}><Text style={styles.successIconText}>✓</Text></View><Text style={styles.title}>Return requested</Text><Text style={styles.detail}>Your request is submitted for review. The next update will explain the handover step.</Text><Card style={styles.statusCard}><StatusBadge label="Submitted" tone="info" /><Text style={styles.statusTitle}>{label}</Text><Text style={styles.statusDetail}>Requested {requestLabel} · Newworld Cargo review pending</Text></Card><PrimaryButton label="Back to shipment" icon="arrow-left" onPress={onBack} /></View>;
 }
 
 const styles = StyleSheet.create({

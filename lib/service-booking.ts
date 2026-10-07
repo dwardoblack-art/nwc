@@ -18,7 +18,6 @@ export function isImportReady(draft: ImportBookingDraft) {
     draft.originCity &&
     draft.originBranchId &&
     draft.destinationCity &&
-    draft.destinationBranchId &&
     draft.cargoCategory &&
     draft.consignee?.name &&
     draft.consignee.phone,
@@ -34,12 +33,8 @@ export const intercitySteps = [
 ];
 
 export function isIntercityReady(draft: IntercityBookingDraft) {
-  // Collection-point shipments move branch-to-branch, so both branch IDs are
-  // required. Door delivery works from a plain address (a Google Places result
-  // carries no branchId), so only the cities are required in that case.
-  const branchesReady = draft.fulfilment === "door_delivery"
-    ? true
-    : Boolean(draft.originBranchId && draft.destinationBranchId);
+  // Addresses throughout Zambia are supported; a branch is optional.
+  const branchesReady = Boolean(draft.originCity && draft.destinationCity);
   return Boolean(
     draft.originCity &&
     draft.destinationCity &&
