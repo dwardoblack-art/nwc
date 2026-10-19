@@ -32,3 +32,19 @@ export const nwcShadow = {
   shadowRadius: 16,
   elevation: 3,
 } as const;
+
+export const nwcSpacing = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
+  hero: 48,
+} as const;
+export const nwcTypography = {
+  caption: { fontSize: 12, lineHeight: 18 },
+  body: { fontSize: 16, lineHeight: 24 },
+  title: { fontSize: 24, lineHeight: 32 },
+  display: { fontSize: 32, lineHeight: 40 },
+} as const;

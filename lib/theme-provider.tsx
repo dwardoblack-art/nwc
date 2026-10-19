@@ -76,3 +76,8 @@ export function useThemeContext(): ThemeContextValue {
   }
   return ctx;
 }
+
+/** UI rendered outside the app provider (startup overlays) follows the system. */
+export function useOptionalThemeContext(): ThemeContextValue | null {
+  return useContext(ThemeContext);
+}

@@ -1,3 +1,6 @@
+import {
+  useNwcColors, type NwcPalette,
+} from "@/ui/use-nwc-colors";
 import { StyleSheet, View, type ViewProps } from "react-native";
 import { SafeAreaView, type Edge } from "react-native-safe-area-context";
 
@@ -47,13 +50,12 @@ export function ScreenContainer({
   style,
   ...props
 }: ScreenContainerProps) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <View
-      className={cn(
-        "flex-1",
-        "bg-background",
-        containerClassName
-      )}
+      className={cn("flex-1", "bg-background", containerClassName)}
       style={styles.container}
       {...props}
     >
@@ -62,13 +64,16 @@ export function ScreenContainer({
         className={cn("flex-1", safeAreaClassName)}
         style={[styles.flex, style]}
       >
-        <View className={cn("flex-1", className)} style={styles.flex}>{children}</View>
+        <View className={cn("flex-1", className)} style={styles.flex}>
+          {children}
+        </View>
       </SafeAreaView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F4F7F7" },
-  flex: { flex: 1 },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: nwcColors.background },
+    flex: { flex: 1 },
+  });
