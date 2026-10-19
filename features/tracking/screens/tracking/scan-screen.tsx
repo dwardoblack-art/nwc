@@ -1,5 +1,5 @@
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
-import { mobileInputStyles } from "@/ui/mobile-input";
+import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useState } from "react";
 import {
   StyleSheet,
@@ -21,6 +21,8 @@ import {
 import { usePublicTracking } from "@/lib/use-cases/use-public-tracking";
 
 export default function ScanTrackingScreen() {
+  const mobileInputStyles = useMobileInputStyles();
+
   const nwcColors = useNwcColors();
   const styles = createThemedStyles_styles(nwcColors);
 

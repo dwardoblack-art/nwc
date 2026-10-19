@@ -1,7 +1,7 @@
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { LocalLocationPicker } from "@/ui/maps/local-location-picker";
 import { useAppToast } from "@/ui/app-toast";
-import { mobileInputStyles, MobileInput } from "@/ui/mobile-input";
+import { useMobileInputStyles, MobileInput } from "@/ui/mobile-input";
 import { useEffect, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 
@@ -32,6 +32,8 @@ export function LocationFinderDrawer({
   onDismiss,
   onSave,
 }: LocationFinderDrawerProps) {
+  const mobileInputStyles = useMobileInputStyles();
+
   const nwcColors = useNwcColors();
   const styles = createThemedStyles_styles(nwcColors);
 

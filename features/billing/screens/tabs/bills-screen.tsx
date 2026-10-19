@@ -4,7 +4,7 @@ import {
   Skeleton,
   SkeletonGroup,
 } from "@/ui/skeleton";
-import { mobileInputStyles } from "@/ui/mobile-input";
+import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useMemo, useState } from "react";
 import {
   ScrollView,
@@ -29,6 +29,8 @@ import {
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
 
 export default function BillsScreen() {
+  const mobileInputStyles = useMobileInputStyles();
+
   const nwcColors = useNwcColors();
   const styles = createThemedStyles_styles(nwcColors);
 

@@ -1,6 +1,6 @@
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
-import { mobileInputStyles } from "@/ui/mobile-input";
+import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useEffect, useState } from "react";
 import {
   Modal,
@@ -29,6 +29,8 @@ function TrackingLookupContent({
   onDismiss,
   mode,
 }: TrackingLookupContentProps) {
+  const mobileInputStyles = useMobileInputStyles();
+
   const nwcColors = useNwcColors();
   const styles = createThemedStyles_styles(nwcColors);
 

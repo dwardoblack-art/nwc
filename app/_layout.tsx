@@ -38,6 +38,12 @@ const poppinsFonts = {
 
 export default function RootLayout() {
   if (shouldLoadBundledPoppins(Platform.OS)) return <NativeFontRoot />;
+  return <WebFontRoot />;
+}
+
+function WebFontRoot() {
+  // Register the same bundled faces in the browser without gating app startup.
+  useFonts(poppinsFonts);
   return <AppRoot />;
 }
 

@@ -1,6 +1,6 @@
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { cameraService } from "@/lib/services/device/camera-service";
-import { mobileInputStyles } from "@/ui/mobile-input";
+import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useState } from "react";
 import {
   StyleSheet,
@@ -41,6 +41,8 @@ export function CargoItemsForm({
   onChangePhotos,
   onChangeSupportingDocument,
 }: Props) {
+  const mobileInputStyles = useMobileInputStyles();
+
   const nwcColors = useNwcColors();
   const styles = createThemedStyles_styles(nwcColors);
 

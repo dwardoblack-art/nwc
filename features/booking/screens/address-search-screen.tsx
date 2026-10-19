@@ -1,5 +1,5 @@
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
-import { mobileInputStyles } from "@/ui/mobile-input";
+import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useEffect, useState } from "react";
 import {
   ScrollView,
@@ -39,6 +39,8 @@ type AddressSearchResult = RouteSuggestion & {
 };
 
 export default function AddressSearchScreen() {
+  const mobileInputStyles = useMobileInputStyles();
+
   const nwcColors = useNwcColors();
   const styles = createThemedStyles_styles(nwcColors);
 

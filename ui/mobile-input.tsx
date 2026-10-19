@@ -49,6 +49,10 @@ export const createThemedStyles_mobileInputStyles = (nwcColors: NwcPalette) =>
   });
 export const mobileInputStyles =
   createThemedStyles_mobileInputStyles(nwcColors);
+
+export function useMobileInputStyles() {
+  return createThemedStyles_mobileInputStyles(useNwcColors());
+}
 export function MobileInput({
   label,
   error,

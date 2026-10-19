@@ -1,5 +1,17 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Appearance, Platform, View, useColorScheme as useSystemColorScheme } from "react-native";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
+  Appearance,
+  Platform,
+  View,
+  useColorScheme as useSystemColorScheme,
+} from "react-native";
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 
 import { SchemeColors, type ColorScheme } from "@/constants/theme";
@@ -14,7 +26,9 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useSystemColorScheme() ?? "light";
   // Match the static web render, then apply the browser preference after hydration.
-  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(Platform.OS === "web" ? "light" : systemScheme);
+  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(
+    Platform.OS === "web" ? "light" : systemScheme,
+  );
   const [themeReady, setThemeReady] = useState(Platform.OS !== "web");
   useEffect(() => {
     setColorSchemeState(systemScheme);
@@ -35,10 +49,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const setColorScheme = useCallback((scheme: ColorScheme) => {
-    setColorSchemeState(scheme);
-    applyScheme(scheme);
-  }, [applyScheme]);
+  const setColorScheme = useCallback(
+    (scheme: ColorScheme) => {
+      setColorSchemeState(scheme);
+      applyScheme(scheme);
+    },
+    [applyScheme],
+  );
 
   useEffect(() => {
     if (themeReady) applyScheme(colorScheme);
@@ -46,17 +63,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const themeVariables = useMemo(
     () =>
-      vars({
-        "color-primary": SchemeColors[colorScheme].primary,
-        "color-background": SchemeColors[colorScheme].background,
-        "color-surface": SchemeColors[colorScheme].surface,
-        "color-foreground": SchemeColors[colorScheme].foreground,
-        "color-muted": SchemeColors[colorScheme].muted,
-        "color-border": SchemeColors[colorScheme].border,
-        "color-success": SchemeColors[colorScheme].success,
-        "color-warning": SchemeColors[colorScheme].warning,
-        "color-error": SchemeColors[colorScheme].error,
-      }),
+      vars(Object.fromEntries(Object.entries(SchemeColors[colorScheme]).map(
+        ([name, value]) => [`color-${name}`, value],
+      ))),
     [colorScheme],
   );
 
