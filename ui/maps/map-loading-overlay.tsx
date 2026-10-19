@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useRef, useState } from "react";
 import { Animated, StyleSheet, Text, TouchableOpacity } from "react-native";
@@ -38,7 +39,7 @@ export function MapLoadingOverlay({
         accessibilityRole="button"
         accessibilityLabel="Retry map loading"
         onPress={onRetry}
-        style={styles.retry}
+        style={[styles.retry, minimumTouchTarget]}
       >
         <Text style={{ color: nwcColors.brandNavy }}>
           Map could not load. Tap to retry.

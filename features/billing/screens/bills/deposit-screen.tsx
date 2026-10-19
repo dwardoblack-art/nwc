@@ -1,5 +1,4 @@
-import {
-  useNwcColors, } from "@/ui/use-nwc-colors";
+import { useNwcColors } from "@/ui/use-nwc-colors";
 import { useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";

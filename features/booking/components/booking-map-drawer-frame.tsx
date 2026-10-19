@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState, type ReactNode } from "react";
 import {
@@ -135,7 +136,7 @@ export function BookingMapDrawerFrame({
             onPress={toggleExpanded}
             activeOpacity={0.8}
             {...panHandlers}
-            style={styles.handleArea}
+            style={[styles.handleArea, minimumTouchTarget]}
           >
             <View style={styles.grabber} />
           </TouchableOpacity>

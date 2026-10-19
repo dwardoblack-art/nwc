@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { InvoiceSkeleton } from "@/ui/skeleton";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -102,7 +103,7 @@ export default function ReceiptScreen() {
           accessibilityLabel="Download receipt"
           onPress={downloadReceipt}
           activeOpacity={0.74}
-          style={styles.documentAction}
+          style={[styles.documentAction, minimumTouchTarget]}
         >
           <AppIcon
             name="share-variant-outline"

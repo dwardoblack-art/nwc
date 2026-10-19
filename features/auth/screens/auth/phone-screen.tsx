@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -45,6 +46,8 @@ export default function SignInScreen() {
       <View style={styles.accountPrompt}>
         <Text style={styles.promptText}>Don’t have an account?</Text>
         <TouchableOpacity
+          accessibilityLabel="Sign up"
+          style={minimumTouchTarget}
           accessibilityRole="link"
           onPress={() => router.push("/auth/register" as Href)}
         >
@@ -52,6 +55,8 @@ export default function SignInScreen() {
         </TouchableOpacity>
       </View>
       <TouchableOpacity
+        accessibilityLabel="Forgot password?"
+        style={minimumTouchTarget}
         accessibilityRole="link"
         onPress={() => router.push("/auth/forgot-password" as Href)}
       >
@@ -70,12 +75,16 @@ export default function SignInScreen() {
       afterActions={
         <>
           <TouchableOpacity
+            accessibilityLabel="Track shipment directly"
             accessibilityRole="link"
-            style={{
-              alignSelf: "center",
-              minHeight: 44,
-              justifyContent: "center",
-            }}
+            style={[
+              {
+                alignSelf: "center",
+                minHeight: 44,
+                justifyContent: "center",
+              },
+              minimumTouchTarget,
+            ]}
             onPress={() => router.push("/tracking" as Href)}
           >
             <Text style={styles.linkText}>Track shipment directly</Text>
@@ -109,7 +118,7 @@ export default function SignInScreen() {
         accessibilityState={{ checked: remember }}
         accessibilityLabel="Remember me"
         onPress={() => setRemember((current) => !current)}
-        style={styles.rememberRow}
+        style={[styles.rememberRow, minimumTouchTarget]}
       >
         <View style={[styles.checkbox, remember && styles.checkboxChecked]}>
           {remember ? (

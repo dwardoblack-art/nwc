@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import { useState } from "react";
@@ -251,7 +252,7 @@ export default function ShipmentDetailScreen() {
                   onPress={() =>
                     router.push(`/returns/${shipment.id}` as never)
                   }
-                  style={styles.returnAction}
+                  style={[styles.returnAction, minimumTouchTarget]}
                 >
                   <AppIcon
                     name="undo-variant"
@@ -288,7 +289,7 @@ export default function ShipmentDetailScreen() {
             accessibilityState={{ expanded: historyOpen }}
             activeOpacity={0.74}
             onPress={() => setHistoryOpen((open) => !open)}
-            style={styles.historyToggle}
+            style={[styles.historyToggle, minimumTouchTarget]}
           >
             <Text style={styles.historyToggleText}>
               {historyOpen

@@ -58,6 +58,16 @@ The first web attempt hit a temporary missing palette import during implementati
 
 ## Review artifacts and limits
 
+### Follow-up compliance audit
+
+The follow-up audit found and corrected undersized touch controls, missing explicit accessibility labels, selected mobile-money text contrast, and an Android custom-scheme override edge case. All 138 direct `TouchableOpacity`/`Pressable` controls now apply the shared 44pt minimum; 18 previously implicit labels are explicit. Existing roles and handlers are preserved. `redesign-accessibility-audit.json` records zero remaining static target/label findings.
+
+Simulated 200% browser text exposed horizontal clipping in public tracking. The screen panel now stays within its viewport and shared button labels wrap. The tracking overlay also uses the active theme surface rather than a fixed translucent white background. Additional large-text captures are browser simulations; native system text scaling still needs device review.
+
+All 13 original theme token pairs match the baseline exactly, build-profile API URLs are unchanged, and no secret paths are tracked. The expanded source comparison checks 133 screen/component modules with presentation, types and import relocation normalized; it found no remaining executable-logic differences. The separate 787 callback/input-attribute comparison remains unchanged. Runtime checks with both legacy and custom scheme overrides confirm that `nwcargo` and `newworldcargo` remain accepted with the new package identifiers.
+
+This does not certify real-device interaction or every authenticated state. The initial workflow also did not retain independent web/native verification artifacts after every phase; that historical process gap cannot be retroactively claimed as completed. Final and follow-up full checks are recorded instead.
+
 Light/dark browser screenshots of welcome, sign-in, public tracking and the theme lab are in `redesign-screens/`. These are browser captures at a mobile viewport, not physical-device certification. Authenticated booking, payment, map, contact-picker, notification and account flows still need device review with a dedicated test account; no real bookings or payments were submitted.
 
 The Send route remains hidden from the floating tab bar, matching the original navigation configuration. Existing entry points remain intact. Scheduling, pricing, mappers, request shapes, permission decisions, session recovery and payment state transitions were deliberately left alone.

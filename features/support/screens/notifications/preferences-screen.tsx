@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import { useState } from "react";
@@ -13,12 +14,7 @@ import { router } from "expo-router";
 
 import { CustomerConfirmationDialog } from "@/ui/customer-confirmation-dialog";
 import { AppIcon, type AppIconName } from "@/ui/app-icon";
-import {
-  IconButton,
-  PrimaryButton,
-  Screen,
-  StatusBadge,
-} from "@/ui/nwc-ui";
+import { IconButton, PrimaryButton, Screen, StatusBadge } from "@/ui/nwc-ui";
 import type { NotificationPreferences } from "@/lib/domain/notifications";
 
 import { useNotificationPreferences } from "@/stores/notification-preferences";
@@ -220,8 +216,11 @@ export default function NotificationPreferencesScreen() {
             activeOpacity={0.72}
             onPress={() => setConfirmPause(true)}
             style={[
-              styles.pauseAll,
-              (allPaused || saving) && styles.pauseAllDisabled,
+              [
+                styles.pauseAll,
+                (allPaused || saving) && styles.pauseAllDisabled,
+              ],
+              minimumTouchTarget,
             ]}
           >
             <AppIcon

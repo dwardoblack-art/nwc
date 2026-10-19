@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   ScrollView,
@@ -69,6 +70,7 @@ export default function AppStateGalleryScreen() {
             </Text>
           </View>
           <TouchableOpacity
+            style={minimumTouchTarget}
             accessibilityRole="button"
             accessibilityLabel="Open physical device review"
             accessibilityHint="Open the manual accessibility and device review checklist"
@@ -95,6 +97,7 @@ export default function AppStateGalleryScreen() {
           </TouchableOpacity>
           {scenarios.map((item) => (
             <TouchableOpacity
+              style={minimumTouchTarget}
               key={item}
               accessibilityRole="button"
               accessibilityLabel={`Preview ${startupScenarioLabel(item)}`}

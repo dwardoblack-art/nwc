@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
@@ -124,11 +125,12 @@ export default function ForgotPasswordScreen() {
             onChangeText={setPassword}
           />
           <TouchableOpacity
+            accessibilityLabel={resendLabel}
             accessibilityRole="button"
             accessibilityState={{ disabled: seconds > 0 }}
             disabled={seconds > 0}
             onPress={resend}
-            style={styles.resendButton}
+            style={[styles.resendButton, minimumTouchTarget]}
           >
             <Text style={[styles.resend, seconds > 0 && styles.resendDisabled]}>
               {resendLabel}

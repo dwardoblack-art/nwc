@@ -1,5 +1,4 @@
-import {
-  useNwcColors, } from "@/ui/use-nwc-colors";
+import { useNwcColors } from "@/ui/use-nwc-colors";
 import { Text, View } from "react-native";
 import Svg, { Circle, Polyline } from "react-native-svg";
 import { CustomerMap } from "@/ui/maps/customer-map";

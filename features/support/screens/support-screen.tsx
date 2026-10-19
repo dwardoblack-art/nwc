@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MobileInput } from "@/ui/mobile-input";
 import { CustomerBottomDrawer } from "@/ui/customer-bottom-drawer";
@@ -90,7 +91,7 @@ export default function SupportScreen() {
               accessibilityRole="button"
               accessibilityLabel="Start a support request"
               onPress={() => setIsCreating((open) => !open)}
-              style={styles.newAction}
+              style={[styles.newAction, minimumTouchTarget]}
             >
               <Text style={styles.newActionText}>
                 {isCreating ? "Close" : "New request"}
@@ -102,7 +103,7 @@ export default function SupportScreen() {
               accessibilityRole="button"
               accessibilityLabel="Retry support requests"
               onPress={refresh}
-              style={styles.errorCard}
+              style={[styles.errorCard, minimumTouchTarget]}
             >
               <AppIcon
                 name="alert-circle-outline"
@@ -117,6 +118,7 @@ export default function SupportScreen() {
           <View style={styles.list}>
             {cases.map((item) => (
               <TouchableOpacity
+                style={minimumTouchTarget}
                 key={item.id}
                 accessibilityRole="button"
                 accessibilityLabel={`Open support case ${item.title}`}
@@ -184,11 +186,12 @@ export default function SupportScreen() {
         >
           {topics.map((item) => (
             <TouchableOpacity
+              accessibilityLabel={item}
               key={item}
               accessibilityRole="radio"
               accessibilityState={{ selected: topic === item }}
               onPress={() => setTopic(item)}
-              style={styles.topic}
+              style={[styles.topic, minimumTouchTarget]}
             >
               <Text style={styles.topicText}>{item}</Text>
               <AppIcon
@@ -250,7 +253,7 @@ function CaseDetail({
           accessibilityRole="button"
           accessibilityLabel="Close support case detail"
           onPress={onBack}
-          style={styles.closeAction}
+          style={[styles.closeAction, minimumTouchTarget]}
         >
           <AppIcon
             name="close-circle-outline"
@@ -273,7 +276,7 @@ function CaseDetail({
         accessibilityRole="button"
         accessibilityLabel="Attach support evidence"
         onPress={onAddEvidence}
-        style={styles.evidenceAction}
+        style={[styles.evidenceAction, minimumTouchTarget]}
       >
         <AppIcon
           name={evidenceName ? "check-circle" : "paperclip"}

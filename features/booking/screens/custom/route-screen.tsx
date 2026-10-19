@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { router } from "expo-router";
 import { BookingMapRouteShell } from "@/features/booking/components/booking-map-route-shell";
-import { BookingSection, FormField } from "@/features/booking/components/booking-ui";
+import {
+  BookingSection,
+  FormField,
+} from "@/features/booking/components/booking-ui";
 import { RouteEntryCard } from "@/features/booking/components/route-entry-card";
 import { isRouteComplete } from "@/lib/service-booking";
 import { routeSuggestionToAddress } from "@/lib/route-autocomplete";

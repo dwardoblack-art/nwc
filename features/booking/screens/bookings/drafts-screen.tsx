@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useState } from "react";
 import {
@@ -112,7 +113,7 @@ export default function BookingDraftsScreen() {
                         accessibilityRole="button"
                         accessibilityLabel={`Delete ${draft.title} draft`}
                         onPress={() => setRemoving(draft)}
-                        style={styles.delete}
+                        style={[styles.delete, minimumTouchTarget]}
                       >
                         <Text style={styles.deleteText}>Delete</Text>
                       </TouchableOpacity>
@@ -120,7 +121,7 @@ export default function BookingDraftsScreen() {
                         accessibilityRole="button"
                         accessibilityLabel={`Resume ${draft.title} draft`}
                         onPress={() => resume(draft)}
-                        style={styles.resume}
+                        style={[styles.resume, minimumTouchTarget]}
                       >
                         <Text style={styles.resumeText}>Resume</Text>
                         <AppIcon

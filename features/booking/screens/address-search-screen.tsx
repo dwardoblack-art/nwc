@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useEffect, useState } from "react";
@@ -171,7 +172,7 @@ export default function AddressSearchScreen() {
             accessibilityLabel="Use my current location"
             accessibilityHint="Uses the phone GPS after requesting location permission"
             onPress={useCurrentLocation}
-            style={styles.locationButton}
+            style={[styles.locationButton, minimumTouchTarget]}
           >
             <AppIcon name="crosshairs-gps" size={19} color={nwcColors.info} />
             <Text style={styles.locationText}>Use my current location</Text>
@@ -303,7 +304,10 @@ function TargetButton({
       accessibilityState={{ selected }}
       accessibilityLabel={`Select ${label.toLowerCase()} address`}
       onPress={onPress}
-      style={[styles.targetButton, selected && styles.targetButtonSelected]}
+      style={[
+        [styles.targetButton, selected && styles.targetButtonSelected],
+        minimumTouchTarget,
+      ]}
     >
       <Text style={[styles.targetText, selected && styles.targetTextSelected]}>
         {label}
@@ -336,6 +340,7 @@ function AddressResultCard({
         : "Address";
   return (
     <TouchableOpacity
+      style={minimumTouchTarget}
       accessibilityRole="button"
       accessibilityLabel={`Choose ${address.label}`}
       accessibilityHint={`${address.detail}. ${address.landmark}`}

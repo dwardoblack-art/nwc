@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import {
@@ -283,8 +284,8 @@ function SelectionPanel<T extends string>({
             activeOpacity={0.74}
             onPress={() => onChange(option.id)}
             style={[
-              styles.option,
-              value === option.id && styles.optionSelected,
+              [styles.option, value === option.id && styles.optionSelected],
+              minimumTouchTarget,
             ]}
           >
             <View style={styles.optionCopy}>

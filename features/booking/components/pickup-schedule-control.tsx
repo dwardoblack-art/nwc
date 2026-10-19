@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useState } from "react";
 import {
@@ -71,7 +72,7 @@ export function PickupScheduleControl({
           accessibilityRole="button"
           accessibilityLabel="Choose pickup schedule"
           onPress={show}
-          style={{ flex: 1 }}
+          style={[{ flex: 1 }, minimumTouchTarget]}
         >
           <Text style={styles.title}>Schedule pickup</Text>
           <Text style={styles.detail}>
@@ -115,7 +116,7 @@ export function PickupScheduleControl({
               accessibilityRole="button"
               accessibilityLabel={`Change pickup ${field}`}
               onPress={() => setMode(field)}
-              style={styles.field}
+              style={[styles.field, minimumTouchTarget]}
             >
               <AppIcon
                 name={field === "date" ? "calendar-outline" : "clock-outline"}

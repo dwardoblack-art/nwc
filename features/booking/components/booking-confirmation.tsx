@@ -1,15 +1,11 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useState, type ReactNode } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { router, useLocalSearchParams, type Href } from "expo-router";
 
 import { AppIcon, type AppIconName } from "@/ui/app-icon";
-import {
-  Card,
-  PrimaryButton,
-  Screen,
-  SecondaryButton,
-} from "@/ui/nwc-ui";
+import { Card, PrimaryButton, Screen, SecondaryButton } from "@/ui/nwc-ui";
 import {
   copyTrackingNumber,
   shareTrackingNumber,
@@ -92,7 +88,7 @@ export function BookingConfirmation({
                 accessibilityLabel="Copy tracking ID"
                 activeOpacity={0.74}
                 onPress={copy}
-                style={styles.referenceAction}
+                style={[styles.referenceAction, minimumTouchTarget]}
               >
                 <AppIcon
                   name="content-copy"
@@ -106,7 +102,7 @@ export function BookingConfirmation({
                 accessibilityLabel="Share tracking ID"
                 activeOpacity={0.74}
                 onPress={share}
-                style={styles.referenceAction}
+                style={[styles.referenceAction, minimumTouchTarget]}
               >
                 <AppIcon
                   name="share-variant-outline"
@@ -148,7 +144,7 @@ export function BookingConfirmation({
               accessibilityState={{ expanded: codeRevealed }}
               activeOpacity={0.74}
               onPress={() => setCodeRevealed((shown) => !shown)}
-              style={styles.revealAction}
+              style={[styles.revealAction, minimumTouchTarget]}
             >
               <AppIcon
                 name={codeRevealed ? "eye-off-outline" : "eye-outline"}

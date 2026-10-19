@@ -1,9 +1,6 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
-import {
-  InvoiceSkeleton,
-  Skeleton,
-  SkeletonGroup,
-} from "@/ui/skeleton";
+import { InvoiceSkeleton, Skeleton, SkeletonGroup } from "@/ui/skeleton";
 import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useMemo, useState } from "react";
 import {
@@ -151,7 +148,7 @@ export default function BillsScreen() {
             accessibilityHint={`Available balance ${walletLabel}`}
             onPress={() => router.push("/bills/wallet" as Href)}
             activeOpacity={0.74}
-            style={styles.walletCard}
+            style={[styles.walletCard, minimumTouchTarget]}
           >
             <View style={styles.walletIcon}>
               <AppIcon
@@ -202,8 +199,8 @@ export default function BillsScreen() {
                 activeOpacity={0.74}
                 onPress={() => setFilter(option)}
                 style={[
-                  styles.filter,
-                  filter === option && styles.filterActive,
+                  [styles.filter, filter === option && styles.filterActive],
+                  minimumTouchTarget,
                 ]}
               >
                 <Text
@@ -257,7 +254,7 @@ export default function BillsScreen() {
                   setQuery("");
                   setFilter("all");
                 }}
-                style={styles.clearButton}
+                style={[styles.clearButton, minimumTouchTarget]}
               >
                 <Text style={styles.clearText}>Clear filters</Text>
               </TouchableOpacity>
@@ -316,8 +313,11 @@ function InvoiceSection({
             activeOpacity={0.72}
             onPress={() => onOpen(invoice.id)}
             style={[
-              styles.invoiceRow,
-              index !== invoices.length - 1 && styles.invoiceDivider,
+              [
+                styles.invoiceRow,
+                index !== invoices.length - 1 && styles.invoiceDivider,
+              ],
+              minimumTouchTarget,
             ]}
           >
             <View
@@ -401,7 +401,7 @@ function BillsState({
             accessibilityRole="button"
             accessibilityLabel={actionLabel}
             onPress={onAction}
-            style={styles.stateButton}
+            style={[styles.stateButton, minimumTouchTarget]}
           >
             <Text style={styles.stateButtonText}>{actionLabel}</Text>
           </TouchableOpacity>

@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MobileMoneyFields } from "@/features/billing/components/mobile-money-fields";
 import { isValidInternationalMobile } from "@/lib/auth-flow";
@@ -119,7 +120,7 @@ export default function PaymentScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Manage saved payment methods"
                 onPress={() => router.push("/account/payment-methods" as Href)}
-                style={styles.manageMethods}
+                style={[styles.manageMethods, minimumTouchTarget]}
               >
                 <Text style={styles.manageMethodsText}>Manage</Text>
               </TouchableOpacity>
@@ -146,7 +147,7 @@ export default function PaymentScreen() {
               accessibilityRole="button"
               accessibilityLabel="Add wallet balance"
               onPress={() => router.push("/bills/wallet" as Href)}
-              style={styles.walletWarning}
+              style={[styles.walletWarning, minimumTouchTarget]}
             >
               <AppIcon
                 name="alert-circle-outline"
@@ -203,7 +204,10 @@ function PaymentMethod({
       accessibilityHint={`Use ${title} for this payment`}
       activeOpacity={0.77}
       onPress={onPress}
-      style={[styles.method, selected && styles.methodSelected]}
+      style={[
+        [styles.method, selected && styles.methodSelected],
+        minimumTouchTarget,
+      ]}
     >
       <View style={[styles.methodIcon, selected && styles.methodIconSelected]}>
         <AppIcon

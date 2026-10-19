@@ -1,5 +1,5 @@
-import {
-  useNwcColors, } from "@/ui/use-nwc-colors";
+import { minimumTouchTarget } from "@/ui/touch-target";
+import { useNwcColors } from "@/ui/use-nwc-colors";
 import { View, Text, TouchableOpacity } from "react-native";
 import { MobileInput } from "@/ui/mobile-input";
 import type { MobileMoneyDetails } from "@/lib/domain/billing";
@@ -24,21 +24,33 @@ export function MobileMoneyFields({
       <View style={{ flexDirection: "row", gap: 8 }}>
         {(["MTN", "Airtel", "Zamtel"] as const).map((provider) => (
           <TouchableOpacity
+            accessibilityLabel={provider}
             key={provider}
             accessibilityRole="radio"
             accessibilityState={{ selected: value.provider === provider }}
             onPress={() => onChange({ ...value, provider })}
-            style={{
-              flex: 1,
-              padding: 12,
-              borderRadius: 14,
-              backgroundColor:
-                value.provider === provider
-                  ? nwcColors.primary
-                  : nwcColors.surfaceNavyTint,
-            }}
+            style={[
+              {
+                flex: 1,
+                padding: 12,
+                borderRadius: 14,
+                backgroundColor:
+                  value.provider === provider
+                    ? nwcColors.primary
+                    : nwcColors.surfaceNavyTint,
+              },
+              minimumTouchTarget,
+            ]}
           >
-            <Text style={{ textAlign: "center", color: nwcColors.foreground }}>
+            <Text
+              style={{
+                textAlign: "center",
+                color:
+                  value.provider === provider
+                    ? nwcColors.primaryInk
+                    : nwcColors.foreground,
+              }}
+            >
               {provider}
             </Text>
           </TouchableOpacity>

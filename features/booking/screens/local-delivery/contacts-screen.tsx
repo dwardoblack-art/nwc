@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { isValidPhoneInput } from "@/lib/auth-flow";
 import { router, type Href } from "expo-router";
@@ -97,7 +98,7 @@ export default function LocalDeliveryContactsScreen() {
                       receiver: recipientToBookingContact(recipient),
                     })
                   }
-                  style={styles.recipientChip}
+                  style={[styles.recipientChip, minimumTouchTarget]}
                 >
                   <Text style={styles.recipientChipText}>
                     {recipient.label}

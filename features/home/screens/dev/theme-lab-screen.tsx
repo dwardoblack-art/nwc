@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useMemo, useState } from "react";
 import {
@@ -62,7 +63,7 @@ export default function ThemeLabScreen() {
       text: SchemeColors[scheme].foreground,
       subText: SchemeColors[scheme].muted,
       activeBackground: SchemeColors[scheme].primary,
-      activeText: SchemeColors[scheme].background,
+      activeText: SchemeColors[scheme].primaryInk,
     });
     return {
       light: build("light"),
@@ -77,19 +78,26 @@ export default function ThemeLabScreen() {
           <View className="flex-row gap-2">
             {(["light", "dark"] as ColorScheme[]).map((scheme) => (
               <Pressable
+                accessibilityLabel={
+                  scheme === "light" ? "Light preview" : "Dark preview"
+                }
+                accessibilityRole="button"
                 key={scheme}
                 style={[
-                  styles.schemeToggle,
-                  {
-                    backgroundColor:
-                      colorScheme === scheme
-                        ? tileStyles[scheme].activeBackground
-                        : tileStyles[scheme].background,
-                    borderColor:
-                      colorScheme === scheme
-                        ? tileStyles[scheme].activeBackground
-                        : tileStyles[scheme].border,
-                  },
+                  [
+                    styles.schemeToggle,
+                    {
+                      backgroundColor:
+                        colorScheme === scheme
+                          ? tileStyles[scheme].activeBackground
+                          : tileStyles[scheme].background,
+                      borderColor:
+                        colorScheme === scheme
+                          ? tileStyles[scheme].activeBackground
+                          : tileStyles[scheme].border,
+                    },
+                  ],
+                  minimumTouchTarget,
                 ]}
                 onPress={() => {
                   setColorScheme(scheme);
@@ -135,21 +143,34 @@ export default function ThemeLabScreen() {
             </Text>
 
             <View className="mt-4 flex-row flex-wrap gap-2">
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityLabel="Primary"
+                accessibilityRole="button"
                 className="rounded-full px-4 py-2"
-                style={{ backgroundColor: SchemeColors[colorScheme].primary }}
+                style={[
+                  { backgroundColor: SchemeColors[colorScheme].primary },
+                  minimumTouchTarget,
+                ]}
                 onPress={() => {
                   setPressCount((count) => count + 1);
                   setLastAction("Pressed Primary token");
                 }}
               >
-                <Text className="text-sm font-semibold text-background">
+                <Text
+                  className="text-sm font-semibold"
+                  style={{ color: nwcColors.primaryInk }}
+                >
                   Primary
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityLabel="Surface"
+                accessibilityRole="button"
                 className="rounded-full px-4 py-2 border border-border"
-                style={{ backgroundColor: SchemeColors[colorScheme].surface }}
+                style={[
+                  { backgroundColor: SchemeColors[colorScheme].surface },
+                  minimumTouchTarget,
+                ]}
                 onPress={() => {
                   setPressCount((count) => count + 1);
                   setLastAction("Pressed Surface token");
@@ -159,9 +180,14 @@ export default function ThemeLabScreen() {
                   Surface
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityLabel="Success"
+                accessibilityRole="button"
                 className="rounded-full px-4 py-2"
-                style={{ backgroundColor: SchemeColors[colorScheme].success }}
+                style={[
+                  { backgroundColor: SchemeColors[colorScheme].success },
+                  minimumTouchTarget,
+                ]}
                 onPress={() => {
                   setPressCount((count) => count + 1);
                   setLastAction("Pressed Success token");
@@ -171,9 +197,14 @@ export default function ThemeLabScreen() {
                   Success
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityLabel="Warning"
+                accessibilityRole="button"
                 className="rounded-full px-4 py-2"
-                style={{ backgroundColor: SchemeColors[colorScheme].warning }}
+                style={[
+                  { backgroundColor: SchemeColors[colorScheme].warning },
+                  minimumTouchTarget,
+                ]}
                 onPress={() => {
                   setPressCount((count) => count + 1);
                   setLastAction("Pressed Warning token");
@@ -183,9 +214,14 @@ export default function ThemeLabScreen() {
                   Warning
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityLabel="Error"
+                accessibilityRole="button"
                 className="rounded-full px-4 py-2"
-                style={{ backgroundColor: SchemeColors[colorScheme].error }}
+                style={[
+                  { backgroundColor: SchemeColors[colorScheme].error },
+                  minimumTouchTarget,
+                ]}
                 onPress={() => {
                   setPressCount((count) => count + 1);
                   setLastAction("Pressed Error token");

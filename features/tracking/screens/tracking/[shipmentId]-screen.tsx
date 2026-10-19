@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { TrackingSkeleton } from "@/ui/skeleton";
 import {
@@ -109,7 +110,7 @@ function RoundControl({
       accessibilityLabel={label}
       activeOpacity={0.74}
       onPress={onPress}
-      style={styles.roundControl}
+      style={[styles.roundControl, minimumTouchTarget]}
     >
       <AppIcon name={icon} size={24} color={nwcColors.primaryInk} />
     </TouchableOpacity>

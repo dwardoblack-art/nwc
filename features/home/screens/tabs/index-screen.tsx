@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import {
@@ -59,7 +60,7 @@ export default function HomeScreen() {
                   onPress={() =>
                     router.push(shipmentDestination(activeShipment) as Href)
                   }
-                  style={styles.sectionAction}
+                  style={[styles.sectionAction, minimumTouchTarget]}
                 >
                   <Text style={styles.sectionActionText}>Open</Text>
                   <AppIcon
@@ -124,7 +125,7 @@ export default function HomeScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="View all shipments"
                 onPress={() => router.push("/shipments" as Href)}
-                style={styles.sectionAction}
+                style={[styles.sectionAction, minimumTouchTarget]}
               >
                 <Text style={styles.sectionActionText}>View all</Text>
                 <AppIcon
@@ -206,7 +207,7 @@ function HomeStateCard({
           accessibilityRole="button"
           accessibilityLabel="Try loading shipments again"
           onPress={onRetry}
-          style={styles.retryButton}
+          style={[styles.retryButton, minimumTouchTarget]}
         >
           <Text style={styles.retryText}>Retry</Text>
         </TouchableOpacity>

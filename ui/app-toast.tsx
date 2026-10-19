@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   createContext,
@@ -128,6 +129,7 @@ export function AppToastProvider({ children }: PropsWithChildren) {
             ]}
           >
             <Pressable
+              style={minimumTouchTarget}
               accessibilityRole="button"
               accessibilityLabel="Dismiss notification"
               onPress={dismiss}

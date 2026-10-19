@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
@@ -71,8 +72,11 @@ export function FloatingCapsuleTabBar({
               onLongPress={onLongPress}
               activeOpacity={0.74}
               style={[
-                styles.item,
-                focused ? styles.itemActive : styles.itemInactive,
+                [
+                  styles.item,
+                  focused ? styles.itemActive : styles.itemInactive,
+                ],
+                minimumTouchTarget,
               ]}
             >
               {focused ? (

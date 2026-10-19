@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useState } from "react";
@@ -93,7 +94,7 @@ export function TrackingHistoryPanel({
         accessibilityState={{ expanded: open }}
         activeOpacity={0.74}
         onPress={onToggle}
-        style={styles.historyToggle}
+        style={[styles.historyToggle, minimumTouchTarget]}
       >
         <View>
           <Text style={styles.historyTitle}>Tracking history</Text>
@@ -181,7 +182,7 @@ export function TrackingReferenceActions({ reference }: { reference: string }) {
           accessibilityLabel="Copy tracking number"
           activeOpacity={0.74}
           onPress={copy}
-          style={styles.referenceAction}
+          style={[styles.referenceAction, minimumTouchTarget]}
         >
           <AppIcon name="content-copy" size={18} color={nwcColors.foreground} />
           <Text style={styles.referenceActionText}>Copy number</Text>
@@ -191,7 +192,7 @@ export function TrackingReferenceActions({ reference }: { reference: string }) {
           accessibilityLabel="Share tracking"
           activeOpacity={0.74}
           onPress={share}
-          style={styles.referenceAction}
+          style={[styles.referenceAction, minimumTouchTarget]}
         >
           <AppIcon
             name="share-variant-outline"
@@ -403,8 +404,11 @@ export function TrackingActionList({
           activeOpacity={0.72}
           onPress={row.onPress}
           style={[
-            styles.actionRow,
-            index !== rows.length - 1 && styles.actionDivider,
+            [
+              styles.actionRow,
+              index !== rows.length - 1 && styles.actionDivider,
+            ],
+            minimumTouchTarget,
           ]}
         >
           <View style={styles.actionIcon}>
@@ -472,8 +476,8 @@ export function DeliveryInstructionsCard({
         activeOpacity={0.74}
         onPress={save}
         style={[
-          styles.instructionsButton,
-          saved && styles.instructionsButtonSaved,
+          [styles.instructionsButton, saved && styles.instructionsButtonSaved],
+          minimumTouchTarget,
         ]}
       >
         <AppIcon
@@ -531,7 +535,7 @@ export function ProofOfDeliveryCard({
           accessibilityLabel="Download proof of delivery"
           activeOpacity={0.74}
           onPress={onDownload}
-          style={styles.proofDownload}
+          style={[styles.proofDownload, minimumTouchTarget]}
         >
           <AppIcon
             name="share-variant-outline"
@@ -563,7 +567,7 @@ function CircleAction({
       accessibilityLabel={label}
       activeOpacity={0.7}
       onPress={onPress}
-      style={styles.circleAction}
+      style={[styles.circleAction, minimumTouchTarget]}
     >
       <AppIcon name={icon} size={21} color={nwcColors.foreground} />
     </TouchableOpacity>

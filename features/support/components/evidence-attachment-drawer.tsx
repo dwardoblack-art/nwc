@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -151,7 +152,10 @@ export function EvidenceAttachmentDrawer({
                 setDeviceMessage("");
                 evidence.reset();
               }}
-              style={[styles.file, selected === file && styles.fileSelected]}
+              style={[
+                [styles.file, selected === file && styles.fileSelected],
+                minimumTouchTarget,
+              ]}
             >
               <View style={styles.fileIcon}>
                 <AppIcon

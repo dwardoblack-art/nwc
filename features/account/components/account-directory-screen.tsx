@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import { useState } from "react";
@@ -14,12 +15,7 @@ import { DirectoryEntryModal } from "@/features/account/components/directory-ent
 import { LocationFinderDrawer } from "@/features/account/components/location-finder-drawer";
 import { CustomerConfirmationDialog } from "@/ui/customer-confirmation-dialog";
 import { AppIcon } from "@/ui/app-icon";
-import {
-  Card,
-  IconButton,
-  PrimaryButton,
-  Screen,
-} from "@/ui/nwc-ui";
+import { Card, IconButton, PrimaryButton, Screen } from "@/ui/nwc-ui";
 import { getCustomerApprovalPresentation } from "@/lib/customer-approval";
 import type {
   AddressBookItem,
@@ -129,7 +125,7 @@ export function AccountDirectoryScreen({
                       accessibilityRole="button"
                       accessibilityLabel={`Edit ${item.label}`}
                       onPress={() => beginEdit(item)}
-                      style={styles.action}
+                      style={[styles.action, minimumTouchTarget]}
                     >
                       <Text style={styles.editText}>Edit</Text>
                     </TouchableOpacity>
@@ -137,7 +133,7 @@ export function AccountDirectoryScreen({
                       accessibilityRole="button"
                       accessibilityLabel={`Remove ${item.label}`}
                       onPress={() => setRemoving(item)}
-                      style={styles.action}
+                      style={[styles.action, minimumTouchTarget]}
                     >
                       <Text style={styles.removeText}>Remove</Text>
                     </TouchableOpacity>

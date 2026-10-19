@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -41,7 +42,7 @@ export function CustomerConfirmationDialog({
           accessibilityRole="button"
           accessibilityLabel={`Dismiss ${title}`}
           onPress={onDismiss}
-          style={styles.dismiss}
+          style={[styles.dismiss, minimumTouchTarget]}
         />
         <View
           accessibilityViewIsModal
@@ -68,8 +69,8 @@ export function CustomerConfirmationDialog({
               activeOpacity={0.78}
               onPress={onApprove}
               style={[
-                styles.approve,
-                tone === "danger" && styles.approveDanger,
+                [styles.approve, tone === "danger" && styles.approveDanger],
+                minimumTouchTarget,
               ]}
             >
               <Text

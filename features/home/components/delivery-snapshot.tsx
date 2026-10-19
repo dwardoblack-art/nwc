@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { trackingRouteOverview } from "@/lib/maps/tracking-route";
@@ -43,7 +44,7 @@ export function DeliverySnapshot({
         accessibilityRole="button"
         accessibilityLabel={"Open shipment " + shipment.reference}
         onPress={onPress}
-        style={styles.overlay}
+        style={[styles.overlay, minimumTouchTarget]}
       >
         <View style={{ flex: 1 }}>
           <Text style={styles.reference}>{shipment.reference}</Text>

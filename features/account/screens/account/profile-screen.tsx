@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import {
@@ -88,7 +89,7 @@ export default function AccountSettingsScreen() {
             accessibilityRole="button"
             accessibilityLabel="Change profile photo"
             onPress={() => void choosePhoto()}
-            style={styles.avatar}
+            style={[styles.avatar, minimumTouchTarget]}
           >
             {avatar ? (
               <Image source={{ uri: avatar }} style={styles.image} />

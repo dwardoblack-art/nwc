@@ -69,7 +69,7 @@ Thumbs.db
 .webdev/
 .project-config.json
 
-# Android signing credentials (uploaded separately, not via the tarball)
+# Local signing artifacts must never be uploaded.
 credentials.json
 credentials/
 

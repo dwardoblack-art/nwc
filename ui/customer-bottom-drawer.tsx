@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   useCallback,
@@ -102,7 +103,7 @@ export function CustomerBottomDrawer({
           accessibilityRole="button"
           accessibilityLabel={closeText}
           onPress={onDismiss}
-          style={styles.dismiss}
+          style={[styles.dismiss, minimumTouchTarget]}
         />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -137,7 +138,7 @@ export function CustomerBottomDrawer({
                 accessibilityLabel={closeText}
                 onPress={onDismiss}
                 activeOpacity={0.74}
-                style={styles.close}
+                style={[styles.close, minimumTouchTarget]}
               >
                 <AppIcon name="close" size={20} color={nwcColors.foreground} />
               </TouchableOpacity>

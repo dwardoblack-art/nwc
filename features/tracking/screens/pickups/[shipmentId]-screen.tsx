@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import {
@@ -173,7 +174,7 @@ export default function PickupManagementScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Cancel pickup"
                     onPress={() => setPendingApproval("cancel-pickup")}
-                    style={styles.cancelLink}
+                    style={[styles.cancelLink, minimumTouchTarget]}
                   >
                     <Text style={styles.cancelLinkText}>Cancel pickup</Text>
                   </TouchableOpacity>
@@ -287,8 +288,11 @@ function ReschedulePanel({
             accessibilityLabel={`Use ${slot.label}`}
             onPress={() => onSelect(slot.id)}
             style={[
-              styles.slotRow,
-              selectedSlotId === slot.id && styles.slotRowSelected,
+              [
+                styles.slotRow,
+                selectedSlotId === slot.id && styles.slotRowSelected,
+              ],
+              minimumTouchTarget,
             ]}
           >
             <View style={styles.slotCopy}>

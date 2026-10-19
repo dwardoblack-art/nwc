@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { LocalLocationPicker } from "@/ui/maps/local-location-picker";
 import { isInLocalCity, type LocalCity } from "@/lib/maps/local-city";
@@ -288,7 +289,7 @@ export default function LocalDeliveryRouteScreen() {
             accessibilityHint="You can also drag this handle"
             onPress={toggleExpanded}
             {...panHandlers}
-            style={styles.handleArea}
+            style={[styles.handleArea, minimumTouchTarget]}
           >
             <View style={styles.grabber} />
           </TouchableOpacity>
@@ -373,7 +374,7 @@ export default function LocalDeliveryRouteScreen() {
                                   localDraft.pickup ? "destination" : "pickup",
                                 )
                               }
-                              style={styles.savedChip}
+                              style={[styles.savedChip, minimumTouchTarget]}
                             >
                               <Text style={styles.savedChipText}>
                                 {place.label}
@@ -463,8 +464,11 @@ function RoutePreview({
               accessibilityLabel={`Choose ${vehicleLabels[choice]}`}
               onPress={() => onSelectVehicle(choice)}
               style={[
-                styles.vehicleChoice,
-                vehicle === choice && styles.vehicleChoiceActive,
+                [
+                  styles.vehicleChoice,
+                  vehicle === choice && styles.vehicleChoiceActive,
+                ],
+                minimumTouchTarget,
               ]}
             >
               <AppIcon
@@ -504,7 +508,7 @@ function RoutePreview({
             accessibilityRole="button"
             accessibilityLabel="Adjust pickup pin"
             onPress={onAdjustPickup}
-            style={styles.adjustLink}
+            style={[styles.adjustLink, minimumTouchTarget]}
           >
             <AppIcon name="crosshairs-gps" size={16} color={nwcColors.info} />
             <Text style={styles.adjustLinkText}>Pickup</Text>
@@ -513,7 +517,7 @@ function RoutePreview({
             accessibilityRole="button"
             accessibilityLabel="Adjust destination pin"
             onPress={onAdjustDestination}
-            style={styles.adjustLink}
+            style={[styles.adjustLink, minimumTouchTarget]}
           >
             <AppIcon
               name="map-marker-radius-outline"

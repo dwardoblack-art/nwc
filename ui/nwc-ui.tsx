@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   useRef,
@@ -79,9 +80,8 @@ export function PrimaryButton({
       activeOpacity={0.84}
       onPress={handlePress}
       style={[
-        styles.primaryButton,
-        unavailable && styles.disabledButton,
-        style,
+        [styles.primaryButton, unavailable && styles.disabledButton, style],
+        minimumTouchTarget,
       ]}
     >
       {busy ? (
@@ -119,9 +119,8 @@ export function SecondaryButton({
       activeOpacity={0.76}
       onPress={handlePress}
       style={[
-        styles.secondaryButton,
-        unavailable && styles.disabledButton,
-        style,
+        [styles.secondaryButton, unavailable && styles.disabledButton, style],
+        minimumTouchTarget,
       ]}
     >
       {busy ? (
@@ -155,7 +154,7 @@ export function IconButton({
       accessibilityLabel={label}
       activeOpacity={0.7}
       onPress={onPress}
-      style={styles.iconButton}
+      style={[styles.iconButton, minimumTouchTarget]}
     >
       <AppIcon name={icon} size={22} color={nwcColors.foreground} />
       {badge ? <View style={styles.notificationDot} /> : null}
@@ -353,6 +352,8 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       paddingHorizontal: 18,
     },
     primaryButtonText: {
+      flexShrink: 1,
+      textAlign: "center",
       color: nwcColors.primaryInk,
       fontSize: 15,
       lineHeight: 20,
@@ -371,6 +372,8 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       paddingHorizontal: 18,
     },
     secondaryButtonText: {
+      flexShrink: 1,
+      textAlign: "center",
       color: nwcColors.foreground,
       fontSize: 15,
       lineHeight: 20,

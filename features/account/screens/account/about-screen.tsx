@@ -3,12 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 
 import { AppIcon } from "@/ui/app-icon";
-import {
-  IconButton,
-  PrimaryButton,
-  Screen,
-  StatusBadge,
-} from "@/ui/nwc-ui";
+import { IconButton, PrimaryButton, Screen, StatusBadge } from "@/ui/nwc-ui";
 
 const services = [
   {

@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   ScrollView,
@@ -96,7 +97,7 @@ export default function ReturnsScreen() {
                 onPress={() =>
                   router.push(`/shipments/${request.shipmentId}` as Href)
                 }
-                style={styles.row}
+                style={[styles.row, minimumTouchTarget]}
               >
                 <View style={styles.rowIcon}>
                   <AppIcon

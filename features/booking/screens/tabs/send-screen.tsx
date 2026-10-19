@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   ScrollView,
@@ -33,7 +34,7 @@ export default function SendScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Open saved booking drafts"
                 onPress={() => router.push("/bookings/drafts" as Href)}
-                style={styles.draftsAction}
+                style={[styles.draftsAction, minimumTouchTarget]}
               >
                 <Text style={styles.draftsText}>Saved drafts</Text>
               </TouchableOpacity>

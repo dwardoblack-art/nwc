@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { cameraService } from "@/lib/services/device/camera-service";
 import { useMobileInputStyles } from "@/ui/mobile-input";
@@ -106,7 +107,7 @@ export function CargoItemsForm({
                   accessibilityLabel={`Remove cargo item ${index + 1}`}
                   onPress={() => removeItem(item.id)}
                   activeOpacity={0.74}
-                  style={styles.remove}
+                  style={[styles.remove, minimumTouchTarget]}
                 >
                   <AppIcon name="close" size={16} color={nwcColors.error} />
                   <Text style={styles.removeText}>Remove</Text>
@@ -154,16 +155,17 @@ export function CargoItemsForm({
         accessibilityLabel="Add another cargo item"
         onPress={addItem}
         activeOpacity={0.74}
-        style={[styles.addItem, mobileInputStyles.text]}
+        style={[[styles.addItem, mobileInputStyles.text], minimumTouchTarget]}
       >
         <AppIcon name="plus" size={18} color={nwcColors.foreground} />
         <Text style={styles.addItemText}>Add another cargo item</Text>
       </TouchableOpacity>
       <TouchableOpacity
+        accessibilityLabel="Photos, documents or notes (optional)"
         accessibilityRole="button"
         accessibilityState={{ expanded: extrasOpen }}
         onPress={() => setExtrasOpen((value) => !value)}
-        style={styles.addItem}
+        style={[styles.addItem, minimumTouchTarget]}
       >
         <AppIcon
           name={extrasOpen ? "minus" : "plus"}
@@ -208,7 +210,7 @@ export function CargoItemsForm({
             accessibilityRole="button"
             accessibilityLabel="Take cargo photo"
             onPress={() => choosePhoto(true)}
-            style={styles.addItem}
+            style={[styles.addItem, minimumTouchTarget]}
           >
             <AppIcon name="camera" size={18} color={nwcColors.foreground} />
             <Text style={styles.addItemText}>Take a photo</Text>
@@ -275,7 +277,7 @@ function AttachmentControl({
           accessibilityLabel={actionLabel}
           onPress={onPress}
           activeOpacity={0.74}
-          style={styles.attachButton}
+          style={[styles.attachButton, minimumTouchTarget]}
         >
           <Text style={styles.attachButtonText}>{actionLabel}</Text>
         </TouchableOpacity>
@@ -285,7 +287,7 @@ function AttachmentControl({
             accessibilityLabel={`Remove ${title}`}
             onPress={onRemove}
             activeOpacity={0.74}
-            style={styles.removeAttachment}
+            style={[styles.removeAttachment, minimumTouchTarget]}
           >
             <AppIcon name="close" size={15} color={nwcColors.error} />
           </TouchableOpacity>

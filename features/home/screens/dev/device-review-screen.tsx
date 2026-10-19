@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useMemo, useState } from "react";
 import {
@@ -15,12 +16,7 @@ import {
   type DeviceReviewStatus,
 } from "@/lib/device-review";
 import { AppIcon } from "@/ui/app-icon";
-import {
-  IconButton,
-  Screen,
-  SectionHeader,
-  StatusBadge,
-} from "@/ui/nwc-ui";
+import { IconButton, Screen, SectionHeader, StatusBadge } from "@/ui/nwc-ui";
 
 const statusLabel: Record<DeviceReviewStatus, string> = {
   "not-tested": "Not tested",
@@ -120,8 +116,11 @@ export default function DeviceReviewScreen() {
                         onPress={() => update(check.id)}
                         activeOpacity={0.74}
                         style={[
-                          styles.row,
-                          index < checks.length - 1 && styles.rowBorder,
+                          [
+                            styles.row,
+                            index < checks.length - 1 && styles.rowBorder,
+                          ],
+                          minimumTouchTarget,
                         ]}
                       >
                         <View style={styles.rowCopy}>

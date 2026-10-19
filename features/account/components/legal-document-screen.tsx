@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useMemo, useState } from "react";
 import {
@@ -10,12 +11,7 @@ import {
 import { router } from "expo-router";
 
 import { AppIcon } from "@/ui/app-icon";
-import {
-  IconButton,
-  PrimaryButton,
-  Screen,
-  StatusBadge,
-} from "@/ui/nwc-ui";
+import { IconButton, PrimaryButton, Screen, StatusBadge } from "@/ui/nwc-ui";
 import { type LegalDocument } from "@/lib/legal-documents";
 
 export function LegalDocumentScreen({ document }: { document: LegalDocument }) {
@@ -132,7 +128,10 @@ function TopicChip({
       accessibilityLabel={`Show ${label}`}
       onPress={onPress}
       activeOpacity={0.74}
-      style={[styles.chip, selected && styles.chipSelected]}
+      style={[
+        [styles.chip, selected && styles.chipSelected],
+        minimumTouchTarget,
+      ]}
     >
       <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
         {label}

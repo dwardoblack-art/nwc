@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MobileInput } from "@/ui/mobile-input";
 import { useEffect, useState, type PropsWithChildren } from "react";
@@ -324,7 +325,7 @@ export function FormField({
               accessibilityRole="button"
               accessibilityLabel={`Use ${contact.name || contact.phone}`}
               onPress={() => selectContact(contact)}
-              style={contactSuggestionStyles.row}
+              style={[contactSuggestionStyles.row, minimumTouchTarget]}
             >
               <AppIcon
                 name="account-outline"
@@ -371,7 +372,10 @@ export function ChoiceTile({
       accessibilityHint={detail}
       activeOpacity={0.78}
       onPress={onPress}
-      style={[styles.choiceTile, selected && styles.choiceTileSelected]}
+      style={[
+        [styles.choiceTile, selected && styles.choiceTileSelected],
+        minimumTouchTarget,
+      ]}
     >
       <View style={[styles.choiceIcon, selected && styles.choiceIconSelected]}>
         <AppIcon
@@ -422,7 +426,7 @@ export function OptionalDetails({
         accessibilityLabel={open ? `Hide ${label.toLowerCase()}` : label}
         activeOpacity={0.74}
         onPress={() => setOpen((value) => !value)}
-        style={styles.optionalToggle}
+        style={[styles.optionalToggle, minimumTouchTarget]}
       >
         <Text style={styles.optionalLabel}>
           {open ? "Hide details" : label}
@@ -461,7 +465,7 @@ export function SummaryRow({
           accessibilityRole="button"
           accessibilityLabel={`Edit ${label}`}
           onPress={onEdit}
-          style={styles.editButton}
+          style={[styles.editButton, minimumTouchTarget]}
         >
           <Text style={styles.editButtonText}>Edit</Text>
         </TouchableOpacity>

@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useRef, useState } from "react";
 import {
@@ -53,7 +54,7 @@ export function ContactPickerAction({
       accessibilityState={{ disabled: disabled || loading, busy: loading }}
       disabled={disabled || loading}
       onPress={pick}
-      style={styles.action}
+      style={[styles.action, minimumTouchTarget]}
     >
       {loading ? (
         <ActivityIndicator color={nwcColors.foreground} />

@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useCustomerNotifications } from "@/lib/use-cases/use-customer-notifications";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -55,7 +56,7 @@ export function CustomerHomeHeader({
           accessibilityHint="Open your account and delivery preferences"
           onPress={onAccount}
           activeOpacity={0.74}
-          style={styles.avatar}
+          style={[styles.avatar, minimumTouchTarget]}
         >
           <Text style={styles.avatarText}>
             {firstName.slice(0, 1).toUpperCase()}

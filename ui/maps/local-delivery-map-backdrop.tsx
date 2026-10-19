@@ -1,7 +1,4 @@
-import {
-  CustomerMap,
-  type MapPinPosition,
-} from "@/ui/maps/customer-map";
+import { CustomerMap, type MapPinPosition } from "@/ui/maps/customer-map";
 import type { Address } from "@/types/cargo";
 
 export type PickupPinPosition = MapPinPosition;

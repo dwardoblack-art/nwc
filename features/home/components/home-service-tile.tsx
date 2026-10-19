@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   StyleSheet,
@@ -38,7 +39,7 @@ export function HomeServiceTile({
       accessibilityHint={subtitle}
       onPress={onPress}
       activeOpacity={0.76}
-      style={[styles.tile, styles[variant]]}
+      style={[[styles.tile, styles[variant]], minimumTouchTarget]}
     >
       <View style={styles.copy}>
         <Text

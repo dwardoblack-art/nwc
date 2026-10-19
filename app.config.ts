@@ -89,8 +89,7 @@ const config: ExpoConfig = {
         action: "VIEW",
         autoVerify: true,
         data: [
-          { scheme: env.scheme },
-          { scheme: "newworldcargo" },
+          ...Array.from(new Set([env.scheme, "nwcargo", "newworldcargo"]), (scheme) => ({ scheme })),
           { scheme: "https", host: "app.newworldcargo.com" },
         ],
         category: ["BROWSABLE", "DEFAULT"],

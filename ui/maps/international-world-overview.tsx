@@ -1,5 +1,4 @@
-import {
-  useNwcColors, } from "@/ui/use-nwc-colors";
+import { useNwcColors } from "@/ui/use-nwc-colors";
 import Svg, { Circle, ClipPath, Defs, G, Path, Rect } from "react-native-svg";
 import type { Region } from "react-native-maps";
 import { WORLD_LAND_PATH } from "@/lib/maps/world-land-path";

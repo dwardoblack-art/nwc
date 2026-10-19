@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AppIcon, type AppIconName } from "@/ui/app-icon";
@@ -43,7 +44,7 @@ export function MyOrderRow({
       accessibilityHint={`${status.label}. ${shipment.pickup.city} to ${shipment.destination.city}`}
       onPress={onPress}
       activeOpacity={0.72}
-      style={styles.row}
+      style={[styles.row, minimumTouchTarget]}
     >
       <View style={styles.routeMarks}>
         <View

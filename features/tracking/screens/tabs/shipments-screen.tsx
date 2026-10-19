@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import { useMobileInputStyles } from "@/ui/mobile-input";
@@ -125,8 +126,11 @@ export default function ShipmentsScreen() {
                     accessibilityLabel={`Show ${option} shipments`}
                     onPress={() => setFilter(option)}
                     style={[
-                      styles.filterChip,
-                      filter === option && styles.filterChipSelected,
+                      [
+                        styles.filterChip,
+                        filter === option && styles.filterChipSelected,
+                      ],
+                      minimumTouchTarget,
                     ]}
                   >
                     <Text
@@ -155,7 +159,7 @@ export default function ShipmentsScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Clear shipment search and filters"
                     onPress={resetFilters}
-                    style={styles.resetButton}
+                    style={[styles.resetButton, minimumTouchTarget]}
                   >
                     <AppIcon
                       name="refresh"
@@ -197,7 +201,7 @@ export default function ShipmentsScreen() {
                       ? customerShipments.refresh
                       : resetFilters
                   }
-                  style={styles.emptyReset}
+                  style={[styles.emptyReset, minimumTouchTarget]}
                 >
                   <Text style={styles.emptyResetText}>
                     {customerShipments.status === "error"

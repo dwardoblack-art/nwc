@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import { useMobileInputStyles } from "@/ui/mobile-input";
@@ -118,6 +119,8 @@ function TrackingLookupContent({
     >
       <View style={styles.headingRow}>
         <TouchableOpacity
+          accessibilityLabel={customer ? "Home" : "Sign in"}
+          style={minimumTouchTarget}
           accessibilityRole="link"
           onPress={() => {
             onDismiss?.();
@@ -140,7 +143,7 @@ function TrackingLookupContent({
             accessibilityRole="button"
             accessibilityLabel="Close tracking search"
             onPress={onDismiss}
-            style={styles.close}
+            style={[styles.close, minimumTouchTarget]}
           >
             <AppIcon name="close" size={20} color={nwcColors.muted} />
           </TouchableOpacity>
@@ -213,7 +216,7 @@ function TrackingLookupContent({
             accessibilityRole="button"
             accessibilityLabel="Use test tracking code"
             onPress={useDemo}
-            style={styles.demo}
+            style={[styles.demo, minimumTouchTarget]}
           >
             <Text style={styles.demoText}>Use test code: {demoCode}</Text>
             <AppIcon name="chevron-right" size={17} color={nwcColors.info} />
@@ -250,7 +253,12 @@ export function TrackingLookupOverlay({
       onRequestClose={onDismiss}
     >
       <View style={styles.modal}>
-        <Pressable style={styles.dim} onPress={onDismiss} />
+        <Pressable
+          accessibilityLabel="Close shipment tracking"
+          accessibilityRole="button"
+          style={[styles.dim, minimumTouchTarget]}
+          onPress={onDismiss}
+        />
         <View style={styles.overlayPanel}>
           <TrackingLookupContent mode="overlay" onDismiss={onDismiss} />
         </View>
@@ -290,9 +298,9 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       borderRadius: 28,
       padding: 20,
       gap: 18,
-      backgroundColor: "rgba(255,255,255,0.96)",
+      backgroundColor: nwcColors.surface,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.84)",
+      borderColor: nwcColors.border,
       shadowColor: nwcColors.brandNavy,
       shadowOpacity: 0.06,
       shadowRadius: 30,
@@ -300,6 +308,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       elevation: 2,
     },
     panelScreen: {
+      width: "100%",
       maxWidth: 480,
       alignSelf: "center",
       backgroundColor: nwcColors.surface,

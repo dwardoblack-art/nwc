@@ -1,5 +1,4 @@
-import {
-  useNwcColors, } from "@/ui/use-nwc-colors";
+import { useNwcColors } from "@/ui/use-nwc-colors";
 import { useReviewedBookingQuote } from "@/lib/use-cases/use-reviewed-booking-quote";
 import {
   ShipmentTicket,

@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { PropsWithChildren, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -13,7 +14,10 @@ export function Collapsible({
 
   return (
     <View className="bg-background">
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityLabel={title}
+        style={minimumTouchTarget}
+        accessibilityRole="button"
         className="flex-row items-center gap-1.5"
         onPress={() => setIsOpen((value) => !value)}
         activeOpacity={0.8}

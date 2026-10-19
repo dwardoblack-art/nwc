@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import {
@@ -83,7 +84,7 @@ export default function ReceiptHistoryScreen() {
                     accessibilityHint={`${invoice.amount}, paid ${invoice.paidAt}`}
                     onPress={() => openReceipt(invoice.id)}
                     activeOpacity={0.74}
-                    style={styles.receiptTop}
+                    style={[styles.receiptTop, minimumTouchTarget]}
                   >
                     <View style={styles.receiptIcon}>
                       <AppIcon
@@ -116,7 +117,7 @@ export default function ReceiptHistoryScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`Download receipt ${invoice.reference}`}
                       onPress={() => documentAction(invoice)}
-                      style={styles.documentAction}
+                      style={[styles.documentAction, minimumTouchTarget]}
                     >
                       <AppIcon
                         name="share-variant-outline"

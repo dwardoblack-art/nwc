@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { Skeleton, SkeletonGroup } from "@/ui/skeleton";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -88,7 +89,7 @@ export function ShipmentTicket({
           onPress={onEditRoute}
           accessibilityRole={onEditRoute ? "button" : undefined}
           accessibilityLabel="Edit shipment route"
-          style={styles.route}
+          style={[styles.route, minimumTouchTarget]}
         >
           <View style={styles.routeMarks}>
             <View style={styles.dot} />
@@ -121,7 +122,7 @@ export function ShipmentTicket({
           onPress={onEditContacts}
           accessibilityRole={onEditContacts ? "button" : undefined}
           accessibilityLabel="Edit sender and receiver"
-          style={styles.contacts}
+          style={[styles.contacts, minimumTouchTarget]}
         >
           <View style={styles.contact}>
             <Text style={styles.label}>
@@ -189,7 +190,7 @@ export function ShipmentTicket({
         onPress={onEditCargo}
         accessibilityRole={onEditCargo ? "button" : undefined}
         accessibilityLabel="Edit cargo"
-        style={styles.cargo}
+        style={[styles.cargo, minimumTouchTarget]}
       >
         <AppIcon
           name="package-variant"

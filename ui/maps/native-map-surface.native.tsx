@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MapSkeleton } from "@/ui/skeleton";
 import { BrandedMapPin } from "@/ui/maps/branded-map-pin";
@@ -476,13 +477,16 @@ export function NativeMapSurface({
             setMapAttempt((n) => n + 1);
           }}
           style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: nwcColors.tintEEF2F2,
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 20,
-            },
+            [
+              StyleSheet.absoluteFill,
+              {
+                backgroundColor: nwcColors.tintEEF2F2,
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 20,
+              },
+            ],
+            minimumTouchTarget,
           ]}
         >
           <Text style={{ color: nwcColors.brandNavy }}>
@@ -546,7 +550,7 @@ function MapButton({
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      style={styles.button}
+      style={[styles.button, minimumTouchTarget]}
     >
       <AppIcon name={icon} size={20} color={nwcColors.foreground} />
     </TouchableOpacity>

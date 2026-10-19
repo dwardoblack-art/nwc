@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import {
@@ -40,7 +41,7 @@ export default function NotificationsScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Mark all notifications as read"
                 onPress={customerNotifications.markAllRead}
-                style={styles.settingsButton}
+                style={[styles.settingsButton, minimumTouchTarget]}
               >
                 <AppIcon
                   name="check-all"
@@ -53,7 +54,7 @@ export default function NotificationsScreen() {
               accessibilityRole="button"
               accessibilityLabel="Notification preferences"
               onPress={() => router.push("/notifications/preferences" as Href)}
-              style={styles.settingsButton}
+              style={[styles.settingsButton, minimumTouchTarget]}
             >
               <AppIcon
                 name="tune-variant"
@@ -80,7 +81,7 @@ export default function NotificationsScreen() {
               accessibilityRole="button"
               accessibilityLabel="Retry loading notifications"
               onPress={customerNotifications.refresh}
-              style={styles.emptyState}
+              style={[styles.emptyState, minimumTouchTarget]}
             >
               <Text style={styles.emptyTitle}>
                 Could not load notifications
@@ -114,8 +115,8 @@ export default function NotificationsScreen() {
               onPress={() => openNotice(notice)}
               activeOpacity={0.74}
               style={[
-                styles.noticeRow,
-                notice.unread && styles.noticeRowUnread,
+                [styles.noticeRow, notice.unread && styles.noticeRowUnread],
+                minimumTouchTarget,
               ]}
             >
               <View

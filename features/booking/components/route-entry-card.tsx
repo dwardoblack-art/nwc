@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/ui/skeleton";
 import { useMobileInputStyles } from "@/ui/mobile-input";
@@ -289,7 +290,7 @@ function RouteField({
         accessibilityHint="Type to see location suggestions below this field"
         activeOpacity={0.78}
         onPress={onOpen}
-        style={styles.row}
+        style={[styles.row, minimumTouchTarget]}
       >
         {onManualEntryPress ? (
           <TouchableOpacity
@@ -299,7 +300,10 @@ function RouteField({
               event.stopPropagation();
               onManualEntryPress();
             }}
-            style={isFrom ? styles.routeIconFrom : styles.routeIconTo}
+            style={[
+              isFrom ? styles.routeIconFrom : styles.routeIconTo,
+              minimumTouchTarget,
+            ]}
           >
             <AppIcon
               name="crosshairs-gps"
@@ -388,7 +392,7 @@ function RouteField({
               accessibilityRole="button"
               accessibilityLabel={manualEntryLabel}
               onPress={onManualEntryPress}
-              style={styles.manualRow}
+              style={[styles.manualRow, minimumTouchTarget]}
             >
               <AppIcon
                 name={
@@ -437,7 +441,7 @@ function SuggestionRow({
       accessibilityHint={suggestion.detail}
       onPress={onPress}
       activeOpacity={0.72}
-      style={styles.suggestionRow}
+      style={[styles.suggestionRow, minimumTouchTarget]}
     >
       <View style={styles.suggestionIcon}>
         <AppIcon name={icon} size={17} color={nwcColors.foreground} />

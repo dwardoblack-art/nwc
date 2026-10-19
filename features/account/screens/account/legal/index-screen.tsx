@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   ScrollView,
@@ -52,7 +53,7 @@ export default function LegalIndexScreen() {
                   router.push(`/account/legal/${document.id}` as Href)
                 }
                 activeOpacity={0.74}
-                style={styles.row}
+                style={[styles.row, minimumTouchTarget]}
               >
                 <View style={styles.icon}>
                   <AppIcon
@@ -78,7 +79,7 @@ export default function LegalIndexScreen() {
               accessibilityHint="Learn about services and customer support"
               onPress={() => router.push("/account/about" as Href)}
               activeOpacity={0.74}
-              style={styles.row}
+              style={[styles.row, minimumTouchTarget]}
             >
               <View style={styles.icon}>
                 <AppIcon

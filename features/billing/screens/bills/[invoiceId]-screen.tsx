@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { InvoiceSkeleton } from "@/ui/skeleton";
 import {
@@ -10,12 +11,7 @@ import {
 import { router, useLocalSearchParams, type Href } from "expo-router";
 
 import { AppIcon } from "@/ui/app-icon";
-import {
-  IconButton,
-  PrimaryButton,
-  Screen,
-  StatusBadge,
-} from "@/ui/nwc-ui";
+import { IconButton, PrimaryButton, Screen, StatusBadge } from "@/ui/nwc-ui";
 import { invoiceReminderLabel } from "@/lib/domain/billing";
 
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
@@ -149,7 +145,10 @@ export default function InvoiceDetailScreen() {
               accessibilityLabel="Invoice due-date reminder"
               activeOpacity={0.74}
               onPress={() => toggleInvoiceReminder(invoice.id)}
-              style={[styles.reminderCard, reminderOn && styles.reminderCardOn]}
+              style={[
+                [styles.reminderCard, reminderOn && styles.reminderCardOn],
+                minimumTouchTarget,
+              ]}
             >
               <View style={styles.reminderIcon}>
                 <AppIcon
@@ -269,7 +268,7 @@ export default function InvoiceDetailScreen() {
                 accessibilityLabel="Ask about this charge"
                 onPress={requestChargeReview}
                 activeOpacity={0.74}
-                style={styles.disputeAction}
+                style={[styles.disputeAction, minimumTouchTarget]}
               >
                 <AppIcon
                   name="message-question-outline"
@@ -323,7 +322,7 @@ function DocumentAction({
       accessibilityLabel={`Download or share ${label.toLowerCase()}`}
       onPress={onPress}
       activeOpacity={0.74}
-      style={styles.documentAction}
+      style={[styles.documentAction, minimumTouchTarget]}
     >
       <AppIcon name={icon} size={19} color={nwcColors.foreground} />
       <Text style={styles.documentText}>{label}</Text>

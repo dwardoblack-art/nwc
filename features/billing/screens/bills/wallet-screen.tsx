@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { InvoiceSkeleton } from "@/ui/skeleton";
 import { useState } from "react";
@@ -11,12 +12,7 @@ import {
 import { router, type Href } from "expo-router";
 
 import { AppIcon } from "@/ui/app-icon";
-import {
-  Card,
-  IconButton,
-  PrimaryButton,
-  Screen,
-} from "@/ui/nwc-ui";
+import { Card, IconButton, PrimaryButton, Screen } from "@/ui/nwc-ui";
 import { formatMoney } from "@/lib/domain/money";
 
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
@@ -115,8 +111,11 @@ export default function WalletScreen() {
                     setAmount(option);
                   }}
                   style={[
-                    styles.amountOption,
-                    amount === option && styles.amountOptionActive,
+                    [
+                      styles.amountOption,
+                      amount === option && styles.amountOptionActive,
+                    ],
+                    minimumTouchTarget,
                   ]}
                 >
                   <Text
@@ -178,6 +177,8 @@ export default function WalletScreen() {
                     </Text>
                     {item.type === "topup" && item.detail === "pending" ? (
                       <TouchableOpacity
+                        accessibilityLabel="Check deposit confirmation"
+                        style={minimumTouchTarget}
                         accessibilityRole="button"
                         onPress={() =>
                           router.push({

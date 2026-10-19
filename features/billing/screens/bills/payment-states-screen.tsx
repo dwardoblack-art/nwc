@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   ScrollView,
@@ -73,6 +74,7 @@ export default function PaymentStatesScreen() {
             const item = mockPaymentPresentation(state);
             return (
               <TouchableOpacity
+                style={minimumTouchTarget}
                 key={state}
                 accessibilityRole="button"
                 accessibilityLabel={`Preview ${item.eyebrow}`}

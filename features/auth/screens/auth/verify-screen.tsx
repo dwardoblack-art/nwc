@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -94,6 +95,12 @@ export default function VerifyScreen() {
       <View style={styles.resendRow}>
         <Text style={styles.resendText}>Didn’t receive a code?</Text>
         <TouchableOpacity
+          accessibilityLabel={
+            seconds > 0
+              ? `Resend in 0:${String(seconds).padStart(2, "0")}`
+              : "Resend code"
+          }
+          style={minimumTouchTarget}
           accessibilityRole="button"
           disabled={seconds > 0}
           onPress={resend}

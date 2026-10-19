@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   Image,
@@ -102,7 +103,7 @@ export function ServiceCard({
         accessibilityHint={item.detail}
         activeOpacity={0.78}
         onPress={onPress}
-        style={styles.serviceCard}
+        style={[styles.serviceCard, minimumTouchTarget]}
       >
         {body}
       </TouchableOpacity>
@@ -140,8 +141,8 @@ export function ShipmentCard({
       accessibilityHint={`${service.label}. ${presentation.label}. ${shipment.eta}`}
       onPress={onPress}
       style={({ pressed }) => [
-        styles.shipmentButton,
-        pressed && styles.shipmentButtonPressed,
+        [styles.shipmentButton, pressed && styles.shipmentButtonPressed],
+        minimumTouchTarget,
       ]}
     >
       <View
@@ -325,7 +326,7 @@ export function ActionRequiredCard({
       accessibilityHint={detail}
       onPress={onPress}
       activeOpacity={0.8}
-      style={styles.actionCard}
+      style={[styles.actionCard, minimumTouchTarget]}
     >
       <View style={styles.actionIcon}>
         <AppIcon

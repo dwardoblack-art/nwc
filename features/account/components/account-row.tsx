@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AppIcon, type AppIconName } from "@/ui/app-icon";
@@ -38,7 +39,7 @@ export function AccountRow({
         accessibilityHint={detail}
         activeOpacity={0.75}
         onPress={onPress}
-        style={styles.row}
+        style={[styles.row, minimumTouchTarget]}
       >
         {content}
       </TouchableOpacity>

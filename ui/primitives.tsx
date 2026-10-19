@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import type { PropsWithChildren, ReactNode } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AppIcon, type AppIconName } from "@/ui/app-icon";
@@ -110,7 +111,7 @@ export function ListRow({
       accessibilityLabel={title}
       accessibilityHint={detail}
       onPress={onPress}
-      style={style}
+      style={[style, minimumTouchTarget]}
     >
       {content}
     </TouchableOpacity>

@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useState } from "react";
@@ -11,12 +12,7 @@ import {
 import { router, type Href } from "expo-router";
 
 import { AppIcon } from "@/ui/app-icon";
-import {
-  Card,
-  IconButton,
-  PrimaryButton,
-  Screen,
-} from "@/ui/nwc-ui";
+import { Card, IconButton, PrimaryButton, Screen } from "@/ui/nwc-ui";
 
 import { usePublicTracking } from "@/lib/use-cases/use-public-tracking";
 
@@ -122,7 +118,7 @@ export default function ScanTrackingScreen() {
               accessibilityRole="button"
               accessibilityLabel="Use test tracking code"
               onPress={useDemo}
-              style={styles.demo}
+              style={[styles.demo, minimumTouchTarget]}
             >
               <Text style={styles.demoText}>Use test code: {demoCode}</Text>
               <AppIcon name="chevron-right" size={18} color={nwcColors.info} />

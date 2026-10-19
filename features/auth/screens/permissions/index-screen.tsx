@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   ScrollView,
@@ -32,7 +33,7 @@ export default function PermissionsScreen() {
             accessibilityRole="button"
             accessibilityLabel="Go back"
             onPress={() => router.back()}
-            style={styles.back}
+            style={[styles.back, minimumTouchTarget]}
           >
             <AppIcon name="arrow-left" size={21} color={nwcColors.foreground} />
           </TouchableOpacity>
@@ -57,7 +58,7 @@ export default function PermissionsScreen() {
                 onPress={() =>
                   router.push(`/permissions/${permission}` as Href)
                 }
-                style={styles.card}
+                style={[styles.card, minimumTouchTarget]}
               >
                 <View
                   style={[styles.iconWrap, allowed && styles.iconWrapAllowed]}

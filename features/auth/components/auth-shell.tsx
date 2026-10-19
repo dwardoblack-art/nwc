@@ -1,3 +1,4 @@
+import { minimumTouchTarget } from "@/ui/touch-target";
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MobileInput } from "@/ui/mobile-input";
 import {
@@ -139,7 +140,7 @@ export function AuthPasswordInput({
           accessibilityRole="button"
           accessibilityLabel={visible ? "Hide password" : "Show password"}
           onPress={() => setVisible((current) => !current)}
-          style={styles.passwordToggle}
+          style={[styles.passwordToggle, minimumTouchTarget]}
         >
           <AppIcon
             name={visible ? "eye-off-outline" : "eye-outline"}
@@ -173,7 +174,7 @@ export function OtpInput({
         accessibilityRole="button"
         accessibilityLabel="Enter six-digit verification code"
         onPress={() => inputRef.current?.focus()}
-        style={styles.otpInput}
+        style={[styles.otpInput, minimumTouchTarget]}
       >
         <View style={styles.otpRow}>
           {digits.map((digit, index) => (
