@@ -1,5 +1,10 @@
 {
-  "comparedAttributes": 789,
+  "comparedAttributes": 787,
   "changedCallbackOrInputFiles": [],
-  "frozenFilesChanged": []
+  "frozenFilesChanged": [],
+  "frozenImportPathsOnly": [
+    "lib/booking-review-edits.ts",
+    "lib/customer-map-state.ts",
+    "lib/domain/permission.ts"
+  ]
 }

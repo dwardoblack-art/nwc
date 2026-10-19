@@ -1,0 +1,226 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { router, type Href } from "expo-router";
+import { AppIcon } from "@/ui/app-icon";
+import {
+  Card,
+  IconButton,
+  Screen,
+  SectionHeader,
+  StatusBadge,
+} from "@/ui/nwc-ui";
+import { startupScenarioLabel, type StartupScenario } from "@/lib/startup-flow";
+
+import { useAppStartup } from "@/stores/app-startup";
+
+const scenarios: StartupScenario[] = [
+  "normal",
+  "restoring",
+  "offline",
+  "maintenance",
+  "required_update",
+  "optional_update",
+  "outage",
+];
+
+export default function AppStateGalleryScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const { scenario, setScenario } = useAppStartup();
+  const chooseScenario = (next: StartupScenario) => {
+    setScenario(next);
+    if (next === "normal") router.replace("/" as Href);
+    else router.replace("/startup" as Href);
+  };
+  return (
+    <Screen>
+      <View style={styles.page}>
+        <View style={styles.header}>
+          <View>
+            <SectionHeader title="App states" />
+          </View>
+          <IconButton
+            label="Go back"
+            icon="arrow-left"
+            onPress={() => router.back()}
+          />
+        </View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          <View style={styles.banner}>
+            <AppIcon
+              name="flask-outline"
+              size={21}
+              color={nwcColors.primaryInk}
+            />
+            <Text style={styles.bannerText}>
+              These controls are only for local development. They let the team
+              review startup and recovery experiences while the app remains
+              connected to live services.
+            </Text>
+          </View>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Open physical device review"
+            accessibilityHint="Open the manual accessibility and device review checklist"
+            onPress={() => router.push("/dev/device-review" as Href)}
+            activeOpacity={0.76}
+          >
+            <Card style={styles.reviewEntry}>
+              <View style={styles.reviewIcon}>
+                <AppIcon
+                  name="cellphone-check"
+                  size={21}
+                  color={nwcColors.primaryInk}
+                />
+              </View>
+              <View style={styles.stateCopy}>
+                <Text style={styles.stateTitle}>Physical device review</Text>
+                <Text style={styles.stateDetail}>
+                  Manual small-screen, accessibility, keyboard, map, and
+                  system-bar checklist.
+                </Text>
+              </View>
+              <AppIcon name="chevron-right" size={21} color={nwcColors.muted} />
+            </Card>
+          </TouchableOpacity>
+          {scenarios.map((item) => (
+            <TouchableOpacity
+              key={item}
+              accessibilityRole="button"
+              accessibilityLabel={`Preview ${startupScenarioLabel(item)}`}
+              onPress={() => chooseScenario(item)}
+              activeOpacity={0.76}
+            >
+              <Card
+                style={[
+                  styles.stateCard,
+                  scenario === item && styles.selectedCard,
+                ]}
+              >
+                <View style={styles.stateCopy}>
+                  <Text style={styles.stateTitle}>
+                    {startupScenarioLabel(item)}
+                  </Text>
+                  <Text style={styles.stateDetail}>{descriptionFor(item)}</Text>
+                </View>
+                {scenario === item ? (
+                  <StatusBadge label="Selected" tone="success" icon="check" />
+                ) : (
+                  <AppIcon
+                    name="chevron-right"
+                    size={21}
+                    color={nwcColors.muted}
+                  />
+                )}
+              </Card>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    </Screen>
+  );
+}
+
+function descriptionFor(scenario: StartupScenario) {
+  return {
+    normal: "Route to the signed-in or signed-out customer entry point.",
+    restoring: "Show profile and booking-draft restoration status.",
+    offline: "Show safe access to locally stored customer information.",
+    maintenance: "Show a planned platform maintenance message.",
+    required_update: "Block access until an essential app update is complete.",
+    optional_update:
+      "Offer an upgrade while allowing the customer to continue.",
+    outage: "Explain an unexpected service interruption and recovery action.",
+  }[scenario];
+}
+
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      backgroundColor: nwcColors.background,
+      paddingHorizontal: 20,
+      paddingTop: 16,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    eyebrow: {
+      color: nwcColors.info,
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.7,
+      textTransform: "uppercase",
+      marginBottom: 2,
+    },
+    content: { gap: 20, paddingTop: 14, paddingBottom: 30 },
+    banner: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: 10,
+      borderRadius: 16,
+      padding: 14,
+      backgroundColor: nwcColors.surfaceRaised,
+      marginBottom: 2,
+    },
+    bannerText: {
+      color: nwcColors.warning,
+      flex: 1,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    stateCard: {
+      minHeight: 84,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    reviewEntry: {
+      minHeight: 84,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      backgroundColor: nwcColors.surfaceRaised,
+      borderColor: nwcColors.border,
+    },
+    reviewIcon: {
+      height: 42,
+      width: 42,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    selectedCard: {
+      borderColor: nwcColors.success,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    stateCopy: { flex: 1, gap: 3 },
+    stateTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    stateDetail: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_500Medium",
+    },
+  });

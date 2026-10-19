@@ -1,0 +1,116 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
+import { ContactPickerAction } from "@/ui/contact-picker-action";
+import { MobileInput } from "@/ui/mobile-input";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+
+import { CustomerBottomDrawer } from "@/ui/customer-bottom-drawer";
+import { PrimaryButton, SecondaryButton } from "@/ui/nwc-ui";
+import type { AddressBookItem } from "@/lib/domain/address-book";
+
+type DirectoryEntryModalProps = {
+  visible: boolean;
+  item: AddressBookItem | null;
+  itemLabel: string;
+  itemDetail: string;
+  onDismiss: () => void;
+  onSave: (item: { id?: string; label: string; detail: string }) => void;
+};
+
+export function DirectoryEntryModal({
+  visible,
+  item,
+  itemLabel,
+  itemDetail,
+  onDismiss,
+  onSave,
+}: DirectoryEntryModalProps) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const [label, setLabel] = useState("");
+  const [detail, setDetail] = useState("");
+  useEffect(() => {
+    if (visible) {
+      setLabel(item?.label ?? "");
+      setDetail(item?.detail ?? "");
+    }
+  }, [item, visible]);
+  const save = () => {
+    if (!label.trim() || !detail.trim()) return;
+    onSave({
+      id: item?.id || undefined,
+      label: label.trim(),
+      detail: detail.trim(),
+    });
+  };
+  return (
+    <CustomerBottomDrawer
+      visible={visible}
+      overline="Recipient"
+      title={item?.id ? "Edit recipient" : "Add recipient"}
+      detail="Save the details needed for a faster booking later."
+      initialSnap="half"
+      onDismiss={onDismiss}
+      footer={
+        <View style={styles.actions}>
+          <SecondaryButton
+            label="Cancel"
+            onPress={onDismiss}
+            style={styles.action}
+          />
+          <PrimaryButton
+            label="Save recipient"
+            icon="check"
+            disabled={!label.trim() || !detail.trim()}
+            onPress={save}
+            style={styles.action}
+          />
+        </View>
+      }
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <Text style={{ flex: 1, color: nwcColors.foreground }}>
+          Select from phone contacts
+        </Text>
+        <ContactPickerAction
+          label="recipient"
+          onContact={(contact) => {
+            setLabel(contact.name);
+            setDetail(contact.phone);
+          }}
+        />
+      </View>
+      <MobileInput
+        label={itemLabel}
+        value={label}
+        onChangeText={setLabel}
+        returnKeyType="next"
+      />
+      <MobileInput
+        label={itemDetail}
+        value={detail}
+        onChangeText={setDetail}
+        returnKeyType="done"
+      />
+    </CustomerBottomDrawer>
+  );
+}
+
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    input: {
+      minHeight: 50,
+      paddingHorizontal: 13,
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceElevated,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    actions: { flexDirection: "row", gap: 9 },
+    action: { minHeight: 44, flex: 1 },
+  });

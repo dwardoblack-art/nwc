@@ -1,0 +1,597 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
+import { ListSkeleton } from "@/ui/skeleton";
+import { mobileInputStyles } from "@/ui/mobile-input";
+import { isInLocalCity, type LocalCity } from "@/lib/maps/local-city";
+import { useEffect, useState } from "react";
+import {
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { AppIcon, type AppIconName } from "@/ui/app-icon";
+import {
+  loadRouteReferenceData,
+  resolveRouteSuggestion,
+  routeGuardForSearch,
+  searchLiveRouteSuggestions,
+  searchRouteSuggestions,
+  type RouteSearchScope,
+  type RouteSuggestion,
+} from "@/lib/route-autocomplete";
+
+type RoutePoint = { value: string; detail: string };
+type RouteTarget = "from" | "to";
+
+export function RouteEntryCard({
+  from,
+  to,
+  scope,
+  localCity,
+  onSuggestionSelect,
+  onManualEntryPress,
+  onActiveTargetChange,
+  accessibilityHint,
+  fromLabel = "From where?",
+  toLabel = "To where?",
+  requireBranch = false,
+  manualEntryLabel = "Enter a location manually",
+}: {
+  from: RoutePoint;
+  to: RoutePoint;
+  scope: RouteSearchScope;
+  localCity?: LocalCity;
+  onSuggestionSelect: (
+    target: RouteTarget,
+    suggestion: RouteSuggestion,
+  ) => void;
+  onManualEntryPress?: (target: RouteTarget) => void;
+  onActiveTargetChange?: (target: RouteTarget | null) => void;
+  accessibilityHint?: string;
+  fromLabel?: string;
+  toLabel?: string;
+  requireBranch?: boolean | "origin";
+  manualEntryLabel?: string;
+}) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const [active, setActive] = useState<RouteTarget | null>(null);
+  const [query, setQuery] = useState("");
+  const [referenceVersion, setReferenceVersion] = useState(0);
+  const [results, setResults] = useState<RouteSuggestion[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
+  useEffect(() => {
+    let mounted = true;
+    void loadRouteReferenceData().then(() => {
+      if (mounted) setReferenceVersion((value) => value + 1);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+  useEffect(() => {
+    let mounted = true;
+    if (!active) {
+      setResults([]);
+      return () => {
+        mounted = false;
+      };
+    }
+    const priceable = (items: RouteSuggestion[]) =>
+      items.filter((item) => {
+        if (
+          (requireBranch === true ||
+            (requireBranch === "origin" && active === "from")) &&
+          (item.kind !== "branch" || !item.branchId)
+        )
+          return false;
+        if (scope === "import") {
+          const isZambia =
+            item.countryCode === "ZM" || item.country === "Zambia";
+          return active === "from"
+            ? !isZambia
+            : isZambia || Boolean(item.placeId);
+        }
+        return true;
+      });
+    setResults(priceable(searchRouteSuggestions(scope, query, localCity)));
+    setSearchError("");
+    if (query.trim().length < 3) {
+      setSearching(false);
+      return () => {
+        mounted = false;
+      };
+    }
+    setSearching(true);
+    const timer = setTimeout(() => {
+      void searchLiveRouteSuggestions(scope, query, localCity)
+        .then((next) => {
+          if (mounted) setResults(priceable(next));
+        })
+        .catch((error) => {
+          if (mounted)
+            setSearchError(
+              error instanceof Error
+                ? error.message
+                : "Location search failed.",
+            );
+        })
+        .finally(() => {
+          if (mounted) setSearching(false);
+        });
+    }, 300);
+    return () => {
+      mounted = false;
+      clearTimeout(timer);
+    };
+  }, [active, query, scope, referenceVersion, requireBranch, localCity]);
+  const open = (target: RouteTarget) => {
+    const next = active === target ? null : target;
+    setActive(next);
+    setQuery("");
+    onActiveTargetChange?.(next);
+    if (!next) Keyboard.dismiss();
+  };
+  const select = async (suggestion: RouteSuggestion) => {
+    if (!active) return;
+    setSearching(true);
+    setSearchError("");
+    try {
+      const resolved = await resolveRouteSuggestion(suggestion);
+      if (scope === "local" && !isInLocalCity(resolved, localCity))
+        throw new Error(
+          localCity
+            ? `Choose a location within ${localCity.city}. Use City-to-City for another city.`
+            : "Enable location to identify your city first.",
+        );
+      if (
+        scope === "intercity" &&
+        resolved.countryCode !== "ZM" &&
+        resolved.country !== "Zambia"
+      )
+        throw new Error("Choose an address within Zambia.");
+      if (
+        scope === "import" &&
+        active === "to" &&
+        resolved.countryCode !== "ZM" &&
+        resolved.country !== "Zambia"
+      )
+        throw new Error("Choose a receiving address within Zambia.");
+      const next = active === "from" ? "to" : null;
+      onSuggestionSelect(active, resolved);
+      setQuery("");
+      setActive(next);
+      onActiveTargetChange?.(next);
+    } catch (error) {
+      setSearchError(
+        error instanceof Error
+          ? error.message
+          : "We could not confirm that location.",
+      );
+    } finally {
+      setSearching(false);
+    }
+  };
+  const openManualEntry = (target: RouteTarget) => {
+    Keyboard.dismiss();
+    setActive(null);
+    setQuery("");
+    onActiveTargetChange?.(null);
+    onManualEntryPress?.(target);
+  };
+  return (
+    <View accessibilityLabel={accessibilityHint} style={styles.card}>
+      <RouteField
+        manualEntryLabel={manualEntryLabel}
+        target="from"
+        label={fromLabel}
+        point={from}
+        active={active === "from"}
+        query={query}
+        scope={scope}
+        results={results}
+        searching={searching}
+        searchError={searchError}
+        onOpen={() => open("from")}
+        onChangeText={setQuery}
+        onSelect={select}
+        onManualEntryPress={
+          onManualEntryPress ? () => openManualEntry("from") : undefined
+        }
+      />
+      <View style={styles.divider} />
+      <RouteField
+        manualEntryLabel={manualEntryLabel}
+        target="to"
+        label={toLabel}
+        point={to}
+        active={active === "to"}
+        query={query}
+        scope={scope}
+        results={results}
+        searching={searching}
+        searchError={searchError}
+        onOpen={() => open("to")}
+        onChangeText={setQuery}
+        onSelect={select}
+        onManualEntryPress={
+          onManualEntryPress ? () => openManualEntry("to") : undefined
+        }
+      />
+    </View>
+  );
+}
+
+function RouteField({
+  manualEntryLabel,
+  target,
+  label,
+  point,
+  active,
+  query,
+  scope,
+  results,
+  searching,
+  searchError,
+  onOpen,
+  onChangeText,
+  onSelect,
+  onManualEntryPress,
+}: {
+  manualEntryLabel: string;
+  target: RouteTarget;
+  label: string;
+  point: RoutePoint;
+  active: boolean;
+  query: string;
+  scope: RouteSearchScope;
+  results: RouteSuggestion[];
+  searching: boolean;
+  searchError: string;
+  onOpen: () => void;
+  onChangeText: (value: string) => void;
+  onSelect: (suggestion: RouteSuggestion) => void;
+  onManualEntryPress?: () => void;
+}) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const isFrom = target === "from";
+  const icon: AppIconName = isFrom ? "circle-outline" : "map-marker";
+  const placeholder =
+    label !== "From where?" && label !== "To where?"
+      ? label
+      : isFrom
+        ? "Pickup location"
+        : "Delivery location";
+  const guard = routeGuardForSearch(scope, query);
+  const emptyText = searching
+    ? "Searching live Google Maps locations…"
+    : searchError ||
+      (!query.trim()
+        ? "Search for a place or choose it on the map."
+        : query.trim().length < 3
+          ? "Type at least 3 characters to search."
+          : query.trim() && guard.reason
+            ? guard.reason
+            : `No ${scope === "import" ? "supplier city, port, or airport" : "matching place"} found.`);
+  return (
+    <View style={[styles.fieldBlock, active && styles.fieldBlockActive]}>
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={`${label} ${point.value || placeholder}`}
+        accessibilityHint="Type to see location suggestions below this field"
+        activeOpacity={0.78}
+        onPress={onOpen}
+        style={styles.row}
+      >
+        {onManualEntryPress ? (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={`Choose ${isFrom ? "pickup" : "destination"} on current location map`}
+            onPress={(event) => {
+              event.stopPropagation();
+              onManualEntryPress();
+            }}
+            style={isFrom ? styles.routeIconFrom : styles.routeIconTo}
+          >
+            <AppIcon
+              name="crosshairs-gps"
+              size={20}
+              color={nwcColors.foreground}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View style={isFrom ? styles.routeIconFrom : styles.routeIconTo}>
+            <AppIcon
+              name={icon}
+              size={20}
+              color={isFrom ? nwcColors.brandNavy : nwcColors.primaryInk}
+            />
+          </View>
+        )}
+        <View style={styles.copy}>
+          {active ? (
+            <TextInput
+              accessibilityLabel={label}
+              autoFocus
+              value={query}
+              onChangeText={onChangeText}
+              placeholder={
+                scope === "import"
+                  ? "Search country, city, port, or airport"
+                  : scope === "intercity"
+                    ? "Search city or cargo branch"
+                    : "Search area, landmark, or branch"
+              }
+              placeholderTextColor={nwcColors.tint8A9AA7}
+              style={[styles.searchInput, mobileInputStyles.text]}
+              returnKeyType="search"
+            />
+          ) : (
+            <>
+              <Text
+                numberOfLines={1}
+                style={[styles.value, !point.value && styles.placeholder]}
+              >
+                {point.value || placeholder}
+              </Text>
+              {point.detail ? (
+                <Text numberOfLines={1} style={styles.detail}>
+                  {point.detail}
+                </Text>
+              ) : null}
+            </>
+          )}
+        </View>
+        <AppIcon
+          name={active ? "close" : "magnify"}
+          size={20}
+          color={nwcColors.muted}
+        />
+      </TouchableOpacity>
+      {active ? (
+        <View style={styles.suggestions}>
+          {results.map((suggestion) => (
+            <SuggestionRow
+              key={suggestion.id}
+              suggestion={suggestion}
+              onPress={() => onSelect(suggestion)}
+            />
+          ))}
+          {searching ? <ListSkeleton count={2} /> : null}
+          {!searching && (results.length === 0 || searchError) ? (
+            <View style={styles.emptySuggestion}>
+              <AppIcon
+                name="map-search-outline"
+                size={18}
+                color={guard.supported ? nwcColors.info : nwcColors.error}
+              />
+              <Text
+                style={[
+                  styles.emptySuggestionText,
+                  !guard.supported && styles.emptySuggestionWarning,
+                ]}
+              >
+                {emptyText}
+              </Text>
+            </View>
+          ) : null}
+          {onManualEntryPress ? (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={manualEntryLabel}
+              onPress={onManualEntryPress}
+              style={styles.manualRow}
+            >
+              <AppIcon
+                name={
+                  manualEntryLabel === "Use map"
+                    ? "map-marker-outline"
+                    : "pencil-outline"
+                }
+                size={17}
+                color={nwcColors.info}
+              />
+              <Text style={styles.manualText}>{manualEntryLabel}</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+function SuggestionRow({
+  suggestion,
+  onPress,
+}: {
+  suggestion: RouteSuggestion;
+  onPress: () => void;
+}) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const icon: AppIconName =
+    suggestion.kind === "branch"
+      ? "storefront-outline"
+      : suggestion.kind === "warehouse"
+        ? "warehouse"
+        : suggestion.kind === "airport"
+          ? "airplane"
+          : suggestion.kind === "port"
+            ? "ferry"
+            : suggestion.kind === "city"
+              ? "city-variant-outline"
+              : "map-marker-outline";
+  return (
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={`Select ${suggestion.label}`}
+      accessibilityHint={suggestion.detail}
+      onPress={onPress}
+      activeOpacity={0.72}
+      style={styles.suggestionRow}
+    >
+      <View style={styles.suggestionIcon}>
+        <AppIcon name={icon} size={17} color={nwcColors.foreground} />
+      </View>
+      <View style={styles.suggestionCopy}>
+        <Text numberOfLines={1} style={styles.suggestionTitle}>
+          {suggestion.label}
+        </Text>
+        <Text numberOfLines={1} style={styles.suggestionDetail}>
+          {suggestion.detail}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    card: {
+      borderRadius: 20,
+      overflow: "visible",
+      backgroundColor: nwcColors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      zIndex: 4,
+    },
+    fieldBlock: { position: "relative", zIndex: 1 },
+    fieldBlockActive: { zIndex: 5 },
+    row: {
+      minHeight: 75,
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 15,
+      gap: 12,
+    },
+    routeIconFrom: {
+      width: 43,
+      height: 43,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    routeIconTo: {
+      width: 43,
+      height: 43,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    copy: { flex: 1, gap: 1 },
+    label: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_700Bold",
+    },
+    value: {
+      color: nwcColors.foreground,
+      fontSize: 16,
+      lineHeight: 22,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    placeholder: { color: nwcColors.muted },
+    detail: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    divider: {
+      height: 1,
+      backgroundColor: nwcColors.surfaceRaised,
+      marginLeft: 70,
+    },
+    searchInput: {
+      minHeight: 31,
+      padding: 0,
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 21,
+      fontFamily: "Poppins_700Bold",
+    },
+    suggestions: {
+      marginHorizontal: 10,
+      marginTop: -2,
+      marginBottom: 8,
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      borderRadius: 17,
+      overflow: "hidden",
+      shadowColor: nwcColors.brandNavy,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.06,
+      shadowRadius: 14,
+      elevation: 2,
+    },
+    suggestionRow: {
+      minHeight: 55,
+      paddingHorizontal: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 9,
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
+    },
+    suggestionIcon: {
+      height: 33,
+      width: 33,
+      borderRadius: 11,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    suggestionCopy: { flex: 1, gap: 1 },
+    suggestionTitle: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    suggestionDetail: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_500Medium",
+    },
+    emptySuggestion: {
+      minHeight: 56,
+      paddingHorizontal: 13,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    emptySuggestionText: {
+      flex: 1,
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    emptySuggestionWarning: { color: nwcColors.error },
+    manualRow: {
+      minHeight: 46,
+      paddingHorizontal: 13,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      backgroundColor: nwcColors.surfaceAccent,
+    },
+    manualText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

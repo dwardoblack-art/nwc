@@ -1,4 +1,4 @@
-import type { AppIconName } from "@/components/ui/app-icon";
+import type { AppIconName } from "@/ui/app-icon";
 
 export type CustomerPermission = "location" | "camera" | "photos" | "contacts" | "notifications" | "biometrics";
 export type CustomerPermissionStatus = "not_requested" | "granted" | "denied";

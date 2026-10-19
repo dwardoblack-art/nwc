@@ -1,1 +1,1 @@
-export { default } from "@/components/account/account-settings-screen";
+export { default } from "@/features/account/screens/account/settings-screen";

@@ -1,7 +1,7 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { AppIcon, type AppIconName } from "@/components/ui/app-icon";
-import { IconButton } from "@/components/ui/nwc-ui";
+import { AppIcon, type AppIconName } from "@/ui/app-icon";
+import { IconButton } from "@/ui/nwc-ui";
 import { nwcSpacing, nwcTypography } from "@/lib/nwc-theme";
 import { useNwcColors } from "./use-nwc-colors";
 
@@ -12,9 +12,9 @@ export {
   SecondaryButton,
   IconButton,
   StatusBadge as Badge,
-} from "@/components/ui/nwc-ui";
-export { MobileInput as Field } from "@/components/ui/mobile-input";
-export { CustomerBottomDrawer as Sheet } from "@/components/ui/customer-bottom-drawer";
+} from "@/ui/nwc-ui";
+export { MobileInput as Field } from "@/ui/mobile-input";
+export { CustomerBottomDrawer as Sheet } from "@/ui/customer-bottom-drawer";
 
 export function Header({
   title,

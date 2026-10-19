@@ -1,4 +1,1 @@
-import { Redirect } from "expo-router";
-export default function LocalDeliveryScheduleScreen() {
-  return <Redirect href="/local-delivery/review" />;
-}
+export { default } from "@/features/booking/screens/local-delivery/schedule-screen";

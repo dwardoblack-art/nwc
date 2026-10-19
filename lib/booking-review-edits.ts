@@ -1,4 +1,4 @@
-import type { AppIconName } from "@/components/ui/app-icon";
+import type { AppIconName } from "@/ui/app-icon";
 
 export type BookingQuickEditChoice<T extends string = string> = {
   id: T;

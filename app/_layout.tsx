@@ -1,4 +1,5 @@
 import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
+import "../global.css";
 import { CustomerDataProvider } from "@/lib/data/customer-data-provider";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
@@ -24,7 +25,7 @@ import { NotificationPreferenceProvider } from "@/stores/notification-preference
 import { shouldLoadBundledPoppins } from "@/lib/startup-font-policy";
 import { analytics } from "@/lib/services/observability/analytics";
 import { assertProductionEnvReady } from "@/lib/config/env";
-import { AppToastProvider } from "@/components/ui/app-toast";
+import { AppToastProvider } from "@/ui/app-toast";
 
 assertProductionEnvReady();
 

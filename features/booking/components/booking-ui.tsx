@@ -1,0 +1,724 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
+import { MobileInput } from "@/ui/mobile-input";
+import { useEffect, useState, type PropsWithChildren } from "react";
+import { ContactPickerAction } from "@/ui/contact-picker-action";
+import {
+  contactService,
+  type DeviceContact,
+} from "@/lib/services/device/contact-service";
+import {
+  StyleSheet,
+  Keyboard,
+  Text,
+  TouchableOpacity,
+  View,
+  type TextInputProps,
+} from "react-native";
+import { BookingMapDrawerFrame } from "@/features/booking/components/booking-map-drawer-frame";
+import { AppIcon, type AppIconName } from "@/ui/app-icon";
+import { PrimaryButton, SecondaryButton } from "@/ui/nwc-ui";
+import type { DeliveryMapService } from "@/lib/domain/delivery-map";
+
+import { useBookingDraft } from "@/stores/booking-draft";
+import type { Address, BookingStep } from "@/types/cargo";
+
+const steps: { id: BookingStep; label: string }[] = [
+  { id: "route", label: "Route" },
+  { id: "parcel", label: "Parcel" },
+  { id: "contacts", label: "Contacts" },
+  { id: "review", label: "Review" },
+];
+
+export type BookingProgressStep = { id: string; label: string };
+
+export function BookingScreen({
+  activeStep,
+  title,
+  detail,
+  children,
+  continueLabel,
+  onContinue,
+  continueDisabled,
+  secondaryLabel,
+  onSecondary,
+  serviceLabel = "Local Delivery",
+  progressSteps = steps,
+  service,
+}: PropsWithChildren<{
+  activeStep: string;
+  title: string;
+  detail: string;
+  continueLabel: string;
+  onContinue: () => void | Promise<unknown>;
+  continueDisabled?: boolean;
+  secondaryLabel?: string;
+  onSecondary?: () => void | Promise<unknown>;
+  serviceLabel?: string;
+  progressSteps?: BookingProgressStep[];
+  service?: DeliveryMapService;
+}>) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const resolvedService = service ?? serviceFromLabel(serviceLabel);
+  const route = useBookingMapRoute(resolvedService);
+  const activeIndex = Math.max(
+    0,
+    progressSteps.findIndex((step) => step.id === activeStep),
+  );
+  return (
+    <BookingMapDrawerFrame
+      service={resolvedService}
+      serviceLabel={serviceLabel}
+      stepLabel={progressSteps[activeIndex]?.label ?? "Booking"}
+      stepPosition={`Step ${activeIndex + 1} of ${progressSteps.length}`}
+      title={title}
+      detail={detail}
+      pickup={route.pickup}
+      destination={route.destination}
+      routeReady={route.ready}
+      footer={
+        <>
+          {secondaryLabel && onSecondary ? (
+            <SecondaryButton
+              label={secondaryLabel}
+              onPress={onSecondary}
+              style={styles.secondaryFooterButton}
+            />
+          ) : null}
+          <PrimaryButton
+            label={continueLabel}
+            onPress={onContinue}
+            disabled={continueDisabled}
+            icon="arrow-right"
+          />
+        </>
+      }
+    >
+      <View style={styles.content}>{children}</View>
+    </BookingMapDrawerFrame>
+  );
+}
+
+function serviceFromLabel(label: string): DeliveryMapService {
+  if (label === "International Imports") return "import";
+  if (label === "City-to-City") return "intercity";
+  if (label === "Custom Request") return "custom";
+  return "local";
+}
+
+function useBookingMapRoute(service: DeliveryMapService) {
+  const { localDraft, importDraft, intercityDraft, customDraft } =
+    useBookingDraft();
+  if (service === "import") {
+    return {
+      pickup: laneAddress(
+        importDraft.originCity,
+        importDraft.originCountry,
+        importDraft.originBranchId,
+        importDraft.originLatitude,
+        importDraft.originLongitude,
+      ),
+      destination: laneAddress(
+        importDraft.destinationCity,
+        "Zambia",
+        importDraft.destinationBranchId,
+        importDraft.destinationLatitude,
+        importDraft.destinationLongitude,
+      ),
+      ready: Boolean(
+        importDraft.originCity &&
+        importDraft.originBranchId &&
+        importDraft.destinationCity,
+      ),
+    };
+  }
+  if (service === "intercity") {
+    return {
+      pickup: laneAddress(
+        intercityDraft.originCity,
+        "Zambia",
+        intercityDraft.originBranchId,
+        intercityDraft.originLatitude,
+        intercityDraft.originLongitude,
+      ),
+      destination: laneAddress(
+        intercityDraft.destinationCity,
+        "Zambia",
+        intercityDraft.destinationBranchId,
+        intercityDraft.destinationLatitude,
+        intercityDraft.destinationLongitude,
+      ),
+      ready: Boolean(
+        intercityDraft.originCity && intercityDraft.destinationCity,
+      ),
+    };
+  }
+  if (service === "custom")
+    return {
+      pickup: customDraft.pickup,
+      destination: customDraft.destination,
+      ready: Boolean(customDraft.pickup && customDraft.destination),
+    };
+  return {
+    pickup: localDraft.pickup,
+    destination: localDraft.destination,
+    ready: Boolean(localDraft.pickup && localDraft.destination),
+  };
+}
+
+function laneAddress(
+  city?: string,
+  country?: string,
+  branchId?: string,
+  latitude?: number,
+  longitude?: number,
+): Address | undefined {
+  if (!city) return undefined;
+  return {
+    city,
+    area: country || city,
+    detail: [city, country].filter(Boolean).join(", "),
+    label: city,
+    branchId,
+    latitude,
+    longitude,
+  };
+}
+
+export function ProgressSteps({
+  activeStep,
+  steps: progressSteps = steps,
+}: {
+  activeStep: string;
+  steps?: BookingProgressStep[];
+}) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const activeIndex = Math.max(
+    0,
+    progressSteps.findIndex((step) => step.id === activeStep),
+  );
+  return (
+    <View
+      accessibilityRole="progressbar"
+      accessibilityValue={{
+        min: 1,
+        max: progressSteps.length,
+        now: activeIndex + 1,
+      }}
+      style={styles.progress}
+    >
+      <View style={styles.progressMeta}>
+        <Text
+          style={styles.progressLabel}
+        >{`Step ${activeIndex + 1} of ${progressSteps.length}`}</Text>
+        <Text style={styles.progressName}>
+          {progressSteps[activeIndex].label}
+        </Text>
+      </View>
+      <View style={styles.progressTrack}>
+        {progressSteps.map((step, index) => (
+          <View
+            key={step.id}
+            style={[
+              styles.progressSegment,
+              index <= activeIndex && styles.progressSegmentActive,
+            ]}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
+
+export function FormField({
+  label,
+  icon,
+  onContactPicked,
+  ...props
+}: TextInputProps & {
+  label: string;
+  icon?: AppIconName;
+  onContactPicked?: (contact: DeviceContact) => void;
+}) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+  const contactSuggestionStyles =
+    createThemedStyles_contactSuggestionStyles(nwcColors);
+
+  const [focused, setFocused] = useState(false);
+  const [suggestions, setSuggestions] = useState<DeviceContact[]>([]);
+  const query = props.value ?? "";
+  const searchable = Boolean(onContactPicked);
+  useEffect(() => {
+    let cancelled = false;
+    setSuggestions([]);
+    if (!focused || !searchable || query.trim().length < 2) return;
+    const timer = setTimeout(() => {
+      void contactService
+        .searchContacts(query, () => cancelled)
+        .then((items) => {
+          if (!cancelled) setSuggestions(items);
+        })
+        .catch(() => {
+          if (!cancelled) setSuggestions([]);
+        });
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [focused, query, searchable]);
+  const selectContact = (contact: DeviceContact) => {
+    setSuggestions([]);
+    setFocused(false);
+    Keyboard.dismiss();
+    onContactPicked?.(contact);
+  };
+  return (
+    <View
+      style={[
+        styles.fieldWrap,
+        { position: "relative", zIndex: focused ? 30 : 0 },
+      ]}
+    >
+      <MobileInput
+        {...props}
+        label={
+          label === "Name"
+            ? "Full name"
+            : label === "Phone"
+              ? "Phone number"
+              : label
+        }
+        icon={icon}
+        keepLabel={false}
+        onFocus={(event) => {
+          setFocused(true);
+          props.onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          setFocused(false);
+          props.onBlur?.(event);
+        }}
+        action={
+          props.keyboardType === "phone-pad" ? (
+            <ContactPickerAction
+              label={label}
+              disabled={props.editable === false}
+              onContact={(contact) => {
+                if (onContactPicked) onContactPicked(contact);
+                else props.onChangeText?.(contact.phone);
+              }}
+            />
+          ) : undefined
+        }
+      />
+      {focused && suggestions.length > 0 ? (
+        <View style={contactSuggestionStyles.dropdown}>
+          {suggestions.map((contact) => (
+            <TouchableOpacity
+              key={`${contact.name}:${contact.phone}`}
+              accessibilityRole="button"
+              accessibilityLabel={`Use ${contact.name || contact.phone}`}
+              onPress={() => selectContact(contact)}
+              style={contactSuggestionStyles.row}
+            >
+              <AppIcon
+                name="account-outline"
+                size={22}
+                color={nwcColors.foreground}
+              />
+              <View style={{ flex: 1 }}>
+                <Text numberOfLines={1} style={contactSuggestionStyles.name}>
+                  {contact.name || "Contact"}
+                </Text>
+                <Text style={contactSuggestionStyles.phone}>
+                  {contact.phone}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+export function ChoiceTile({
+  title,
+  detail,
+  icon,
+  selected,
+  onPress,
+}: {
+  title: string;
+  detail: string;
+  icon: AppIconName;
+  selected: boolean;
+  onPress: () => void;
+}) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  return (
+    <TouchableOpacity
+      accessibilityRole="radio"
+      accessibilityState={{ selected }}
+      accessibilityLabel={title}
+      accessibilityHint={detail}
+      activeOpacity={0.78}
+      onPress={onPress}
+      style={[styles.choiceTile, selected && styles.choiceTileSelected]}
+    >
+      <View style={[styles.choiceIcon, selected && styles.choiceIconSelected]}>
+        <AppIcon
+          name={icon}
+          size={21}
+          color={selected ? nwcColors.primaryInk : nwcColors.brandNavy}
+        />
+      </View>
+      <View style={styles.choiceCopy}>
+        <Text style={styles.choiceTitle}>{title}</Text>
+        <Text style={styles.choiceDetail}>{detail}</Text>
+      </View>
+      <View style={[styles.radio, selected && styles.radioSelected]}>
+        {selected ? <View style={styles.radioDot} /> : null}
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+export function BookingSection({
+  label,
+  children,
+}: PropsWithChildren<{ label?: string }>) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  return (
+    <View style={styles.bookingSection}>
+      {label ? <Text style={styles.sectionLabel}>{label}</Text> : null}
+      {children}
+    </View>
+  );
+}
+
+export function OptionalDetails({
+  label = "Add details",
+  children,
+}: PropsWithChildren<{ label?: string }>) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const [open, setOpen] = useState(false);
+  return (
+    <View style={styles.optionalWrap}>
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        accessibilityLabel={open ? `Hide ${label.toLowerCase()}` : label}
+        activeOpacity={0.74}
+        onPress={() => setOpen((value) => !value)}
+        style={styles.optionalToggle}
+      >
+        <Text style={styles.optionalLabel}>
+          {open ? "Hide details" : label}
+        </Text>
+        <AppIcon
+          name={open ? "chevron-up" : "plus"}
+          size={19}
+          color={nwcColors.foreground}
+        />
+      </TouchableOpacity>
+      {open ? <View style={styles.optionalContent}>{children}</View> : null}
+    </View>
+  );
+}
+
+export function SummaryRow({
+  label,
+  value,
+  onEdit,
+}: {
+  label: string;
+  value: string;
+  onEdit?: () => void;
+}) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  return (
+    <View style={styles.summaryRow}>
+      <View style={styles.summaryCopy}>
+        <Text style={styles.summaryLabel}>{label}</Text>
+        <Text style={styles.summaryValue}>{value}</Text>
+      </View>
+      {onEdit ? (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={`Edit ${label}`}
+          onPress={onEdit}
+          style={styles.editButton}
+        >
+          <Text style={styles.editButtonText}>Edit</Text>
+        </TouchableOpacity>
+      ) : null}
+    </View>
+  );
+}
+
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: nwcColors.background },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 18,
+      paddingTop: 4,
+      paddingBottom: 8,
+    },
+    topBarTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    topBarSpacer: { height: 44, width: 44 },
+    progress: { paddingHorizontal: 20, paddingBottom: 13, gap: 7 },
+    progressMeta: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    progressTrack: { flexDirection: "row", gap: 5 },
+    progressSegment: {
+      height: 3,
+      flex: 1,
+      borderRadius: 3,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    progressSegmentActive: { backgroundColor: nwcColors.primary },
+    progressLabel: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_700Bold",
+    },
+    progressName: {
+      color: nwcColors.foreground,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    scrollContent: { flexGrow: 1, paddingHorizontal: 20, paddingTop: 18 },
+    kicker: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+    },
+    bookingTitle: {
+      color: nwcColors.foreground,
+      fontSize: 27,
+      lineHeight: 34,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: -0.45,
+      marginTop: 4,
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 14,
+      lineHeight: 21,
+      fontFamily: "Poppins_500Medium",
+      marginTop: 5,
+    },
+    content: { marginTop: 22, gap: 20 },
+    footer: {
+      paddingHorizontal: 20,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+      backgroundColor: nwcColors.surface,
+    },
+    secondaryFooterButton: { minHeight: 44, marginBottom: 9 },
+    fieldWrap: { gap: 7 },
+    fieldLabel: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_700Bold",
+    },
+    inputFrame: {
+      minHeight: 58,
+      borderRadius: 19,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surface,
+      paddingHorizontal: 15,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    input: {
+      color: nwcColors.foreground,
+      flex: 1,
+      minHeight: 54,
+      fontSize: 16,
+      lineHeight: 21,
+      fontFamily: "Poppins_600SemiBold",
+      paddingVertical: 0,
+    },
+    bookingSection: { gap: 10 },
+    sectionLabel: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.5,
+      textTransform: "uppercase",
+      marginBottom: 2,
+    },
+    choiceTile: {
+      minHeight: 78,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      borderRadius: 21,
+      backgroundColor: nwcColors.surface,
+      padding: 13,
+    },
+    choiceTileSelected: {
+      borderColor: nwcColors.brandNavy,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    choiceIcon: {
+      width: 42,
+      height: 42,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 14,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    choiceIconSelected: { backgroundColor: nwcColors.primary },
+    choiceCopy: { flex: 1, gap: 2 },
+    choiceTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    choiceDetail: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_500Medium",
+    },
+    radio: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      borderWidth: 1.5,
+      borderColor: nwcColors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    radioSelected: { borderColor: nwcColors.brandNavy },
+    radioDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: nwcColors.brandNavy,
+    },
+    summaryRow: {
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    summaryCopy: { flex: 1, gap: 3 },
+    summaryLabel: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: "800",
+    },
+    summaryValue: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontWeight: "700",
+    },
+    editButton: {
+      minHeight: 44,
+      justifyContent: "center",
+      paddingHorizontal: 6,
+    },
+    editButtonText: {
+      color: nwcColors.info,
+      fontSize: 13,
+      lineHeight: 18,
+      fontWeight: "800",
+    },
+    optionalWrap: { gap: 10 },
+    optionalToggle: {
+      minHeight: 48,
+      paddingHorizontal: 15,
+      borderRadius: 17,
+      backgroundColor: nwcColors.surfaceRaised,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    optionalLabel: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    optionalContent: { gap: 12 },
+  });
+
+const createThemedStyles_contactSuggestionStyles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    dropdown: {
+      marginTop: 4,
+      borderRadius: 16,
+      backgroundColor: nwcColors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      shadowColor: nwcColors.brandNavy,
+      shadowOpacity: 0.06,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 5 },
+      elevation: 2,
+      zIndex: 50,
+    },
+    row: {
+      minHeight: 58,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    name: {
+      fontFamily: "Poppins_600SemiBold",
+      fontSize: 14,
+      color: nwcColors.foreground,
+    },
+    phone: {
+      fontFamily: "Poppins_500Medium",
+      fontSize: 12,
+      color: nwcColors.muted,
+    },
+  });

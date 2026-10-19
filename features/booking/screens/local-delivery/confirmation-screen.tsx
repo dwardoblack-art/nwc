@@ -1,0 +1,71 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
+import { StyleSheet, Text, View } from "react-native";
+
+import { BookingConfirmation } from "@/features/booking/components/booking-confirmation";
+import { Card } from "@/ui/nwc-ui";
+
+import { pickupTimeLabel } from "@/lib/pickup-schedule";
+import { useBookingDraft } from "@/stores/booking-draft";
+
+export default function LocalDeliveryConfirmationScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  const { localDraft, resetLocalDraft } = useBookingDraft();
+  const pickupLabel =
+    localDraft.schedule === "scheduled" && localDraft.scheduledAt
+      ? pickupTimeLabel(localDraft.scheduledAt)
+      : localDraft.schedule === "later_today"
+        ? "Later today"
+        : "Earliest available pickup";
+
+  return (
+    <BookingConfirmation
+      icon="check"
+      title="Your Local Delivery request was received."
+      detail="Newworld Cargo will confirm availability, price, and the next step before collection."
+      onReset={resetLocalDraft}
+    >
+      <Card style={styles.card}>
+        <Text style={styles.cardLabel}>Route summary</Text>
+        <Text
+          style={styles.route}
+        >{`${localDraft.pickup?.area || "Pickup"} → ${localDraft.destination?.area || "Delivery"}`}</Text>
+        <View style={styles.divider} />
+        <Text
+          style={styles.cardDetail}
+        >{`${localDraft.receiver?.name || "Receiver"} · ${pickupLabel}`}</Text>
+      </Card>
+    </BookingConfirmation>
+  );
+}
+
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    card: { gap: 7 },
+    cardLabel: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: "800",
+      letterSpacing: 0.5,
+      textTransform: "uppercase",
+    },
+    route: {
+      color: nwcColors.foreground,
+      fontSize: 18,
+      lineHeight: 24,
+      fontWeight: "800",
+    },
+    divider: {
+      height: 1,
+      backgroundColor: nwcColors.border,
+      marginVertical: 7,
+    },
+    cardDetail: {
+      color: nwcColors.muted,
+      fontSize: 13,
+      lineHeight: 18,
+      fontWeight: "700",
+    },
+  });

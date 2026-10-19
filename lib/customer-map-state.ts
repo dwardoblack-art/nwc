@@ -1,4 +1,4 @@
-import type { CustomerMapMode } from "@/components/map/customer-map";
+import type { CustomerMapMode } from "@/ui/maps/customer-map";
 
 export const initialMapZoom: Record<CustomerMapMode, number> = { "location-picker": 1, "route-preview": 1, "live-local": 1, international: 0.82, completed: 1 };
 

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Appearance, View, useColorScheme as useSystemColorScheme } from "react-native";
+import { Appearance, Platform, View, useColorScheme as useSystemColorScheme } from "react-native";
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 
 import { SchemeColors, type ColorScheme } from "@/constants/theme";
@@ -13,7 +13,13 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useSystemColorScheme() ?? "light";
-  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(systemScheme);
+  // Match the static web render, then apply the browser preference after hydration.
+  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(Platform.OS === "web" ? "light" : systemScheme);
+  const [themeReady, setThemeReady] = useState(Platform.OS !== "web");
+  useEffect(() => {
+    setColorSchemeState(systemScheme);
+    setThemeReady(true);
+  }, [systemScheme]);
 
   const applyScheme = useCallback((scheme: ColorScheme) => {
     nativewindColorScheme.set(scheme);
@@ -35,8 +41,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [applyScheme]);
 
   useEffect(() => {
-    applyScheme(colorScheme);
-  }, [applyScheme, colorScheme]);
+    if (themeReady) applyScheme(colorScheme);
+  }, [applyScheme, colorScheme, themeReady]);
 
   const themeVariables = useMemo(
     () =>

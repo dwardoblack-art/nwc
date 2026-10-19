@@ -1,5 +1,1 @@
-import { Redirect } from "expo-router";
-
-export default function ImportMethodRedirect() {
-  return <Redirect href="/import/route" />;
-}
+export { default } from "@/features/booking/screens/import/method-screen";
