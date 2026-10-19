@@ -5,6 +5,20 @@ import eas from "../eas.json";
 import pkg from "../package.json";
 
 describe("mobile release configuration", () => {
+  it("builds a store AAB targeting API 36 without broad media or unused sensitive permissions", () => {
+    expect(eas.build.production.distribution).toBe("store");
+    expect(eas.build.production.android.buildType).toBe("app-bundle");
+    const buildProperties = config.plugins?.find((plugin) => Array.isArray(plugin) && plugin[0] === "expo-build-properties");
+    expect(buildProperties).toEqual(["expo-build-properties", { android: {
+      buildArchs: ["armeabi-v7a", "arm64-v8a"], minSdkVersion: 24,
+      compileSdkVersion: 36, targetSdkVersion: 36,
+    } }]);
+    expect(config.android?.blockedPermissions).toEqual(expect.arrayContaining([
+      "android.permission.RECORD_AUDIO", "android.permission.WRITE_CONTACTS",
+      "android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO",
+      "android.permission.ACCESS_BACKGROUND_LOCATION",
+    ]));
+  });
   it("uses Newworld Cargo production-ready identifiers by default", () => {
     expect(config.name).toBe("Newworld Cargo");
     expect(config.slug).toBe("new-world-cargo-mobile");

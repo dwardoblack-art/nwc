@@ -38,6 +38,11 @@
       }
     },
     "production": {
+      "credentialsSource": "local",
+      "distribution": "store",
+      "android": {
+        "buildType": "app-bundle"
+      },
       "autoIncrement": true,
       "environment": "production",
       "env": {

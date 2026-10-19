@@ -77,6 +77,16 @@ const config: ExpoConfig = {
       "ACCESS_COARSE_LOCATION",
       "READ_CONTACTS",
     ],
+    blockedPermissions: [
+      "android.permission.RECORD_AUDIO",
+      "android.permission.WRITE_CONTACTS",
+      "android.permission.READ_EXTERNAL_STORAGE",
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.READ_MEDIA_IMAGES",
+      "android.permission.READ_MEDIA_VIDEO",
+      "android.permission.SYSTEM_ALERT_WINDOW",
+      "android.permission.ACCESS_BACKGROUND_LOCATION",
+    ],
     intentFilters: [
       {
         action: "VIEW",
@@ -111,7 +121,7 @@ const config: ExpoConfig = {
     "expo-font",
     "expo-video",
     "expo-web-browser",
-    "expo-audio",
+    ["expo-audio", { microphonePermission: false, recordAudioAndroid: false }],
     [
       "expo-secure-store",
       {
@@ -136,6 +146,8 @@ const config: ExpoConfig = {
         android: {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
           minSdkVersion: 24,
+          compileSdkVersion: 36,
+          targetSdkVersion: 36,
         },
       },
     ],

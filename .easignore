@@ -79,3 +79,6 @@ credentials/
 
 # Local validation packages and exported previews.
 .tmp/
+
+# Public policy site is deployed separately.
+sites/
