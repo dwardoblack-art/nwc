@@ -128,7 +128,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       elevation: 2,
     },
     item: {
-      height: 58,
+      minHeight: 58,
       borderRadius: 29,
       alignItems: "center",
       justifyContent: "center",
@@ -148,6 +148,8 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       backgroundColor: nwcColors.surfaceRaised,
     },
     activeLabel: {
+      flexShrink: 1,
+      textAlign: "center",
       color: nwcColors.primaryInk,
       fontSize: 15,
       lineHeight: 20,

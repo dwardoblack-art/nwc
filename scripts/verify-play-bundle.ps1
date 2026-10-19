@@ -16,7 +16,7 @@ $manifestText = & $java -jar $Bundletool dump manifest "--bundle=$bundlePath" --
 if ($LASTEXITCODE -ne 0) { throw 'Could not read bundle manifest.' }
 [xml]$manifest = $manifestText
 $android = 'http://schemas.android.com/apk/res/android'
-if ($manifest.manifest.package -ne 'com.newworldcargo.mobile') { throw 'Unexpected package.' }
+if ($manifest.manifest.package -ne 'com.nwcargo.app') { throw 'Unexpected package.' }
 $sdk = $manifest.manifest.'uses-sdk'.GetAttribute('targetSdkVersion', $android)
 if ([int]$sdk -lt 36) { throw "Target SDK is $sdk; expected at least 36." }
 if ($manifest.manifest.application.GetAttribute('debuggable', $android) -eq 'true') { throw 'Bundle is debuggable.' }

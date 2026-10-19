@@ -1,5 +1,5 @@
 {
-  "name": "app-template",
+  "name": "nwcargo-mobile",
   "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -10,7 +10,7 @@
     "build": "esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc --noEmit",
-    "lint": "expo lint",
+    "lint": "expo lint app features ui hooks constants scripts",
     "format": "prettier --write .",
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",

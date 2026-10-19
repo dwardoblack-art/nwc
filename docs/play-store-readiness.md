@@ -2,8 +2,8 @@
 
 ## Release configuration verified
 
-- Package: `com.newworldcargo.mobile`; app version: `1.0.0`.
-- Production uses a signed Android App Bundle and the existing local upload key.
+- Package: `com.nwcargo.app`; display name: `Newworld Cargo`; slug: `nwcargo-mobile`; app version: `1.0.0`.
+- Production uses an Android App Bundle with EAS-managed remote signing. A new EAS project and a new Play listing are required; see `redesign-report.md` for the setup checklist.
 - Remote EAS version codes increment automatically. Failed build attempts can consume version codes; gaps are valid.
 - Compile and target API: 36; minimum API: 24; includes arm64-v8a.
 - Expo regenerates Android from `app.config.ts` during EAS Build because `/android` is excluded by `.easignore`. The local generated Android folder is not the release source.

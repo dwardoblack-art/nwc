@@ -2,7 +2,7 @@ import "./scripts/load-env.js";
 import type { ExpoConfig } from "expo/config";
 
 const rawBundleId =
-  process.env.EXPO_PUBLIC_APP_ID ?? "com.newworldcargo.mobile";
+  process.env.EXPO_PUBLIC_APP_ID ?? "com.nwcargo.app";
 const googleMapsApiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 const bundleId = rawBundleId
   .replace(/[-_]/g, ".")
@@ -13,8 +13,8 @@ const bundleId = rawBundleId
 
 const env = {
   appName: process.env.EXPO_PUBLIC_APP_NAME ?? "Newworld Cargo",
-  appSlug: process.env.EXPO_PUBLIC_APP_SLUG ?? "new-world-cargo-mobile",
-  scheme: process.env.EXPO_PUBLIC_APP_SCHEME ?? "newworldcargo",
+  appSlug: process.env.EXPO_PUBLIC_APP_SLUG ?? "nwcargo-mobile",
+  scheme: process.env.EXPO_PUBLIC_APP_SCHEME ?? "nwcargo",
   version: process.env.EXPO_PUBLIC_APP_VERSION ?? "1.0.0",
   runtimeVersion: process.env.EXPO_PUBLIC_RUNTIME_VERSION ?? "1.0.0",
   iosBuildNumber: process.env.EXPO_PUBLIC_IOS_BUILD_NUMBER ?? "1",
@@ -35,7 +35,7 @@ const config: ExpoConfig = {
   runtimeVersion: env.runtimeVersion,
   orientation: "portrait",
   icon: "./assets/images/launcher-yellow.png",
-  scheme: env.scheme,
+  scheme: Array.from(new Set([env.scheme, "nwcargo", "newworldcargo"])),
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
@@ -93,6 +93,7 @@ const config: ExpoConfig = {
         autoVerify: true,
         data: [
           { scheme: env.scheme },
+          { scheme: "newworldcargo" },
           { scheme: "https", host: "app.newworldcargo.com" },
         ],
         category: ["BROWSABLE", "DEFAULT"],

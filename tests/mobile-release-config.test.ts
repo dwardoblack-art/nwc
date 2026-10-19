@@ -21,13 +21,13 @@ describe("mobile release configuration", () => {
   });
   it("uses Newworld Cargo production-ready identifiers by default", () => {
     expect(config.name).toBe("Newworld Cargo");
-    expect(config.slug).toBe("new-world-cargo-mobile");
-    expect(config.scheme).toBe("newworldcargo");
+    expect(config.slug).toBe("nwcargo-mobile");
+    expect(config.scheme).toEqual(expect.arrayContaining(["nwcargo", "newworldcargo"]));
     expect(config.version).toBe("1.0.0");
     expect(config.runtimeVersion).toBe("1.0.0");
-    expect(config.ios?.bundleIdentifier).toBe("com.newworldcargo.mobile");
+    expect(config.ios?.bundleIdentifier).toBe("com.nwcargo.app");
     expect(config.ios?.buildNumber).toBe("1");
-    expect(config.android?.package).toBe("com.newworldcargo.mobile");
+    expect(config.android?.package).toBe("com.nwcargo.app");
     expect(config.android?.versionCode).toBe(1);
   });
 
@@ -113,6 +113,7 @@ describe("mobile release configuration", () => {
       autoVerify: true,
       category: ["BROWSABLE", "DEFAULT"],
       data: expect.arrayContaining([
+        { scheme: "nwcargo" },
         { scheme: "newworldcargo" },
         { scheme: "https", host: "app.newworldcargo.com" },
       ]),
