@@ -62,6 +62,12 @@ const entries: {
     path: "/account/legal",
   },
   {
+    title: "Delete account",
+    detail: "Request deletion of your account and personal data",
+    icon: "account-outline",
+    path: "/account/delete",
+  },
+  {
     title: "About Newworld Cargo",
     detail: "Learn about your cargo partner",
     icon: "information-outline",
