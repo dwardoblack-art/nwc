@@ -32,6 +32,7 @@ yarn-error.*
 
 # local env files
 .env
+.env.*
 .env*.local
 
 # typescript
@@ -66,6 +67,10 @@ Thumbs.db
 .webdev/
 .project-config.json
 
-# Android signing credentials (local EAS credentialsSource)
+# Android signing artifacts
 credentials.json
 credentials/
+
+# Local dependency cache and validation artifacts
+.pnpm-store/
+.tmp/

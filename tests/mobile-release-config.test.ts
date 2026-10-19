@@ -8,21 +8,37 @@ describe("mobile release configuration", () => {
   it("builds a store AAB targeting API 36 without broad media or unused sensitive permissions", () => {
     expect(eas.build.production.distribution).toBe("store");
     expect(eas.build.production.android.buildType).toBe("app-bundle");
-    const buildProperties = config.plugins?.find((plugin) => Array.isArray(plugin) && plugin[0] === "expo-build-properties");
-    expect(buildProperties).toEqual(["expo-build-properties", { android: {
-      buildArchs: ["armeabi-v7a", "arm64-v8a"], minSdkVersion: 24,
-      compileSdkVersion: 36, targetSdkVersion: 36,
-    } }]);
-    expect(config.android?.blockedPermissions).toEqual(expect.arrayContaining([
-      "android.permission.RECORD_AUDIO", "android.permission.WRITE_CONTACTS",
-      "android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO",
-      "android.permission.ACCESS_BACKGROUND_LOCATION",
-    ]));
+    const buildProperties = config.plugins?.find(
+      (plugin) =>
+        Array.isArray(plugin) && plugin[0] === "expo-build-properties",
+    );
+    expect(buildProperties).toEqual([
+      "expo-build-properties",
+      {
+        android: {
+          buildArchs: ["armeabi-v7a", "arm64-v8a"],
+          minSdkVersion: 24,
+          compileSdkVersion: 36,
+          targetSdkVersion: 36,
+        },
+      },
+    ]);
+    expect(config.android?.blockedPermissions).toEqual(
+      expect.arrayContaining([
+        "android.permission.RECORD_AUDIO",
+        "android.permission.WRITE_CONTACTS",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+      ]),
+    );
   });
   it("uses Newworld Cargo production-ready identifiers by default", () => {
     expect(config.name).toBe("Newworld Cargo");
     expect(config.slug).toBe("nwcargo-mobile");
-    expect(config.scheme).toEqual(expect.arrayContaining(["nwcargo", "newworldcargo"]));
+    expect(config.scheme).toEqual(
+      expect.arrayContaining(["nwcargo", "newworldcargo"]),
+    );
     expect(config.version).toBe("1.0.0");
     expect(config.runtimeVersion).toBe("1.0.0");
     expect(config.ios?.bundleIdentifier).toBe("com.nwcargo.app");

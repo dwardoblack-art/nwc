@@ -34,6 +34,7 @@ yarn-error.*
 
 # local env files
 .env
+.env.*
 .env*.local
 
 # typescript
@@ -79,6 +80,7 @@ credentials/
 
 # Local validation packages and exported previews.
 .tmp/
+.pnpm-store/
 
 # Public policy site is deployed separately.
 sites/

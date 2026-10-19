@@ -1,8 +1,7 @@
 import "./scripts/load-env.js";
 import type { ExpoConfig } from "expo/config";
 
-const rawBundleId =
-  process.env.EXPO_PUBLIC_APP_ID ?? "com.nwcargo.app";
+const rawBundleId = process.env.EXPO_PUBLIC_APP_ID ?? "com.nwcargo.app";
 const googleMapsApiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 const bundleId = rawBundleId
   .replace(/[-_]/g, ".")
@@ -23,9 +22,7 @@ const env = {
   ),
   iosBundleId: bundleId,
   androidPackage: bundleId,
-  expoProjectId:
-    process.env.EXPO_PUBLIC_EXPO_PROJECT_ID ??
-    "702dd433-05f9-4c44-b178-eaccf2e43403",
+  expoProjectId: process.env.EXPO_PUBLIC_EXPO_PROJECT_ID,
 };
 
 const config: ExpoConfig = {
