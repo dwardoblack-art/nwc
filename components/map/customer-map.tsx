@@ -1,4 +1,6 @@
 import {
+  useNwcColors, } from "@/ui/use-nwc-colors";
+import {
   Platform,
   Text,
   View,
@@ -50,6 +52,8 @@ export function CustomerMap({
   style,
   onZoomChange,
 }: Props) {
+  const nwcColors = useNwcColors();
+
   const service = deliveryService ?? shipment?.service;
   const profile = deliveryMapProfileFor(service, mode);
   const origin = useMemo(
@@ -68,7 +72,7 @@ export function CustomerMap({
             height,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "#F3F5F5",
+            backgroundColor: nwcColors.tintF3F5F5,
           },
           style,
         ]}

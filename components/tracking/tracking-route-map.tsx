@@ -1,10 +1,14 @@
+import {
+  useNwcColors, } from "@/ui/use-nwc-colors";
 import { Text, View } from "react-native";
 import Svg, { Circle, Polyline } from "react-native-svg";
 import { CustomerMap } from "@/components/map/customer-map";
 import { trackingRouteOverview } from "@/lib/maps/tracking-route";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import type { Shipment } from "@/types/cargo";
 export function TrackingRouteMap({ shipment }: { shipment: Shipment }) {
+  const nwcColors = useNwcColors();
+
   const route = trackingRouteOverview(shipment);
   const mapped =
     Number.isFinite(route.pickup.latitude) &&

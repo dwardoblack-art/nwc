@@ -1,13 +1,17 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { router, type Href } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { PrimaryButton, SecondaryButton } from "@/components/ui/nwc-ui";
-import { nwcColors } from "@/lib/nwc-theme";
 
 export default function WelcomeScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <SafeAreaView style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <Image
           accessibilityLabel="Newworld Cargo"
@@ -36,49 +40,53 @@ export default function WelcomeScreen() {
         onPress={() => router.push("/auth/permissions" as Href)}
         style={styles.continueButton}
       />
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: nwcColors.white,
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 18,
-  },
-  header: {
-    alignItems: "center",
-  },
-  logo: {
-    width: 190,
-    height: 76,
-  },
-  message: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 12,
-    paddingHorizontal: 12,
-  },
-  title: {
-    color: nwcColors.foreground,
-    textAlign: "center",
-    fontSize: 34,
-    lineHeight: 42,
-    letterSpacing: -0.8,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  detail: {
-    maxWidth: 310,
-    color: nwcColors.muted,
-    textAlign: "center",
-    fontSize: 15,
-    lineHeight: 23,
-    fontFamily: "Poppins_500Medium",
-  },
-  continueButton: {
-    width: "100%",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: nwcColors.background,
+    },
+    content: {
+      flexGrow: 1,
+      paddingHorizontal: 24,
+      paddingTop: 20,
+      paddingBottom: 18,
+    },
+    header: {
+      alignItems: "flex-start",
+    },
+    logo: {
+      width: 190,
+      height: 76,
+    },
+    message: {
+      flex: 1,
+      minHeight: 340,
+      alignItems: "flex-start",
+      justifyContent: "center",
+      gap: 12,
+      paddingVertical: 32,
+    },
+    title: {
+      color: nwcColors.foreground,
+      textAlign: "left",
+      fontSize: 34,
+      lineHeight: 42,
+      letterSpacing: -0.8,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    detail: {
+      maxWidth: 310,
+      color: nwcColors.muted,
+      textAlign: "left",
+      fontSize: 15,
+      lineHeight: 23,
+      fontFamily: "Poppins_500Medium",
+    },
+    continueButton: { minHeight: 44, width: "100%" },
+  });

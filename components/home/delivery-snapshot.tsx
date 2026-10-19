@@ -1,8 +1,9 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { trackingRouteOverview } from "@/lib/maps/tracking-route";
 import { NativeMapSurface } from "@/components/map/native-map-surface";
 import { AppIcon } from "@/components/ui/app-icon";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import type { Address, Shipment } from "@/types/cargo";
 function point(address: Address) {
   return Number.isFinite(address.latitude) && Number.isFinite(address.longitude)
@@ -20,6 +21,9 @@ export function DeliverySnapshot({
   shipment: Shipment;
   onPress: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const route = trackingRouteOverview(shipment);
   const origin = point(route.pickup),
     destination = point(route.destination);
@@ -51,30 +55,39 @@ export function DeliverySnapshot({
               : "Shipment locations not yet available"}
           </Text>
         </View>
-        <AppIcon name="arrow-top-right" size={22} color={nwcColors.brandNavy} />
+        <AppIcon
+          name="arrow-top-right"
+          size={22}
+          color={nwcColors.foreground}
+        />
       </TouchableOpacity>
     </View>
   );
 }
-const styles = StyleSheet.create({
-  card: { borderRadius: 26, overflow: "hidden", backgroundColor: "#EEF2F2" },
-  overlay: {
-    position: "absolute",
-    bottom: 30,
-    left: 12,
-    right: 12,
-    minHeight: 54,
-    borderRadius: 16,
-    padding: 12,
-    backgroundColor: "white",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  reference: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 14,
-    color: nwcColors.brandNavy,
-  },
-  detail: { fontSize: 11, color: nwcColors.muted },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    card: {
+      borderRadius: 20,
+      overflow: "hidden",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    overlay: {
+      position: "absolute",
+      bottom: 30,
+      left: 12,
+      right: 12,
+      minHeight: 54,
+      borderRadius: 16,
+      padding: 12,
+      backgroundColor: "white",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    reference: {
+      fontFamily: "Poppins_700Bold",
+      fontSize: 14,
+      color: nwcColors.foreground,
+    },
+    detail: { fontSize: 11, color: nwcColors.muted },
+  });

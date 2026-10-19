@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { router, type Href } from "expo-router";
 import { AccountRow } from "@/components/account/account-row";
@@ -5,7 +6,6 @@ import { useCustomerContentInsets } from "@/components/layout/customer-screen-la
 import { Screen } from "@/components/ui/nwc-ui";
 import type { AppIconName } from "@/components/ui/app-icon";
 import { useCustomerAuth } from "@/stores/customer-auth";
-import { nwcColors } from "@/lib/nwc-theme";
 
 const entries: {
   title: string;
@@ -86,6 +86,9 @@ export function AccountSettingsScreen({
 }: {
   hasFloatingNavigation?: boolean;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { customer, signOut } = useCustomerAuth();
   const insets = useCustomerContentInsets({ hasFloatingNavigation });
   return (
@@ -124,27 +127,28 @@ export function AccountSettingsScreen({
   );
 }
 export default AccountSettingsScreen;
-const styles = StyleSheet.create({
-  content: { gap: 22 },
-  heading: { gap: 5 },
-  title: {
-    fontSize: 28,
-    lineHeight: 36,
-    fontFamily: "Poppins_800ExtraBold",
-    color: nwcColors.brandNavy,
-  },
-  subtitle: {
-    fontSize: 14,
-    fontFamily: "Poppins_500Medium",
-    color: nwcColors.muted,
-  },
-  group: {
-    backgroundColor: nwcColors.surface,
-    borderRadius: 24,
-    paddingHorizontal: 16,
-  },
-  row: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: nwcColors.border,
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    content: { gap: 22 },
+    heading: { gap: 5 },
+    title: {
+      fontSize: 28,
+      lineHeight: 36,
+      fontFamily: "Poppins_600SemiBold",
+      color: nwcColors.foreground,
+    },
+    subtitle: {
+      fontSize: 14,
+      fontFamily: "Poppins_500Medium",
+      color: nwcColors.muted,
+    },
+    group: {
+      backgroundColor: nwcColors.surface,
+      borderRadius: 24,
+      paddingHorizontal: 16,
+    },
+    row: {
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: nwcColors.border,
+    },
+  });

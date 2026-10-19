@@ -1,3 +1,5 @@
+import {
+  useNwcColors, } from "@/ui/use-nwc-colors";
 import { useReviewedBookingQuote } from "@/lib/use-cases/use-reviewed-booking-quote";
 import {
   ShipmentTicket,
@@ -17,6 +19,8 @@ import { useSubmitBooking } from "@/lib/use-cases/use-submit-booking";
 import { useBookingDraft } from "@/stores/booking-draft";
 
 export default function IntercityReviewScreen() {
+  const nwcColors = useNwcColors();
+
   const { intercityDraft, updateIntercityDraft } = useBookingDraft();
   const submission = useSubmitBooking();
   const pricing = useReviewedBookingQuote(
@@ -95,7 +99,13 @@ export default function IntercityReviewScreen() {
         error={pricing.error}
       />
       {submission.errorMessage ? (
-        <Text style={{ color: "#B42318", fontSize: 12, fontWeight: "700" }}>
+        <Text
+          style={{
+            color: nwcColors.tintB42318,
+            fontSize: 12,
+            fontWeight: "700",
+          }}
+        >
           {submission.errorMessage}
         </Text>
       ) : null}

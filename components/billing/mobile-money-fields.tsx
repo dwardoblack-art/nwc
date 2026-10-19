@@ -1,7 +1,9 @@
+import {
+  useNwcColors, } from "@/ui/use-nwc-colors";
 import { View, Text, TouchableOpacity } from "react-native";
 import { MobileInput } from "@/components/ui/mobile-input";
 import type { MobileMoneyDetails } from "@/lib/domain/billing";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { isValidInternationalMobile } from "@/lib/auth-flow";
 export function MobileMoneyFields({
   value,
@@ -10,10 +12,12 @@ export function MobileMoneyFields({
   value: MobileMoneyDetails;
   onChange: (value: MobileMoneyDetails) => void;
 }) {
+  const nwcColors = useNwcColors();
+
   return (
     <View style={{ gap: 12 }}>
       <Text
-        style={{ color: nwcColors.brandNavy, fontFamily: "Poppins_700Bold" }}
+        style={{ color: nwcColors.foreground, fontFamily: "Poppins_700Bold" }}
       >
         Mobile money account
       </Text>
@@ -34,7 +38,7 @@ export function MobileMoneyFields({
                   : nwcColors.surfaceNavyTint,
             }}
           >
-            <Text style={{ textAlign: "center", color: nwcColors.brandNavy }}>
+            <Text style={{ textAlign: "center", color: nwcColors.foreground }}>
               {provider}
             </Text>
           </TouchableOpacity>

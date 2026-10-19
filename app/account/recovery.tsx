@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { router, type Href } from "expo-router";
@@ -11,10 +12,13 @@ import {
   Screen,
 } from "@/components/ui/nwc-ui";
 import { isValidEmailInput } from "@/lib/auth-flow";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useCustomerAuth } from "@/stores/customer-auth";
 
 export default function AccountRecoveryScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { authError, changePassword, customer, requestPasswordReset, signOut } =
     useCustomerAuth();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -192,102 +196,102 @@ export default function AccountRecoveryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    paddingTop: 16,
-    paddingHorizontal: 20,
-    backgroundColor: nwcColors.background,
-  },
-  header: {
-    minHeight: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerTitle: {
-    color: nwcColors.brandNavy,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  headerSpacer: { width: 44, height: 44 },
-  content: { paddingTop: 24, paddingBottom: 42, gap: 16 },
-  titleBlock: { gap: 4 },
-  title: {
-    color: nwcColors.foreground,
-    fontSize: 29,
-    lineHeight: 37,
-    letterSpacing: -0.5,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 13,
-    lineHeight: 19,
-    fontFamily: "Poppins_500Medium",
-  },
-  contactCard: {
-    minHeight: 82,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    backgroundColor: "#F2F8FA",
-  },
-  contactIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  contactCopy: { flex: 1, gap: 1 },
-  contactLabel: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  contactValue: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  contactDetail: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  recoveryCard: { gap: 10 },
-  cardTitle: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  cardDetail: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_500Medium",
-  },
-  success: {
-    color: nwcColors.success,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_700Bold",
-    textAlign: "center",
-  },
-  error: {
-    color: nwcColors.error,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_700Bold",
-    textAlign: "center",
-  },
-  actions: { gap: 10 },
-});
-
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      paddingTop: 16,
+      paddingHorizontal: 20,
+      backgroundColor: nwcColors.background,
+    },
+    header: {
+      minHeight: 44,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    headerTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    headerSpacer: { width: 44, height: 44 },
+    content: { paddingTop: 24, paddingBottom: 42, gap: 20 },
+    titleBlock: { gap: 4 },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 29,
+      lineHeight: 37,
+      letterSpacing: -0.5,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 13,
+      lineHeight: 19,
+      fontFamily: "Poppins_500Medium",
+    },
+    contactCard: {
+      minHeight: 82,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    contactIcon: {
+      width: 42,
+      height: 42,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    contactCopy: { flex: 1, gap: 1 },
+    contactLabel: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contactValue: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contactDetail: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    recoveryCard: { gap: 10 },
+    cardTitle: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    cardDetail: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_500Medium",
+    },
+    success: {
+      color: nwcColors.success,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_700Bold",
+      textAlign: "center",
+    },
+    error: {
+      color: nwcColors.error,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_700Bold",
+      textAlign: "center",
+    },
+    actions: { gap: 10 },
+  });

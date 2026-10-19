@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Keyboard,
@@ -19,7 +20,7 @@ import {
   deliveryMapModeForService,
   type DeliveryMapService,
 } from "@/lib/domain/delivery-map";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useBookingDrawerSnap } from "@/lib/use-cases/use-booking-drawer-snap";
 import type { Address } from "@/types/cargo";
 
@@ -52,6 +53,9 @@ export function BookingMapDrawerFrame({
   footer,
   children,
 }: BookingMapDrawerFrameProps) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const insets = useSafeAreaInsets();
   const { height: viewportHeight } = useWindowDimensions();
   const {
@@ -67,8 +71,10 @@ export function BookingMapDrawerFrame({
   // underneath it. Track the keyboard and lift the sheet above it instead.
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   useEffect(() => {
-    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
     const onShow = Keyboard.addListener(showEvent, (event) =>
       setKeyboardHeight(event.endCoordinates?.height ?? 0),
     );
@@ -78,8 +84,12 @@ export function BookingMapDrawerFrame({
       onHide.remove();
     };
   }, []);
-  const keyboardLift = keyboardHeight > 0 ? Math.max(0, keyboardHeight - insets.bottom) : 0;
-  const availableHeight = Math.max(240, viewportHeight - insets.top - keyboardLift);
+  const keyboardLift =
+    keyboardHeight > 0 ? Math.max(0, keyboardHeight - insets.bottom) : 0;
+  const availableHeight = Math.max(
+    240,
+    viewportHeight - insets.top - keyboardLift,
+  );
 
   return (
     <Screen>
@@ -108,7 +118,16 @@ export function BookingMapDrawerFrame({
           </View>
           <View style={styles.topSpacer} />
         </View>
-        <View style={[styles.sheet, { height: Math.min(sheetHeight, availableHeight), bottom: keyboardLift }, drawerTransform]}>
+        <View
+          style={[
+            styles.sheet,
+            {
+              height: Math.min(sheetHeight, availableHeight),
+              bottom: keyboardLift,
+            },
+            drawerTransform,
+          ]}
+        >
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel={`${expanded ? "Collapse" : "Expand"} ${stepLabel} drawer`}
@@ -146,103 +165,108 @@ export function BookingMapDrawerFrame({
   );
 }
 
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: "#EAF0F1" },
-  topBar: {
-    position: "absolute",
-    zIndex: 3,
-    left: 18,
-    right: 18,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  servicePill: {
-    minHeight: 40,
-    paddingHorizontal: 13,
-    borderRadius: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    backgroundColor: "rgba(255,255,255,0.96)",
-  },
-  serviceDot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    backgroundColor: nwcColors.primary,
-  },
-  serviceText: {
-    color: nwcColors.brandNavy,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  topSpacer: { width: 44, height: 44 },
-  sheet: {
-    position: "absolute",
-    zIndex: 5,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    overflow: "hidden",
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    backgroundColor: nwcColors.background,
-    shadowColor: "#012642",
-    shadowOffset: { width: 0, height: -7 },
-    shadowOpacity: 0.17,
-    shadowRadius: 18,
-    elevation: 14,
-  },
-  handleArea: { minHeight: 28, alignItems: "center", justifyContent: "center" },
-  grabber: {
-    width: 46,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: "#B8C6CC",
-  },
-  heading: { paddingHorizontal: 20, paddingBottom: 10, gap: 3 },
-  stepPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    marginBottom: 2,
-  },
-  stepPosition: {
-    color: nwcColors.info,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: 0.4,
-    textTransform: "uppercase",
-  },
-  stepLabel: {
-    color: nwcColors.brandNavy,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-  },
-  title: {
-    color: nwcColors.foreground,
-    fontSize: 24,
-    lineHeight: 30,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: -0.35,
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_500Medium",
-  },
-  body: { gap: 16, paddingHorizontal: 20, paddingTop: 8, paddingBottom: 22 },
-  footer: {
-    gap: 9,
-    paddingHorizontal: 20,
-    paddingTop: 11,
-    borderTopWidth: 1,
-    borderTopColor: nwcColors.border,
-    backgroundColor: nwcColors.surfaceElevated,
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: { flex: 1, backgroundColor: nwcColors.background },
+    topBar: {
+      position: "absolute",
+      zIndex: 3,
+      left: 18,
+      right: 18,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    servicePill: {
+      minHeight: 40,
+      paddingHorizontal: 13,
+      borderRadius: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      backgroundColor: nwcColors.surfaceElevated,
+    },
+    serviceDot: {
+      height: 8,
+      width: 8,
+      borderRadius: 4,
+      backgroundColor: nwcColors.primary,
+    },
+    serviceText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    topSpacer: { width: 44, height: 44 },
+    sheet: {
+      position: "absolute",
+      zIndex: 5,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      overflow: "hidden",
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      backgroundColor: nwcColors.background,
+      shadowColor: nwcColors.brandNavy,
+      shadowOffset: { width: 0, height: -7 },
+      shadowOpacity: 0.06,
+      shadowRadius: 18,
+      elevation: 2,
+    },
+    handleArea: {
+      minHeight: 44,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    grabber: {
+      width: 46,
+      height: 5,
+      borderRadius: 3,
+      backgroundColor: nwcColors.tintB8C6CC,
+    },
+    heading: { paddingHorizontal: 20, paddingBottom: 10, gap: 3 },
+    stepPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      marginBottom: 2,
+    },
+    stepPosition: {
+      color: nwcColors.info,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.4,
+      textTransform: "uppercase",
+    },
+    stepLabel: {
+      color: nwcColors.foreground,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+    },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 24,
+      lineHeight: 30,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: -0.35,
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_500Medium",
+    },
+    body: { gap: 20, paddingHorizontal: 24, paddingTop: 8, paddingBottom: 22 },
+    footer: {
+      gap: 9,
+      paddingHorizontal: 20,
+      paddingTop: 11,
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceElevated,
+    },
+  });

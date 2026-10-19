@@ -1,106 +1,672 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { AppIcon } from "@/components/ui/app-icon";
-import { ProofOfDeliveryCard, TrackingReferenceActions } from "@/components/tracking/tracking-cards";
+import {
+  ProofOfDeliveryCard,
+  TrackingReferenceActions,
+} from "@/components/tracking/tracking-cards";
 import { IconButton, PrimaryButton, Screen } from "@/components/ui/nwc-ui";
 import { toUiShipment } from "@/lib/mappers/shipment-ui-mapper";
 import { statusPresentation } from "@/lib/shipment-status-presentation";
 import { isActiveShipment } from "@/lib/shipment-navigation";
 import { exportProofOfDelivery } from "@/lib/customer-document-export";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { isReturnEligible } from "@/lib/domain/return-request";
 import { useCustomerShipment } from "@/lib/use-cases/use-customer-shipment";
 import { getLiveTrackingHistory } from "@/lib/live-tracking-history";
 import { useAppToast } from "@/components/ui/app-toast";
 
 export default function ShipmentDetailScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { shipmentId } = useLocalSearchParams<{ shipmentId: string }>();
   const toast = useAppToast();
   const [historyOpen, setHistoryOpen] = useState(false);
   const shipmentState = useCustomerShipment(shipmentId);
-  const shipment = shipmentState.shipment ? toUiShipment(shipmentState.shipment) : null;
-  if (!shipment) return <ShipmentStateScreen status={shipmentState.status} message={shipmentState.errorMessage} onRetry={shipmentState.refresh} />;
+  const shipment = shipmentState.shipment
+    ? toUiShipment(shipmentState.shipment)
+    : null;
+  if (!shipment)
+    return (
+      <ShipmentStateScreen
+        status={shipmentState.status}
+        message={shipmentState.errorMessage}
+        onRetry={shipmentState.refresh}
+      />
+    );
   const status = statusPresentation[shipment.status];
   const timeline = getLiveTrackingHistory(shipment);
-  const latest = [...timeline].reverse().find((event) => event.state !== "upcoming") ?? timeline[0];
-  if (isActiveShipment(shipment)) return <Redirect href={`/tracking/${shipment.id}` as never} />;
+  const latest =
+    [...timeline].reverse().find((event) => event.state !== "upcoming") ??
+    timeline[0];
+  if (isActiveShipment(shipment))
+    return <Redirect href={`/tracking/${shipment.id}` as never} />;
   const isImport = shipment.service === "import";
   const foreground = isImport ? nwcColors.primaryInk : nwcColors.white;
-  const muted = isImport ? "#4A4A45" : "#B9C8D1";
-  const vehicleArtwork = shipment.service === "local" ? require("../../assets/images/services/new-world-scooter.png") : require("../../assets/images/services/new-world-truck.png");
-  const downloadProof = () => { void exportProofOfDelivery(shipment).then((result) => result.status === "downloaded" ? toast.success(`${result.filename} was downloaded.`) : toast.warning("Proof download is ready, but this device needs native file saving enabled.")); };
-  return <Screen><View style={styles.page}><View style={styles.header}><IconButton label="Go back" icon="arrow-left" onPress={() => router.back()} /><Text style={styles.headerTitle}>Tracking</Text><View style={styles.headerSpacer} /></View><ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}><View style={styles.lead}><Text style={styles.reference}>{shipment.reference}</Text><Text style={styles.title}>{shipment.title}</Text></View><View style={[styles.routeHero, isImport ? styles.routeHeroImport : styles.routeHeroNavy]}><View pointerEvents="none" style={[styles.heroHalo, isImport ? styles.heroHaloImport : styles.heroHaloNavy]} /><View style={styles.heroHeader}><View style={[styles.statusChip, isImport ? styles.statusChipImport : styles.statusChipNavy]}><AppIcon name={status.icon as any} size={14} color={isImport ? nwcColors.white : nwcColors.primaryInk} /><Text style={[styles.statusText, { color: isImport ? nwcColors.white : nwcColors.primaryInk }]}>{status.label}</Text></View><AppIcon name={shipment.service === "local" ? "bike-fast" : shipment.service === "intercity" ? "truck-fast-outline" : "airplane"} size={23} color={isImport ? nwcColors.primaryInk : nwcColors.primary} /></View><View style={styles.routeTop}><View style={styles.routePoint}><Text style={[styles.routeLabel, { color: muted }]}>From</Text><Text numberOfLines={1} style={[styles.routeValue, { color: foreground }]}>{shipment.pickup.area}</Text><Text numberOfLines={1} style={[styles.routeCity, { color: muted }]}>{shipment.pickup.city}</Text></View><View style={styles.routeConnector}><View style={[styles.routeLine, { backgroundColor: isImport ? "#6E5926" : "#527086" }]} /><AppIcon name="arrow-right" size={19} color={isImport ? nwcColors.primaryInk : "#AFC2CC"} /></View><View style={[styles.routePoint, styles.routePointEnd]}><Text style={[styles.routeLabel, { color: muted }]}>To</Text><Text numberOfLines={1} style={[styles.routeValue, { color: foreground }]}>{shipment.destination.area}</Text><Text numberOfLines={1} style={[styles.routeCity, { color: muted }]}>{shipment.destination.city}</Text></View></View><View style={[styles.eta, { borderTopColor: isImport ? "#D6A72D" : "#28465C" }]}><View style={[styles.etaIcon, isImport ? styles.etaIconImport : styles.etaIconNavy]}><AppIcon name="clock-time-four-outline" size={21} color={nwcColors.primaryInk} /></View><View><Text style={[styles.etaLabel, { color: muted }]}>Estimated arrival</Text><Text style={[styles.etaValue, { color: foreground }]}>{shipment.eta}</Text></View></View></View><TrackingReferenceActions reference={shipment.reference} />{shipment.status === "out_for_delivery" ? <View style={styles.deliveryNote}><View style={styles.deliveryNoteCopy}><AppIcon name="phone-outline" size={18} color={nwcColors.warning} /><Text style={styles.deliveryNoteText}>Keep your phone nearby for the courier.</Text></View><Image source={vehicleArtwork} resizeMode="contain" style={styles.deliveryVehicle} /></View> : null}{shipment.status === "delivered" ? <><ProofOfDeliveryCard shipment={shipment} onDownload={downloadProof} />{isReturnEligible(shipment) ? <TouchableOpacity accessibilityRole="button" accessibilityLabel="Start a return" activeOpacity={0.74} onPress={() => router.push(`/returns/${shipment.id}` as never)} style={styles.returnAction}><AppIcon name="undo-variant" size={19} color={nwcColors.brandNavy} /><Text style={styles.returnActionText}>Start a return</Text><AppIcon name="chevron-right" size={20} color={nwcColors.info} /></TouchableOpacity> : null}</> : null}{latest ? <View style={styles.updateCard}><View style={styles.updateMark}><AppIcon name="check" size={17} color={nwcColors.white} /></View><View style={styles.updateCopy}><Text style={styles.updateEyebrow}>Latest update</Text><Text style={styles.updateTitle}>{latest.label}</Text><Text style={styles.updateTime}>{latest.time}</Text></View></View> : null}<TouchableOpacity accessibilityRole="button" accessibilityLabel={historyOpen ? "Hide tracking history" : "View tracking history"} accessibilityState={{ expanded: historyOpen }} activeOpacity={0.74} onPress={() => setHistoryOpen((open) => !open)} style={styles.historyToggle}><Text style={styles.historyToggleText}>{historyOpen ? "Hide tracking history" : `View tracking history · ${timeline.length} updates`}</Text><AppIcon name={historyOpen ? "chevron-up" : "chevron-down"} size={20} color={nwcColors.brandNavy} /></TouchableOpacity>{historyOpen ? <View style={styles.timeline}>{timeline.map((event, index) => <View key={event.id} style={styles.timelineItem}><View style={styles.timelineRail}><View style={styles.timelineDot} />{index < timeline.length - 1 ? <View style={styles.timelineLine} /> : null}</View><View style={styles.timelineCopy}><Text style={styles.timelineTitle}>{event.label}</Text><Text style={styles.timelineDetail}>{event.detail}</Text><Text style={styles.timelineTime}>{event.time}</Text></View></View>)}</View> : null}<PrimaryButton label="Need help?" icon="headset" onPress={() => router.push("/account")} /></ScrollView></View></Screen>;
+  const muted = isImport ? nwcColors.tint4A4A45 : nwcColors.tintB9C8D1;
+  const vehicleArtwork =
+    shipment.service === "local"
+      ? require("../../assets/images/services/new-world-scooter.png")
+      : require("../../assets/images/services/new-world-truck.png");
+  const downloadProof = () => {
+    void exportProofOfDelivery(shipment).then((result) =>
+      result.status === "downloaded"
+        ? toast.success(`${result.filename} was downloaded.`)
+        : toast.warning(
+            "Proof download is ready, but this device needs native file saving enabled.",
+          ),
+    );
+  };
+  return (
+    <Screen>
+      <View style={styles.page}>
+        <View style={styles.header}>
+          <IconButton
+            label="Go back"
+            icon="arrow-left"
+            onPress={() => router.back()}
+          />
+          <Text style={styles.headerTitle}>Tracking</Text>
+          <View style={styles.headerSpacer} />
+        </View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          <View style={styles.lead}>
+            <Text style={styles.reference}>{shipment.reference}</Text>
+            <Text style={styles.title}>{shipment.title}</Text>
+          </View>
+          <View
+            style={[
+              styles.routeHero,
+              isImport ? styles.routeHeroImport : styles.routeHeroNavy,
+            ]}
+          >
+            <View
+              pointerEvents="none"
+              style={[
+                styles.heroHalo,
+                isImport ? styles.heroHaloImport : styles.heroHaloNavy,
+              ]}
+            />
+            <View style={styles.heroHeader}>
+              <View
+                style={[
+                  styles.statusChip,
+                  isImport ? styles.statusChipImport : styles.statusChipNavy,
+                ]}
+              >
+                <AppIcon
+                  name={status.icon as any}
+                  size={14}
+                  color={isImport ? nwcColors.white : nwcColors.primaryInk}
+                />
+                <Text
+                  style={[
+                    styles.statusText,
+                    {
+                      color: isImport ? nwcColors.white : nwcColors.primaryInk,
+                    },
+                  ]}
+                >
+                  {status.label}
+                </Text>
+              </View>
+              <AppIcon
+                name={
+                  shipment.service === "local"
+                    ? "bike-fast"
+                    : shipment.service === "intercity"
+                      ? "truck-fast-outline"
+                      : "airplane"
+                }
+                size={23}
+                color={isImport ? nwcColors.primaryInk : nwcColors.primary}
+              />
+            </View>
+            <View style={styles.routeTop}>
+              <View style={styles.routePoint}>
+                <Text style={[styles.routeLabel, { color: muted }]}>From</Text>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.routeValue, { color: foreground }]}
+                >
+                  {shipment.pickup.area}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.routeCity, { color: muted }]}
+                >
+                  {shipment.pickup.city}
+                </Text>
+              </View>
+              <View style={styles.routeConnector}>
+                <View
+                  style={[
+                    styles.routeLine,
+                    {
+                      backgroundColor: isImport
+                        ? nwcColors.tint6E5926
+                        : nwcColors.tint527086,
+                    },
+                  ]}
+                />
+                <AppIcon
+                  name="arrow-right"
+                  size={19}
+                  color={isImport ? nwcColors.primaryInk : nwcColors.tintAFC2CC}
+                />
+              </View>
+              <View style={[styles.routePoint, styles.routePointEnd]}>
+                <Text style={[styles.routeLabel, { color: muted }]}>To</Text>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.routeValue, { color: foreground }]}
+                >
+                  {shipment.destination.area}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.routeCity, { color: muted }]}
+                >
+                  {shipment.destination.city}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={[
+                styles.eta,
+                {
+                  borderTopColor: isImport
+                    ? nwcColors.tintD6A72D
+                    : nwcColors.tint28465C,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.etaIcon,
+                  isImport ? styles.etaIconImport : styles.etaIconNavy,
+                ]}
+              >
+                <AppIcon
+                  name="clock-time-four-outline"
+                  size={21}
+                  color={nwcColors.primaryInk}
+                />
+              </View>
+              <View>
+                <Text style={[styles.etaLabel, { color: muted }]}>
+                  Estimated arrival
+                </Text>
+                <Text style={[styles.etaValue, { color: foreground }]}>
+                  {shipment.eta}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <TrackingReferenceActions reference={shipment.reference} />
+          {shipment.status === "out_for_delivery" ? (
+            <View style={styles.deliveryNote}>
+              <View style={styles.deliveryNoteCopy}>
+                <AppIcon
+                  name="phone-outline"
+                  size={18}
+                  color={nwcColors.warning}
+                />
+                <Text style={styles.deliveryNoteText}>
+                  Keep your phone nearby for the courier.
+                </Text>
+              </View>
+              <Image
+                source={vehicleArtwork}
+                resizeMode="contain"
+                style={styles.deliveryVehicle}
+              />
+            </View>
+          ) : null}
+          {shipment.status === "delivered" ? (
+            <>
+              <ProofOfDeliveryCard
+                shipment={shipment}
+                onDownload={downloadProof}
+              />
+              {isReturnEligible(shipment) ? (
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityLabel="Start a return"
+                  activeOpacity={0.74}
+                  onPress={() =>
+                    router.push(`/returns/${shipment.id}` as never)
+                  }
+                  style={styles.returnAction}
+                >
+                  <AppIcon
+                    name="undo-variant"
+                    size={19}
+                    color={nwcColors.foreground}
+                  />
+                  <Text style={styles.returnActionText}>Start a return</Text>
+                  <AppIcon
+                    name="chevron-right"
+                    size={20}
+                    color={nwcColors.info}
+                  />
+                </TouchableOpacity>
+              ) : null}
+            </>
+          ) : null}
+          {latest ? (
+            <View style={styles.updateCard}>
+              <View style={styles.updateMark}>
+                <AppIcon name="check" size={17} color={nwcColors.white} />
+              </View>
+              <View style={styles.updateCopy}>
+                <Text style={styles.updateEyebrow}>Latest update</Text>
+                <Text style={styles.updateTitle}>{latest.label}</Text>
+                <Text style={styles.updateTime}>{latest.time}</Text>
+              </View>
+            </View>
+          ) : null}
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={
+              historyOpen ? "Hide tracking history" : "View tracking history"
+            }
+            accessibilityState={{ expanded: historyOpen }}
+            activeOpacity={0.74}
+            onPress={() => setHistoryOpen((open) => !open)}
+            style={styles.historyToggle}
+          >
+            <Text style={styles.historyToggleText}>
+              {historyOpen
+                ? "Hide tracking history"
+                : `View tracking history · ${timeline.length} updates`}
+            </Text>
+            <AppIcon
+              name={historyOpen ? "chevron-up" : "chevron-down"}
+              size={20}
+              color={nwcColors.foreground}
+            />
+          </TouchableOpacity>
+          {historyOpen ? (
+            <View style={styles.timeline}>
+              {timeline.map((event, index) => (
+                <View key={event.id} style={styles.timelineItem}>
+                  <View style={styles.timelineRail}>
+                    <View style={styles.timelineDot} />
+                    {index < timeline.length - 1 ? (
+                      <View style={styles.timelineLine} />
+                    ) : null}
+                  </View>
+                  <View style={styles.timelineCopy}>
+                    <Text style={styles.timelineTitle}>{event.label}</Text>
+                    <Text style={styles.timelineDetail}>{event.detail}</Text>
+                    <Text style={styles.timelineTime}>{event.time}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          ) : null}
+          <PrimaryButton
+            label="Need help?"
+            icon="headset"
+            onPress={() => router.push("/account")}
+          />
+        </ScrollView>
+      </View>
+    </Screen>
+  );
 }
 
-function ShipmentStateScreen({ status, message, onRetry }: { status: "idle" | "loading" | "success" | "not-found" | "error"; message?: string; onRetry: () => void }) {
-  if (status === "loading" || status === "idle") return <Screen><View style={{padding:20, gap:16}}><IconButton label="Go back" icon="arrow-left" onPress={() => router.back()} /><ListSkeleton kind="shipment" count={2} /></View></Screen>;
+function ShipmentStateScreen({
+  status,
+  message,
+  onRetry,
+}: {
+  status: "idle" | "loading" | "success" | "not-found" | "error";
+  message?: string;
+  onRetry: () => void;
+}) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
+  if (status === "loading" || status === "idle")
+    return (
+      <Screen>
+        <View style={{ padding: 20, gap: 16 }}>
+          <IconButton
+            label="Go back"
+            icon="arrow-left"
+            onPress={() => router.back()}
+          />
+          <ListSkeleton kind="shipment" count={2} />
+        </View>
+      </Screen>
+    );
   const isError = status === "error";
   const title = isError ? "Shipment could not load" : "Shipment not found";
-  const detail = isError ? message || "Try again when your connection is stable." : "Check the shipment reference and try again.";
-  return <Screen><View style={styles.statePage}><View style={styles.stateIcon}><AppIcon name={isError ? "alert-circle-outline" : "package-variant"} size={30} color={nwcColors.primaryInk} /></View><Text style={styles.stateTitle}>{title}</Text><Text style={styles.stateDetail}>{detail}</Text>{isError ? <PrimaryButton label="Try again" onPress={onRetry} /> : null}</View></Screen>;
+  const detail = isError
+    ? message || "Try again when your connection is stable."
+    : "Check the shipment reference and try again.";
+  return (
+    <Screen>
+      <View style={styles.statePage}>
+        <View style={styles.stateIcon}>
+          <AppIcon
+            name={isError ? "alert-circle-outline" : "package-variant"}
+            size={30}
+            color={nwcColors.primaryInk}
+          />
+        </View>
+        <Text style={styles.stateTitle}>{title}</Text>
+        <Text style={styles.stateDetail}>{detail}</Text>
+        {isError ? <PrimaryButton label="Try again" onPress={onRetry} /> : null}
+      </View>
+    </Screen>
+  );
 }
 
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: nwcColors.background, paddingHorizontal: 20, paddingTop: 16 },
-  header: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  headerTitle: { color: nwcColors.brandNavy, fontSize: 15, lineHeight: 20, fontFamily: "Poppins_800ExtraBold" },
-  headerSpacer: { width: 44, height: 44 },
-  content: { paddingTop: 22, paddingBottom: 116, gap: 16 },
-  lead: { gap: 6 },
-  reference: { color: nwcColors.muted, fontSize: 11, lineHeight: 15, fontFamily: "Poppins_800ExtraBold", letterSpacing: 0.6 },
-  title: { color: nwcColors.foreground, fontSize: 31, lineHeight: 38, fontFamily: "Poppins_800ExtraBold", letterSpacing: -0.6 },
-  routeHero: { overflow: "hidden", gap: 22, borderRadius: 28, padding: 18 },
-  routeHeroImport: { backgroundColor: nwcColors.primary },
-  routeHeroNavy: { backgroundColor: nwcColors.brandNavy },
-  heroHalo: { position: "absolute", right: -43, top: -50, width: 148, height: 148, borderRadius: 74, borderWidth: 18 },
-  heroHaloImport: { borderColor: "rgba(13,13,13,0.14)" },
-  heroHaloNavy: { borderColor: "rgba(255,200,61,0.3)" },
-  heroHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  statusChip: { minHeight: 29, borderRadius: 10, paddingHorizontal: 9, flexDirection: "row", alignItems: "center", gap: 5 },
-  statusChipImport: { backgroundColor: nwcColors.primaryInk },
-  statusChipNavy: { backgroundColor: nwcColors.primary },
-  statusText: { fontSize: 10, lineHeight: 14, fontFamily: "Poppins_800ExtraBold" },
-  routeTop: { flexDirection: "row", alignItems: "center", gap: 10 },
-  routePoint: { flex: 1, gap: 1 },
-  routePointEnd: { alignItems: "flex-end" },
-  routeLabel: { fontSize: 10, lineHeight: 14, fontFamily: "Poppins_700Bold", textTransform: "uppercase", letterSpacing: 0.5 },
-  routeValue: { maxWidth: 112, fontSize: 16, lineHeight: 21, fontFamily: "Poppins_800ExtraBold" },
-  routeCity: { maxWidth: 112, fontSize: 11, lineHeight: 15, fontFamily: "Poppins_500Medium" },
-  routeConnector: { width: 46, alignItems: "center", justifyContent: "center" },
-  routeLine: { position: "absolute", left: 0, right: 0, height: 1 },
-  eta: { flexDirection: "row", alignItems: "center", gap: 10, borderTopWidth: 1, paddingTop: 14 },
-  etaIcon: { width: 38, height: 38, borderRadius: 13, alignItems: "center", justifyContent: "center" },
-  etaIconImport: { backgroundColor: "rgba(255,255,255,0.52)" },
-  etaIconNavy: { backgroundColor: nwcColors.primary },
-  etaLabel: { fontSize: 11, lineHeight: 15, fontFamily: "Poppins_600SemiBold" },
-  etaValue: { fontSize: 15, lineHeight: 21, fontFamily: "Poppins_800ExtraBold" },
-  deliveryNote: { minHeight: 68, overflow: "hidden", borderRadius: 18, paddingLeft: 13, paddingRight: 8, backgroundColor: "#FBF0D8", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 9 },
-  deliveryNoteCopy: { flex: 1, flexDirection: "row", alignItems: "center", gap: 9, paddingVertical: 12 },
-  deliveryNoteText: { flex: 1, color: nwcColors.warning, fontSize: 12, lineHeight: 17, fontFamily: "Poppins_700Bold" },
-  deliveryVehicle: { width: 94, height: 62, marginRight: -7 },
-  updateCard: { minHeight: 79, borderRadius: 20, backgroundColor: nwcColors.white, borderWidth: 1, borderColor: "#E5ECEE", padding: 14, flexDirection: "row", alignItems: "center", gap: 11 },
-  updateMark: { width: 38, height: 38, borderRadius: 19, backgroundColor: nwcColors.success, alignItems: "center", justifyContent: "center" },
-  updateCopy: { flex: 1, gap: 1 },
-  updateEyebrow: { color: nwcColors.muted, fontSize: 10, lineHeight: 14, fontFamily: "Poppins_700Bold", textTransform: "uppercase", letterSpacing: 0.5 },
-  updateTitle: { color: nwcColors.foreground, fontSize: 15, lineHeight: 20, fontFamily: "Poppins_800ExtraBold" },
-  updateTime: { color: nwcColors.muted, fontSize: 11, lineHeight: 15, fontFamily: "Poppins_500Medium" },
-  historyToggle: { minHeight: 48, paddingHorizontal: 4, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  historyToggleText: { color: nwcColors.brandNavy, fontSize: 13, lineHeight: 18, fontFamily: "Poppins_800ExtraBold" },
-  timeline: { gap: 0, paddingHorizontal: 4 },
-  timelineItem: { flexDirection: "row", gap: 11, minHeight: 72 },
-  timelineRail: { width: 15, alignItems: "center" },
-  timelineDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: nwcColors.border, marginTop: 5 },
-  timelineLine: { width: 1, flex: 1, backgroundColor: nwcColors.border, marginVertical: 3 },
-  timelineCopy: { flex: 1, gap: 1, paddingBottom: 12 },
-  timelineTitle: { color: nwcColors.foreground, fontSize: 13, lineHeight: 18, fontFamily: "Poppins_800ExtraBold" },
-  timelineDetail: { color: nwcColors.muted, fontSize: 11, lineHeight: 16, fontFamily: "Poppins_500Medium" },
-  timelineTime: { color: nwcColors.muted, fontSize: 10, lineHeight: 14, fontFamily: "Poppins_600SemiBold", marginTop: 2 },
-  returnAction: { minHeight: 58, paddingHorizontal: 14, borderRadius: 20, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: nwcColors.surfaceNavyTint, borderWidth: 1, borderColor: "#DCE8EC" },
-  returnActionText: { flex: 1, color: nwcColors.brandNavy, fontSize: 13, lineHeight: 18, fontFamily: "Poppins_800ExtraBold" },
-  statePage: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 30, gap: 9, backgroundColor: nwcColors.background },
-  stateIcon: { width: 68, height: 68, borderRadius: 24, alignItems: "center", justifyContent: "center", backgroundColor: nwcColors.primary, marginBottom: 6 },
-  stateTitle: { color: nwcColors.foreground, fontSize: 23, lineHeight: 29, fontFamily: "Poppins_800ExtraBold", textAlign: "center" },
-  stateDetail: { color: nwcColors.muted, fontSize: 13, lineHeight: 19, fontFamily: "Poppins_500Medium", textAlign: "center" },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      backgroundColor: nwcColors.background,
+      paddingHorizontal: 20,
+      paddingTop: 16,
+    },
+    header: {
+      minHeight: 44,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    headerTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    headerSpacer: { width: 44, height: 44 },
+    content: { paddingTop: 22, paddingBottom: 116, gap: 20 },
+    lead: { gap: 6 },
+    reference: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.6,
+    },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 31,
+      lineHeight: 38,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: -0.6,
+    },
+    routeHero: { overflow: "hidden", gap: 22, borderRadius: 28, padding: 18 },
+    routeHeroImport: { backgroundColor: nwcColors.primary },
+    routeHeroNavy: { backgroundColor: nwcColors.brandNavy },
+    heroHalo: {
+      position: "absolute",
+      right: -43,
+      top: -50,
+      width: 148,
+      height: 148,
+      borderRadius: 74,
+      borderWidth: 18,
+    },
+    heroHaloImport: { borderColor: "rgba(13,13,13,0.14)" },
+    heroHaloNavy: { borderColor: "rgba(255,200,61,0.3)" },
+    heroHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    statusChip: {
+      minHeight: 44,
+      borderRadius: 10,
+      paddingHorizontal: 9,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+    },
+    statusChipImport: { minHeight: 44, backgroundColor: nwcColors.primaryInk },
+    statusChipNavy: { minHeight: 44, backgroundColor: nwcColors.primary },
+    statusText: {
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    routeTop: { flexDirection: "row", alignItems: "center", gap: 10 },
+    routePoint: { flex: 1, gap: 1 },
+    routePointEnd: { alignItems: "flex-end" },
+    routeLabel: {
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    routeValue: {
+      maxWidth: 112,
+      fontSize: 16,
+      lineHeight: 21,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    routeCity: {
+      maxWidth: 112,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_500Medium",
+    },
+    routeConnector: {
+      width: 46,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    routeLine: { position: "absolute", left: 0, right: 0, height: 1 },
+    eta: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      borderTopWidth: 1,
+      paddingTop: 14,
+    },
+    etaIcon: {
+      width: 38,
+      height: 38,
+      borderRadius: 13,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    etaIconImport: { backgroundColor: "rgba(255,255,255,0.52)" },
+    etaIconNavy: { backgroundColor: nwcColors.primary },
+    etaLabel: {
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    etaValue: {
+      fontSize: 15,
+      lineHeight: 21,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    deliveryNote: {
+      minHeight: 68,
+      overflow: "hidden",
+      borderRadius: 18,
+      paddingLeft: 13,
+      paddingRight: 8,
+      backgroundColor: nwcColors.surfaceRaised,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 9,
+    },
+    deliveryNoteCopy: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 9,
+      paddingVertical: 12,
+    },
+    deliveryNoteText: {
+      flex: 1,
+      color: nwcColors.warning,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_700Bold",
+    },
+    deliveryVehicle: { width: 94, height: 62, marginRight: -7 },
+    updateCard: {
+      minHeight: 79,
+      borderRadius: 20,
+      backgroundColor: nwcColors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      padding: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 11,
+    },
+    updateMark: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: nwcColors.success,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    updateCopy: { flex: 1, gap: 1 },
+    updateEyebrow: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    updateTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    updateTime: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_500Medium",
+    },
+    historyToggle: {
+      minHeight: 48,
+      paddingHorizontal: 4,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    historyToggleText: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    timeline: { gap: 0, paddingHorizontal: 4 },
+    timelineItem: { flexDirection: "row", gap: 11, minHeight: 72 },
+    timelineRail: { width: 15, alignItems: "center" },
+    timelineDot: {
+      width: 9,
+      height: 9,
+      borderRadius: 5,
+      backgroundColor: nwcColors.border,
+      marginTop: 5,
+    },
+    timelineLine: {
+      width: 1,
+      flex: 1,
+      backgroundColor: nwcColors.border,
+      marginVertical: 3,
+    },
+    timelineCopy: { flex: 1, gap: 1, paddingBottom: 12 },
+    timelineTitle: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    timelineDetail: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    timelineTime: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+      marginTop: 2,
+    },
+    returnAction: {
+      minHeight: 58,
+      paddingHorizontal: 14,
+      borderRadius: 20,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      backgroundColor: nwcColors.surfaceNavyTint,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    returnActionText: {
+      flex: 1,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    statePage: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 30,
+      gap: 9,
+      backgroundColor: nwcColors.background,
+    },
+    stateIcon: {
+      width: 68,
+      height: 68,
+      borderRadius: 24,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+      marginBottom: 6,
+    },
+    stateTitle: {
+      color: nwcColors.foreground,
+      fontSize: 23,
+      lineHeight: 29,
+      fontFamily: "Poppins_600SemiBold",
+      textAlign: "center",
+    },
+    stateDetail: {
+      color: nwcColors.muted,
+      fontSize: 13,
+      lineHeight: 19,
+      fontFamily: "Poppins_500Medium",
+      textAlign: "center",
+    },
+  });

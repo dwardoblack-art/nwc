@@ -1,5 +1,7 @@
 import {
-  useNwcColors, defaultNwcPalette as nwcColors, type NwcPalette,
+  useNwcColors,
+  defaultNwcPalette as nwcColors,
+  type NwcPalette,
 } from "@/ui/use-nwc-colors";
 import { useState, type ReactNode } from "react";
 import {

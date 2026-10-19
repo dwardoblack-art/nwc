@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { mobileInputStyles } from "@/components/ui/mobile-input";
 import { useState } from "react";
 import {
@@ -16,10 +17,13 @@ import {
   PrimaryButton,
   Screen,
 } from "@/components/ui/nwc-ui";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { usePublicTracking } from "@/lib/use-cases/use-public-tracking";
 
 export default function ScanTrackingScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const tracking = usePublicTracking();
@@ -91,7 +95,7 @@ export default function ScanTrackingScreen() {
                 }}
                 autoCapitalize="characters"
                 placeholder="Tracking number"
-                placeholderTextColor="#91A0AE"
+                placeholderTextColor={nwcColors.tint91A0AE}
                 returnKeyType="go"
                 onSubmitEditing={submit}
                 style={[styles.input, mobileInputStyles.text]}
@@ -128,114 +132,115 @@ export default function ScanTrackingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    backgroundColor: nwcColors.background,
-  },
-  header: {
-    minHeight: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerTitle: {
-    color: nwcColors.brandNavy,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  headerSpacer: { width: 44, height: 44 },
-  content: { flex: 1, paddingTop: 24, gap: 18 },
-  lead: { gap: 4 },
-  title: {
-    color: nwcColors.foreground,
-    fontSize: 29,
-    lineHeight: 37,
-    letterSpacing: -0.5,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 13,
-    lineHeight: 19,
-    fontFamily: "Poppins_500Medium",
-  },
-  scanner: {
-    alignItems: "center",
-    paddingVertical: 24,
-    gap: 7,
-    backgroundColor: nwcColors.surfaceNavyTint,
-  },
-  scanIcon: {
-    width: 76,
-    height: 76,
-    borderRadius: 27,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  scanTitle: {
-    color: nwcColors.foreground,
-    fontSize: 17,
-    lineHeight: 23,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  scanDetail: {
-    maxWidth: 260,
-    color: nwcColors.muted,
-    textAlign: "center",
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  form: { gap: 9 },
-  label: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  inputShell: {
-    minHeight: 54,
-    paddingHorizontal: 13,
-    borderWidth: 1,
-    borderColor: "#DCE6E8",
-    borderRadius: 17,
-    backgroundColor: nwcColors.surfaceElevated,
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 9,
-  },
-  input: {
-    flex: 1,
-    minHeight: 52,
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  message: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  demo: {
-    minHeight: 48,
-    paddingHorizontal: 12,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
-    backgroundColor: "#F2F7F8",
-  },
-  demoText: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingTop: 16,
+      backgroundColor: nwcColors.background,
+    },
+    header: {
+      minHeight: 44,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    headerTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    headerSpacer: { width: 44, height: 44 },
+    content: { flex: 1, paddingTop: 24, gap: 20 },
+    lead: { gap: 4 },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 29,
+      lineHeight: 37,
+      letterSpacing: -0.5,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 13,
+      lineHeight: 19,
+      fontFamily: "Poppins_500Medium",
+    },
+    scanner: {
+      alignItems: "center",
+      paddingVertical: 24,
+      gap: 7,
+      backgroundColor: nwcColors.surfaceNavyTint,
+    },
+    scanIcon: {
+      width: 76,
+      height: 76,
+      borderRadius: 27,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    scanTitle: {
+      color: nwcColors.foreground,
+      fontSize: 17,
+      lineHeight: 23,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    scanDetail: {
+      maxWidth: 260,
+      color: nwcColors.muted,
+      textAlign: "center",
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    form: { gap: 9 },
+    label: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    inputShell: {
+      minHeight: 54,
+      paddingHorizontal: 13,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      borderRadius: 17,
+      backgroundColor: nwcColors.surfaceElevated,
+      alignItems: "center",
+      flexDirection: "row",
+      gap: 9,
+    },
+    input: {
+      flex: 1,
+      minHeight: 52,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    message: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    demo: {
+      minHeight: 48,
+      paddingHorizontal: 12,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexDirection: "row",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    demoText: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

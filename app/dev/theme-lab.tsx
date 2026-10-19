@@ -1,5 +1,13 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { ScreenContainer } from "@/components/screen-container";
 import { ThemedView } from "@/components/themed-view";
@@ -10,13 +18,18 @@ import { useThemeContext } from "@/lib/theme-provider";
 
 type PaletteName = keyof typeof SchemeColors.light;
 
-const paletteNames: PaletteName[] = Object.keys(SchemeColors.light) as PaletteName[];
+const paletteNames: PaletteName[] = Object.keys(
+  SchemeColors.light,
+) as PaletteName[];
 
 function ColorSwatch({ name, value }: { name: PaletteName; value: string }) {
   return (
     <View className="flex-row items-center justify-between rounded-xl border border-border px-3 py-2">
       <View className="flex-row items-center gap-3">
-        <View className="h-6 w-6 rounded-full border border-border" style={{ backgroundColor: value }} />
+        <View
+          className="h-6 w-6 rounded-full border border-border"
+          style={{ backgroundColor: value }}
+        />
         <Text className="text-sm font-semibold text-foreground">{name}</Text>
       </View>
       <Text className="text-xs font-mono text-muted">{value}</Text>
@@ -25,6 +38,9 @@ function ColorSwatch({ name, value }: { name: PaletteName; value: string }) {
 }
 
 export default function ThemeLabScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [pressCount, setPressCount] = useState(0);
   const [lastAction, setLastAction] = useState<string>("None yet");
   const { colorScheme, setColorScheme } = useThemeContext();
@@ -119,7 +135,7 @@ export default function ThemeLabScreen() {
             </Text>
 
             <View className="mt-4 flex-row flex-wrap gap-2">
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 className="rounded-full px-4 py-2"
                 style={{ backgroundColor: SchemeColors[colorScheme].primary }}
                 onPress={() => {
@@ -127,9 +143,11 @@ export default function ThemeLabScreen() {
                   setLastAction("Pressed Primary token");
                 }}
               >
-                <Text className="text-sm font-semibold text-background">Primary</Text>
+                <Text className="text-sm font-semibold text-background">
+                  Primary
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 className="rounded-full px-4 py-2 border border-border"
                 style={{ backgroundColor: SchemeColors[colorScheme].surface }}
                 onPress={() => {
@@ -141,7 +159,7 @@ export default function ThemeLabScreen() {
                   Surface
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 className="rounded-full px-4 py-2"
                 style={{ backgroundColor: SchemeColors[colorScheme].success }}
                 onPress={() => {
@@ -153,7 +171,7 @@ export default function ThemeLabScreen() {
                   Success
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 className="rounded-full px-4 py-2"
                 style={{ backgroundColor: SchemeColors[colorScheme].warning }}
                 onPress={() => {
@@ -165,7 +183,7 @@ export default function ThemeLabScreen() {
                   Warning
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 className="rounded-full px-4 py-2"
                 style={{ backgroundColor: SchemeColors[colorScheme].error }}
                 onPress={() => {
@@ -184,10 +202,12 @@ export default function ThemeLabScreen() {
                 useColors()
               </Text>
               <Text className="mt-1 text-sm text-muted">
-                Background: {colors.background} • Text: {colors.text} • Tint: {colors.tint}
+                Background: {colors.background} • Text: {colors.text} • Tint:{" "}
+                {colors.tint}
               </Text>
               <Text className="text-xs text-muted">
-                (Pressable uses style; Tailwind on Pressable is disabled via remap)
+                (Pressable uses style; Tailwind on Pressable is disabled via
+                remap)
               </Text>
               <View className="mt-3 gap-2">
                 <View className="flex-row items-center gap-2">
@@ -212,7 +232,11 @@ export default function ThemeLabScreen() {
             </Text>
             <View className="mt-3 gap-2">
               {swatches.map((item) => (
-                <ColorSwatch key={item.name} name={item.name} value={item.value} />
+                <ColorSwatch
+                  key={item.name}
+                  name={item.name}
+                  value={item.value}
+                />
               ))}
             </View>
           </ThemedView>
@@ -222,20 +246,21 @@ export default function ThemeLabScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  schemeToggle: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 4,
-  },
-  schemeToggleTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  schemeToggleSubtitle: {
-    fontSize: 12,
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    schemeToggle: {
+      flex: 1,
+      borderWidth: 1,
+      borderRadius: 16,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      gap: 4,
+    },
+    schemeToggleTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    schemeToggleSubtitle: {
+      fontSize: 12,
+    },
+  });

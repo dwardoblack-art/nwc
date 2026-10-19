@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { TrackingSkeleton } from "@/components/ui/skeleton";
 import {
   ScrollView,
@@ -11,7 +12,7 @@ import { ShipmentTrackingScreen } from "@/components/tracking/shipment-tracking-
 import { AppIcon } from "@/components/ui/app-icon";
 import { PrimaryButton, Screen } from "@/components/ui/nwc-ui";
 import { toUiShipment } from "@/lib/mappers/shipment-ui-mapper";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useCustomerShipment } from "@/lib/use-cases/use-customer-shipment";
 
 export default function LiveTrackingScreen() {
@@ -49,6 +50,9 @@ function TrackingStateScreen({
   message?: string;
   onRetry: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   if (status === "loading" || status === "idle")
     return (
       <Screen>
@@ -96,6 +100,9 @@ function RoundControl({
   icon: Parameters<typeof AppIcon>[0]["name"];
   onPress: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <TouchableOpacity
       accessibilityRole="button"
@@ -109,91 +116,92 @@ function RoundControl({
   );
 }
 
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: nwcColors.background },
-  mapArea: { height: 328, position: "relative" },
-  mapHeader: {
-    position: "absolute",
-    left: 20,
-    right: 20,
-    top: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerActions: { flexDirection: "row", gap: 10 },
-  roundControl: {
-    width: 52,
-    height: 52,
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.96)",
-    borderWidth: 1,
-    borderColor: "#F0F3F4",
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 42,
-    gap: 12,
-  },
-  trackingNote: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-    textAlign: "center",
-    paddingHorizontal: 14,
-    paddingTop: 2,
-  },
-  freshness: {
-    minHeight: 38,
-    borderRadius: 13,
-    paddingHorizontal: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    backgroundColor: "#EAF7F0",
-  },
-  freshnessStale: { backgroundColor: "#FFF4DA" },
-  freshnessText: {
-    flex: 1,
-    color: nwcColors.success,
-    fontSize: 10,
-    lineHeight: 15,
-    fontFamily: "Poppins_700Bold",
-  },
-  freshnessTextStale: { color: nwcColors.warning },
-  statePage: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 30,
-    gap: 9,
-    backgroundColor: nwcColors.background,
-  },
-  stateIcon: {
-    width: 68,
-    height: 68,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-    marginBottom: 6,
-  },
-  stateTitle: {
-    color: nwcColors.foreground,
-    fontSize: 23,
-    lineHeight: 29,
-    fontFamily: "Poppins_800ExtraBold",
-    textAlign: "center",
-  },
-  stateDetail: {
-    color: nwcColors.muted,
-    fontSize: 13,
-    lineHeight: 19,
-    fontFamily: "Poppins_500Medium",
-    textAlign: "center",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: { flex: 1, backgroundColor: nwcColors.background },
+    mapArea: { height: 328, position: "relative" },
+    mapHeader: {
+      position: "absolute",
+      left: 20,
+      right: 20,
+      top: 15,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    headerActions: { flexDirection: "row", gap: 10 },
+    roundControl: {
+      width: 52,
+      height: 52,
+      borderRadius: 19,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "rgba(255,255,255,0.96)",
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    content: {
+      paddingHorizontal: 24,
+      paddingTop: 16,
+      paddingBottom: 42,
+      gap: 20,
+    },
+    trackingNote: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+      textAlign: "center",
+      paddingHorizontal: 14,
+      paddingTop: 2,
+    },
+    freshness: {
+      minHeight: 38,
+      borderRadius: 13,
+      paddingHorizontal: 11,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    freshnessStale: { backgroundColor: nwcColors.surfaceRaised },
+    freshnessText: {
+      flex: 1,
+      color: nwcColors.success,
+      fontSize: 10,
+      lineHeight: 15,
+      fontFamily: "Poppins_700Bold",
+    },
+    freshnessTextStale: { color: nwcColors.warning },
+    statePage: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 30,
+      gap: 9,
+      backgroundColor: nwcColors.background,
+    },
+    stateIcon: {
+      width: 68,
+      height: 68,
+      borderRadius: 24,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+      marginBottom: 6,
+    },
+    stateTitle: {
+      color: nwcColors.foreground,
+      fontSize: 23,
+      lineHeight: 29,
+      fontFamily: "Poppins_600SemiBold",
+      textAlign: "center",
+    },
+    stateDetail: {
+      color: nwcColors.muted,
+      fontSize: 13,
+      lineHeight: 19,
+      fontFamily: "Poppins_500Medium",
+      textAlign: "center",
+    },
+  });

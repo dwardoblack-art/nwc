@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import {
   Image,
@@ -23,9 +24,11 @@ import { cameraService } from "@/lib/services/device/camera-service";
 import { useProfilePhoto } from "@/lib/use-cases/use-profile-photo";
 import { useCustomerAuth } from "@/stores/customer-auth";
 import { useAppToast } from "@/components/ui/app-toast";
-import { nwcColors } from "@/lib/nwc-theme";
 
 export default function AccountSettingsScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { customer, updateProfile, changePassword } = useCustomerAuth();
   const photo = useProfilePhoto();
   const toast = useAppToast();
@@ -93,14 +96,14 @@ export default function AccountSettingsScreen() {
               <AppIcon
                 name="account-outline"
                 size={50}
-                color={nwcColors.brandNavy}
+                color={nwcColors.foreground}
               />
             )}
             <View style={styles.camera}>
               <AppIcon
                 name="camera-outline"
                 size={19}
-                color={nwcColors.brandNavy}
+                color={nwcColors.foreground}
               />
             </View>
           </TouchableOpacity>
@@ -181,48 +184,49 @@ export default function AccountSettingsScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    backgroundColor: nwcColors.background,
-    paddingHorizontal: 20,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 14,
-  },
-  title: {
-    fontSize: 17,
-    color: nwcColors.brandNavy,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  content: { flexGrow: 1, paddingTop: 24, paddingBottom: 32, gap: 18 },
-  avatar: {
-    alignSelf: "center",
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: nwcColors.surfaceNavyTint,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  image: { width: 100, height: 100, borderRadius: 50 },
-  camera: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    backgroundColor: nwcColors.primary,
-    padding: 8,
-    borderRadius: 16,
-  },
-  fields: {
-    gap: 14,
-    borderRadius: 22,
-    backgroundColor: nwcColors.surface,
-    padding: 16,
-  },
-  error: { color: nwcColors.error, fontSize: 12 },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      backgroundColor: nwcColors.background,
+      paddingHorizontal: 20,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 14,
+    },
+    title: {
+      fontSize: 17,
+      color: nwcColors.foreground,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    content: { flexGrow: 1, paddingTop: 24, paddingBottom: 32, gap: 20 },
+    avatar: {
+      alignSelf: "center",
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      backgroundColor: nwcColors.surfaceNavyTint,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 16,
+    },
+    image: { width: 100, height: 100, borderRadius: 50 },
+    camera: {
+      position: "absolute",
+      right: 0,
+      bottom: 0,
+      backgroundColor: nwcColors.primary,
+      padding: 8,
+      borderRadius: 16,
+    },
+    fields: {
+      gap: 14,
+      borderRadius: 22,
+      backgroundColor: nwcColors.surface,
+      padding: 16,
+    },
+    error: { color: nwcColors.error, fontSize: 12 },
+  });

@@ -1,6 +1,4 @@
-import {
-  useNwcColors, type NwcPalette,
-} from "@/ui/use-nwc-colors";
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { StyleSheet, View, type ViewProps } from "react-native";
 import { SafeAreaView, type Edge } from "react-native-safe-area-context";
 

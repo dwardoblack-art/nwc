@@ -1,6 +1,4 @@
-import {
-  useNwcColors, type NwcPalette,
-} from "@/ui/use-nwc-colors";
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   useCallback,
   useEffect,
@@ -190,7 +188,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       elevation: 2,
     },
     handleArea: {
-      minHeight: 28,
+      minHeight: 44,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -231,14 +229,14 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       fontFamily: "Poppins_500Medium",
     },
     close: {
-      width: 40,
-      height: 40,
+      width: 44,
+      minHeight: 44,
       borderRadius: 14,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: nwcColors.surfaceRaised,
     },
-    body: { gap: 12, padding: 20, paddingBottom: 28 },
+    body: { gap: 20, padding: 20, paddingBottom: 28 },
     footer: {
       borderTopWidth: 1,
       borderTopColor: nwcColors.border,

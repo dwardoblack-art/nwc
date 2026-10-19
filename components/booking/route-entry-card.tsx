@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/components/ui/skeleton";
 import { mobileInputStyles } from "@/components/ui/mobile-input";
 import { isInLocalCity, type LocalCity } from "@/lib/maps/local-city";
@@ -20,7 +21,6 @@ import {
   type RouteSearchScope,
   type RouteSuggestion,
 } from "@/lib/route-autocomplete";
-import { nwcColors } from "@/lib/nwc-theme";
 
 type RoutePoint = { value: string; detail: string };
 type RouteTarget = "from" | "to";
@@ -55,6 +55,9 @@ export function RouteEntryCard({
   requireBranch?: boolean | "origin";
   manualEntryLabel?: string;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [active, setActive] = useState<RouteTarget | null>(null);
   const [query, setQuery] = useState("");
   const [referenceVersion, setReferenceVersion] = useState(0);
@@ -254,6 +257,9 @@ function RouteField({
   onSelect: (suggestion: RouteSuggestion) => void;
   onManualEntryPress?: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const isFrom = target === "from";
   const icon: AppIconName = isFrom ? "circle-outline" : "map-marker";
   const placeholder =
@@ -296,7 +302,7 @@ function RouteField({
             <AppIcon
               name="crosshairs-gps"
               size={20}
-              color={nwcColors.brandNavy}
+              color={nwcColors.foreground}
             />
           </TouchableOpacity>
         ) : (
@@ -322,7 +328,7 @@ function RouteField({
                     ? "Search city or cargo branch"
                     : "Search area, landmark, or branch"
               }
-              placeholderTextColor="#8A9AA7"
+              placeholderTextColor={nwcColors.tint8A9AA7}
               style={[styles.searchInput, mobileInputStyles.text]}
               returnKeyType="search"
             />
@@ -407,6 +413,9 @@ function SuggestionRow({
   suggestion: RouteSuggestion;
   onPress: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const icon: AppIconName =
     suggestion.kind === "branch"
       ? "storefront-outline"
@@ -429,7 +438,7 @@ function SuggestionRow({
       style={styles.suggestionRow}
     >
       <View style={styles.suggestionIcon}>
-        <AppIcon name={icon} size={17} color={nwcColors.brandNavy} />
+        <AppIcon name={icon} size={17} color={nwcColors.foreground} />
       </View>
       <View style={styles.suggestionCopy}>
         <Text numberOfLines={1} style={styles.suggestionTitle}>
@@ -443,141 +452,146 @@ function SuggestionRow({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 24,
-    overflow: "visible",
-    backgroundColor: nwcColors.white,
-    borderWidth: 1,
-    borderColor: "#E4EAED",
-    zIndex: 4,
-  },
-  fieldBlock: { position: "relative", zIndex: 1 },
-  fieldBlockActive: { zIndex: 5 },
-  row: {
-    minHeight: 75,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 15,
-    gap: 12,
-  },
-  routeIconFrom: {
-    width: 43,
-    height: 43,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#EDF3F5",
-  },
-  routeIconTo: {
-    width: 43,
-    height: 43,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  copy: { flex: 1, gap: 1 },
-  label: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_700Bold",
-  },
-  value: {
-    color: nwcColors.foreground,
-    fontSize: 16,
-    lineHeight: 22,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  placeholder: { color: nwcColors.muted },
-  detail: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  divider: { height: 1, backgroundColor: "#E7ECEE", marginLeft: 70 },
-  searchInput: {
-    minHeight: 31,
-    padding: 0,
-    color: nwcColors.foreground,
-    fontSize: 15,
-    lineHeight: 21,
-    fontFamily: "Poppins_700Bold",
-  },
-  suggestions: {
-    marginHorizontal: 10,
-    marginTop: -2,
-    marginBottom: 8,
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: "#DDE6E9",
-    borderRadius: 17,
-    overflow: "hidden",
-    shadowColor: "#012642",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.13,
-    shadowRadius: 14,
-    elevation: 7,
-  },
-  suggestionRow: {
-    minHeight: 55,
-    paddingHorizontal: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 9,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EDF1F2",
-  },
-  suggestionIcon: {
-    height: 33,
-    width: 33,
-    borderRadius: 11,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#EDF3F5",
-  },
-  suggestionCopy: { flex: 1, gap: 1 },
-  suggestionTitle: {
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  suggestionDetail: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_500Medium",
-  },
-  emptySuggestion: {
-    minHeight: 56,
-    paddingHorizontal: 13,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  emptySuggestionText: {
-    flex: 1,
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  emptySuggestionWarning: { color: nwcColors.error },
-  manualRow: {
-    minHeight: 46,
-    paddingHorizontal: 13,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: nwcColors.surfaceAccent,
-  },
-  manualText: {
-    color: nwcColors.brandNavy,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    card: {
+      borderRadius: 20,
+      overflow: "visible",
+      backgroundColor: nwcColors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      zIndex: 4,
+    },
+    fieldBlock: { position: "relative", zIndex: 1 },
+    fieldBlockActive: { zIndex: 5 },
+    row: {
+      minHeight: 75,
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 15,
+      gap: 12,
+    },
+    routeIconFrom: {
+      width: 43,
+      height: 43,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    routeIconTo: {
+      width: 43,
+      height: 43,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    copy: { flex: 1, gap: 1 },
+    label: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_700Bold",
+    },
+    value: {
+      color: nwcColors.foreground,
+      fontSize: 16,
+      lineHeight: 22,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    placeholder: { color: nwcColors.muted },
+    detail: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    divider: {
+      height: 1,
+      backgroundColor: nwcColors.surfaceRaised,
+      marginLeft: 70,
+    },
+    searchInput: {
+      minHeight: 31,
+      padding: 0,
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 21,
+      fontFamily: "Poppins_700Bold",
+    },
+    suggestions: {
+      marginHorizontal: 10,
+      marginTop: -2,
+      marginBottom: 8,
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      borderRadius: 17,
+      overflow: "hidden",
+      shadowColor: nwcColors.brandNavy,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.06,
+      shadowRadius: 14,
+      elevation: 2,
+    },
+    suggestionRow: {
+      minHeight: 55,
+      paddingHorizontal: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 9,
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
+    },
+    suggestionIcon: {
+      height: 33,
+      width: 33,
+      borderRadius: 11,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    suggestionCopy: { flex: 1, gap: 1 },
+    suggestionTitle: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    suggestionDetail: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_500Medium",
+    },
+    emptySuggestion: {
+      minHeight: 56,
+      paddingHorizontal: 13,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    emptySuggestionText: {
+      flex: 1,
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    emptySuggestionWarning: { color: nwcColors.error },
+    manualRow: {
+      minHeight: 46,
+      paddingHorizontal: 13,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      backgroundColor: nwcColors.surfaceAccent,
+    },
+    manualText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

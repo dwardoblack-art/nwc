@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { CustomerDataProvider } from "@/lib/data/customer-data-provider";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
@@ -97,6 +98,9 @@ function AppRoot() {
 }
 
 function LaunchSplash() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <View accessibilityLabel="Newworld Cargo" style={styles.splash}>
       <Image
@@ -108,19 +112,20 @@ function LaunchSplash() {
   );
 }
 
-const styles = StyleSheet.create({
-  splash: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 1000,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FFC83D",
-  },
-  splashContent: { alignItems: "center", justifyContent: "center" },
-  splashLogo: {
-    width: "64%",
-    maxWidth: 300,
-    height: 120,
-    tintColor: "#012642",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    splash: {
+      ...StyleSheet.absoluteFillObject,
+      zIndex: 1000,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    splashContent: { alignItems: "center", justifyContent: "center" },
+    splashLogo: {
+      width: "64%",
+      maxWidth: 300,
+      height: 120,
+      tintColor: nwcColors.brandNavy,
+    },
+  });

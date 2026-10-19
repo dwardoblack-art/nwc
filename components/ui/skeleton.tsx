@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useRef } from "react";
 import {
   AccessibilityInfo,
@@ -9,6 +10,9 @@ import {
 } from "react-native";
 
 export function Skeleton({ style }: { style?: StyleProp<ViewStyle> }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return <View style={[styles.bone, style]} />;
 }
 export function SkeletonGroup({
@@ -71,6 +75,9 @@ export function ListSkeleton({
   kind?: "row" | "shipment" | "invoice";
   count?: number;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <SkeletonGroup label={`Loading ${kind === "row" ? "items" : `${kind}s`}`}>
       {Array.from({ length: count }, (_, i) => (
@@ -104,6 +111,8 @@ export function MapSkeleton({
   height?: number;
   fill?: boolean;
 }) {
+  const nwcColors = useNwcColors();
+
   return (
     <View
       pointerEvents="none"
@@ -112,7 +121,7 @@ export function MapSkeleton({
           height: fill ? undefined : height,
           overflow: "hidden",
           borderRadius: 24,
-          backgroundColor: "#EEF2F2",
+          backgroundColor: nwcColors.surfaceRaised,
         },
         fill && StyleSheet.absoluteFillObject,
       ]}
@@ -132,6 +141,9 @@ export function MapSkeleton({
   );
 }
 export function ProfileSkeleton() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <SkeletonGroup label="Loading profile">
       <View style={styles.row}>
@@ -169,15 +181,16 @@ export function InvoiceSkeleton() {
     </View>
   );
 }
-const styles = StyleSheet.create({
-  bone: { backgroundColor: "#DCE5E8", borderRadius: 8 },
-  card: {
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#E5ECEF",
-    padding: 16,
-    gap: 16,
-    backgroundColor: "#FAFCFC",
-  },
-  row: { flexDirection: "row", alignItems: "center", gap: 12 },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    bone: { backgroundColor: nwcColors.surfaceRaised, borderRadius: 8 },
+    card: {
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      padding: 20,
+      gap: 16,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    row: { flexDirection: "row", alignItems: "center", gap: 12 },
+  });

@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { InvoiceSkeleton } from "@/components/ui/skeleton";
 import {
   ScrollView,
@@ -16,17 +17,22 @@ import {
   StatusBadge,
 } from "@/components/ui/nwc-ui";
 import { invoiceReminderLabel } from "@/lib/domain/billing";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
 import { useSupportCases } from "@/lib/use-cases/use-support-cases";
 import { exportInvoice, exportReceipt } from "@/lib/customer-document-export";
 import { useAppToast } from "@/components/ui/app-toast";
 
 export default function InvoiceDetailScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { invoiceId } = useLocalSearchParams<{ invoiceId: string }>();
   const toast = useAppToast();
   const {
-    billingLoading, billingError, refreshBilling,
+    billingLoading,
+    billingError,
+    refreshBilling,
     invoices,
     selectInvoice,
     reminders,
@@ -36,17 +42,41 @@ export default function InvoiceDetailScreen() {
   } = useCustomerBillingAccount();
   const { createCase } = useSupportCases();
   const invoice = invoices.find((item) => item.id === invoiceId);
-  if (!invoice) return <Screen><View style={{padding:20, gap:16}}><IconButton label="Go back" icon="arrow-left" onPress={() => router.back()} />{billingLoading ? <InvoiceSkeleton /> : <><Text>{billingError || "Invoice not found."}</Text><PrimaryButton label="Retry" onPress={refreshBilling} /></>}</View></Screen>;
+  if (!invoice)
+    return (
+      <Screen>
+        <View style={{ padding: 20, gap: 16 }}>
+          <IconButton
+            label="Go back"
+            icon="arrow-left"
+            onPress={() => router.back()}
+          />
+          {billingLoading ? (
+            <InvoiceSkeleton />
+          ) : (
+            <>
+              <Text>{billingError || "Invoice not found."}</Text>
+              <PrimaryButton label="Retry" onPress={refreshBilling} />
+            </>
+          )}
+        </View>
+      </Screen>
+    );
   const reminderOn = Boolean(reminders[invoice.id]);
   const pay = () => {
     selectInvoice(invoice.id);
     router.push("/bills/payment" as Href);
   };
   const documentAction = (kind: "invoice" | "receipt") => {
-    const request = kind === "invoice" ? exportInvoice(invoice) : exportReceipt(invoice);
-    void request.then((result) => result.status === "downloaded"
-      ? toast.success(`${result.filename} was downloaded.`)
-      : toast.error("The official document could not be downloaded. Please try again."));
+    const request =
+      kind === "invoice" ? exportInvoice(invoice) : exportReceipt(invoice);
+    void request.then((result) =>
+      result.status === "downloaded"
+        ? toast.success(`${result.filename} was downloaded.`)
+        : toast.error(
+            "The official document could not be downloaded. Please try again.",
+          ),
+    );
   };
   const requestChargeReview = () => {
     submitInvoiceDispute(invoice.id);
@@ -77,7 +107,11 @@ export default function InvoiceDetailScreen() {
           <View style={styles.titleBlock}>
             <Text style={styles.title}>{invoice.reference}</Text>
           </View>
-          {actionError ? <Text accessibilityRole="alert" style={styles.reminderDetail}>{actionError}</Text> : null}
+          {actionError ? (
+            <Text accessibilityRole="alert" style={styles.reminderDetail}>
+              {actionError}
+            </Text>
+          ) : null}
           <View style={styles.summary}>
             <View style={styles.summaryHead}>
               <View style={styles.summaryIcon}>
@@ -240,7 +274,7 @@ export default function InvoiceDetailScreen() {
                 <AppIcon
                   name="message-question-outline"
                   size={18}
-                  color={nwcColors.brandNavy}
+                  color={nwcColors.foreground}
                 />
                 <Text style={styles.disputeActionText}>
                   Ask about this charge
@@ -261,6 +295,9 @@ export default function InvoiceDetailScreen() {
 }
 
 function DateCell({ label, value }: { label: string; value: string }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <View style={styles.dateCell}>
       <Text style={styles.dateLabel}>{label}</Text>
@@ -277,6 +314,9 @@ function DocumentAction({
   icon: Parameters<typeof AppIcon>[0]["name"];
   onPress: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <TouchableOpacity
       accessibilityRole="button"
@@ -285,7 +325,7 @@ function DocumentAction({
       activeOpacity={0.74}
       style={styles.documentAction}
     >
-      <AppIcon name={icon} size={19} color={nwcColors.brandNavy} />
+      <AppIcon name={icon} size={19} color={nwcColors.foreground} />
       <Text style={styles.documentText}>{label}</Text>
       <AppIcon name="share-variant-outline" size={17} color={nwcColors.muted} />
     </TouchableOpacity>
@@ -302,6 +342,9 @@ function ResolutionTimeline({
   events: { label: string; detail: string; time: string; complete: boolean }[];
   kind: "refund" | "dispute";
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <View style={styles.timeline}>
       <View style={styles.timelineHeader}>
@@ -354,334 +397,342 @@ function ResolutionTimeline({
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    backgroundColor: nwcColors.background,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-  },
-  header: {
-    minHeight: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerTitle: {
-    color: nwcColors.brandNavy,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  headerSpacer: { width: 44, height: 44 },
-  content: { paddingTop: 22, paddingBottom: 48, gap: 16 },
-  titleBlock: { gap: 3 },
-  eyebrow: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-  },
-  title: {
-    color: nwcColors.foreground,
-    fontSize: 29,
-    lineHeight: 37,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: -0.5,
-  },
-  summary: {
-    gap: 14,
-    padding: 15,
-    borderRadius: 23,
-    backgroundColor: "#F2F7F8",
-    borderWidth: 1,
-    borderColor: "#DFE9EB",
-  },
-  summaryHead: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
-  summaryIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  summaryCopy: { flex: 1, gap: 2 },
-  summaryTitle: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  summaryRoute: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  dates: {
-    flexDirection: "row",
-    gap: 18,
-    paddingTop: 13,
-    borderTopWidth: 1,
-    borderTopColor: "#DDE6E8",
-  },
-  dateCell: { flex: 1, gap: 2 },
-  dateLabel: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  dateValue: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  reminderCard: {
-    minHeight: 66,
-    borderRadius: 19,
-    padding: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 9,
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: "#E1E8EA",
-  },
-  reminderCardOn: { backgroundColor: "#FFF8E7", borderColor: "#FFE1A0" },
-  reminderIcon: {
-    width: 37,
-    height: 37,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  reminderCopy: { flex: 1, gap: 1 },
-  reminderTitle: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  reminderDetail: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  reminderToggle: {
-    width: 37,
-    height: 23,
-    padding: 3,
-    borderRadius: 12,
-    backgroundColor: "#CAD4D8",
-    justifyContent: "center",
-  },
-  reminderToggleOn: {
-    alignItems: "flex-end",
-    backgroundColor: nwcColors.brandNavy,
-  },
-  reminderThumb: {
-    width: 17,
-    height: 17,
-    borderRadius: 9,
-    backgroundColor: nwcColors.white,
-  },
-  reminderThumbOn: { backgroundColor: nwcColors.primary },
-  charges: {
-    gap: 0,
-    padding: 15,
-    borderRadius: 23,
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: "#E5EBED",
-  },
-  chargesLabel: {
-    marginBottom: 4,
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.55,
-  },
-  chargeRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: 15,
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#E8EEEF",
-  },
-  chargeCopy: { flex: 1, gap: 2 },
-  chargeTitle: {
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_700Bold",
-  },
-  chargeDetail: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  chargeAmount: {
-    color: nwcColors.brandNavy,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  total: {
-    marginTop: 2,
-    paddingTop: 13,
-    borderTopWidth: 1.5,
-    borderTopColor: "#C8D5D9",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  totalLabel: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  totalAmount: {
-    color: nwcColors.brandNavy,
-    fontSize: 21,
-    lineHeight: 27,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  context: {
-    padding: 14,
-    borderRadius: 19,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 9,
-  },
-  contextDue: { backgroundColor: "#FFF4DA" },
-  contextPaid: { backgroundColor: "#EAF7F0" },
-  contextCopy: { flex: 1, gap: 2 },
-  contextTitle: {
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  contextDetail: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  timeline: {
-    gap: 13,
-    padding: 14,
-    borderRadius: 21,
-    backgroundColor: "#F2F7F8",
-    borderWidth: 1,
-    borderColor: "#DDE7EA",
-  },
-  timelineHeader: { flexDirection: "row", alignItems: "flex-start", gap: 9 },
-  timelineIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FFF1CA",
-  },
-  timelineIconRefund: { backgroundColor: "#EAF7F0" },
-  timelineCopy: { flex: 1, gap: 2 },
-  timelineTitle: {
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  timelineDetail: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 15,
-    fontFamily: "Poppins_500Medium",
-  },
-  timelineEvents: { gap: 1 },
-  timelineEvent: { flexDirection: "row", gap: 9 },
-  timelineRail: { width: 19, alignItems: "center" },
-  timelineDot: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#CFDADF",
-    borderWidth: 2,
-    borderColor: nwcColors.white,
-  },
-  timelineDotComplete: { backgroundColor: nwcColors.success },
-  timelineLine: { width: 2, height: 37, backgroundColor: "#D5E0E3" },
-  timelineEventCopy: { flex: 1, paddingBottom: 10, gap: 1 },
-  timelineEventTitle: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_700Bold",
-  },
-  timelineEventDetail: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  timelineTime: {
-    marginTop: 2,
-    color: nwcColors.muted,
-    fontSize: 9,
-    lineHeight: 13,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  documentActions: { flexDirection: "row", gap: 9 },
-  documentAction: {
-    flex: 1,
-    minHeight: 48,
-    borderRadius: 16,
-    paddingHorizontal: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: "#E1E8EA",
-  },
-  documentText: {
-    flex: 1,
-    color: nwcColors.brandNavy,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  bottomActions: { gap: 9 },
-  disputeAction: {
-    minHeight: 44,
-    borderRadius: 15,
-    paddingHorizontal: 13,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 7,
-    backgroundColor: "#EFF5F6",
-  },
-  disputeActionText: {
-    color: nwcColors.brandNavy,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      backgroundColor: nwcColors.background,
+      paddingHorizontal: 20,
+      paddingTop: 16,
+    },
+    header: {
+      minHeight: 44,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    headerTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    headerSpacer: { width: 44, height: 44 },
+    content: { paddingTop: 22, paddingBottom: 48, gap: 20 },
+    titleBlock: { gap: 3 },
+    eyebrow: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.6,
+    },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 29,
+      lineHeight: 37,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: -0.5,
+    },
+    summary: {
+      gap: 14,
+      padding: 15,
+      borderRadius: 23,
+      backgroundColor: nwcColors.surfaceRaised,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    summaryHead: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
+    summaryIcon: {
+      width: 42,
+      height: 42,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    summaryCopy: { flex: 1, gap: 2 },
+    summaryTitle: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    summaryRoute: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    dates: {
+      flexDirection: "row",
+      gap: 18,
+      paddingTop: 13,
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+    },
+    dateCell: { flex: 1, gap: 2 },
+    dateLabel: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    dateValue: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    reminderCard: {
+      minHeight: 66,
+      borderRadius: 19,
+      padding: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 9,
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    reminderCardOn: {
+      backgroundColor: nwcColors.surfaceRaised,
+      borderColor: nwcColors.border,
+    },
+    reminderIcon: {
+      width: 37,
+      height: 37,
+      borderRadius: 13,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    reminderCopy: { flex: 1, gap: 1 },
+    reminderTitle: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    reminderDetail: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    reminderToggle: {
+      width: 37,
+      height: 23,
+      padding: 3,
+      borderRadius: 12,
+      backgroundColor: nwcColors.tintCAD4D8,
+      justifyContent: "center",
+    },
+    reminderToggleOn: {
+      alignItems: "flex-end",
+      backgroundColor: nwcColors.brandNavy,
+    },
+    reminderThumb: {
+      width: 17,
+      height: 17,
+      borderRadius: 9,
+      backgroundColor: nwcColors.surfaceElevated,
+    },
+    reminderThumbOn: { backgroundColor: nwcColors.primary },
+    charges: {
+      gap: 0,
+      padding: 15,
+      borderRadius: 23,
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    chargesLabel: {
+      marginBottom: 4,
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.55,
+    },
+    chargeRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: 15,
+      paddingVertical: 12,
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+    },
+    chargeCopy: { flex: 1, gap: 2 },
+    chargeTitle: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_700Bold",
+    },
+    chargeDetail: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    chargeAmount: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    total: {
+      marginTop: 2,
+      paddingTop: 13,
+      borderTopWidth: 1.5,
+      borderTopColor: nwcColors.border,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    totalLabel: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    totalAmount: {
+      color: nwcColors.foreground,
+      fontSize: 21,
+      lineHeight: 27,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    context: {
+      padding: 14,
+      borderRadius: 19,
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: 9,
+    },
+    contextDue: { backgroundColor: nwcColors.surfaceRaised },
+    contextPaid: { backgroundColor: nwcColors.surfaceRaised },
+    contextCopy: { flex: 1, gap: 2 },
+    contextTitle: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contextDetail: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    timeline: {
+      gap: 13,
+      padding: 14,
+      borderRadius: 21,
+      backgroundColor: nwcColors.surfaceRaised,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    timelineHeader: { flexDirection: "row", alignItems: "flex-start", gap: 9 },
+    timelineIcon: {
+      width: 38,
+      height: 38,
+      borderRadius: 13,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    timelineIconRefund: { backgroundColor: nwcColors.surfaceRaised },
+    timelineCopy: { flex: 1, gap: 2 },
+    timelineTitle: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    timelineDetail: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 15,
+      fontFamily: "Poppins_500Medium",
+    },
+    timelineEvents: { gap: 1 },
+    timelineEvent: { flexDirection: "row", gap: 9 },
+    timelineRail: { width: 19, alignItems: "center" },
+    timelineDot: {
+      width: 18,
+      height: 18,
+      borderRadius: 9,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.tintCFDADF,
+      borderWidth: 2,
+      borderColor: nwcColors.white,
+    },
+    timelineDotComplete: { backgroundColor: nwcColors.success },
+    timelineLine: {
+      width: 2,
+      height: 37,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    timelineEventCopy: { flex: 1, paddingBottom: 10, gap: 1 },
+    timelineEventTitle: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_700Bold",
+    },
+    timelineEventDetail: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    timelineTime: {
+      marginTop: 2,
+      color: nwcColors.muted,
+      fontSize: 9,
+      lineHeight: 13,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    documentActions: { flexDirection: "row", gap: 9 },
+    documentAction: {
+      flex: 1,
+      minHeight: 48,
+      borderRadius: 16,
+      paddingHorizontal: 11,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    documentText: {
+      flex: 1,
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    bottomActions: { gap: 9 },
+    disputeAction: {
+      minHeight: 44,
+      borderRadius: 15,
+      paddingHorizontal: 13,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 7,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    disputeActionText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

@@ -1,3 +1,5 @@
+import {
+  useNwcColors, } from "@/ui/use-nwc-colors";
 import { useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
@@ -12,12 +14,14 @@ import {
 import { repositories } from "@/lib/repositories";
 import { isValidInternationalMobile } from "@/lib/auth-flow";
 import { formatMoney } from "@/lib/domain/money";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import type { MobileMoneyDetails } from "@/lib/domain/billing";
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function WalletDepositScreen() {
+  const nwcColors = useNwcColors();
+
   const params = useLocalSearchParams<{ amount: string; depositId?: string }>();
   const amount = Number(params.amount);
   const validAmount = Number.isFinite(amount) && amount > 0;
@@ -87,8 +91,8 @@ export default function WalletDepositScreen() {
           <Text
             style={{
               fontSize: 22,
-              fontFamily: "Poppins_800ExtraBold",
-              color: nwcColors.brandNavy,
+              fontFamily: "Poppins_600SemiBold",
+              color: nwcColors.foreground,
             }}
           >
             Wallet deposit
@@ -105,9 +109,9 @@ export default function WalletDepositScreen() {
           </Text>
           <Text
             style={{
-              fontFamily: "Poppins_800ExtraBold",
+              fontFamily: "Poppins_600SemiBold",
               fontSize: 32,
-              color: nwcColors.brandNavy,
+              color: nwcColors.foreground,
             }}
           >
             {validAmount ? formatDepositAmount(amount) : "Invalid amount"}
@@ -117,8 +121,8 @@ export default function WalletDepositScreen() {
           <>
             <Text
               style={{
-                fontFamily: "Poppins_800ExtraBold",
-                color: nwcColors.brandNavy,
+                fontFamily: "Poppins_600SemiBold",
+                color: nwcColors.foreground,
               }}
             >
               Pay with mobile money
@@ -145,9 +149,9 @@ export default function WalletDepositScreen() {
           <View style={{ gap: 12 }}>
             <Text
               style={{
-                fontFamily: "Poppins_800ExtraBold",
+                fontFamily: "Poppins_600SemiBold",
                 fontSize: 22,
-                color: nwcColors.brandNavy,
+                color: nwcColors.foreground,
               }}
             >
               {state === "confirmed"

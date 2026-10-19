@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MobileInput } from "@/components/ui/mobile-input";
 import { useEffect, useState, type PropsWithChildren } from "react";
 import { ContactPickerAction } from "@/components/ui/contact-picker-action";
@@ -17,7 +18,7 @@ import { BookingMapDrawerFrame } from "@/components/booking/booking-map-drawer-f
 import { AppIcon, type AppIconName } from "@/components/ui/app-icon";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/nwc-ui";
 import type { DeliveryMapService } from "@/lib/domain/delivery-map";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useBookingDraft } from "@/stores/booking-draft";
 import type { Address, BookingStep } from "@/types/cargo";
 
@@ -56,6 +57,9 @@ export function BookingScreen({
   progressSteps?: BookingProgressStep[];
   service?: DeliveryMapService;
 }>) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const resolvedService = service ?? serviceFromLabel(serviceLabel);
   const route = useBookingMapRoute(resolvedService);
   const activeIndex = Math.max(
@@ -189,6 +193,9 @@ export function ProgressSteps({
   activeStep: string;
   steps?: BookingProgressStep[];
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const activeIndex = Math.max(
     0,
     progressSteps.findIndex((step) => step.id === activeStep),
@@ -236,6 +243,11 @@ export function FormField({
   icon?: AppIconName;
   onContactPicked?: (contact: DeviceContact) => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+  const contactSuggestionStyles =
+    createThemedStyles_contactSuggestionStyles(nwcColors);
+
   const [focused, setFocused] = useState(false);
   const [suggestions, setSuggestions] = useState<DeviceContact[]>([]);
   const query = props.value ?? "";
@@ -317,7 +329,7 @@ export function FormField({
               <AppIcon
                 name="account-outline"
                 size={22}
-                color={nwcColors.brandNavy}
+                color={nwcColors.foreground}
               />
               <View style={{ flex: 1 }}>
                 <Text numberOfLines={1} style={contactSuggestionStyles.name}>
@@ -348,6 +360,9 @@ export function ChoiceTile({
   selected: boolean;
   onPress: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <TouchableOpacity
       accessibilityRole="radio"
@@ -380,6 +395,9 @@ export function BookingSection({
   label,
   children,
 }: PropsWithChildren<{ label?: string }>) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <View style={styles.bookingSection}>
       {label ? <Text style={styles.sectionLabel}>{label}</Text> : null}
@@ -392,6 +410,9 @@ export function OptionalDetails({
   label = "Add details",
   children,
 }: PropsWithChildren<{ label?: string }>) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [open, setOpen] = useState(false);
   return (
     <View style={styles.optionalWrap}>
@@ -409,7 +430,7 @@ export function OptionalDetails({
         <AppIcon
           name={open ? "chevron-up" : "plus"}
           size={19}
-          color={nwcColors.brandNavy}
+          color={nwcColors.foreground}
         />
       </TouchableOpacity>
       {open ? <View style={styles.optionalContent}>{children}</View> : null}
@@ -426,6 +447,9 @@ export function SummaryRow({
   value: string;
   onEdit?: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <View style={styles.summaryRow}>
       <View style={styles.summaryCopy}>
@@ -446,249 +470,255 @@ export function SummaryRow({
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: nwcColors.background },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 18,
-    paddingTop: 4,
-    paddingBottom: 8,
-  },
-  topBarTitle: {
-    color: nwcColors.brandNavy,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  topBarSpacer: { height: 44, width: 44 },
-  progress: { paddingHorizontal: 20, paddingBottom: 13, gap: 7 },
-  progressMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  progressTrack: { flexDirection: "row", gap: 5 },
-  progressSegment: {
-    height: 3,
-    flex: 1,
-    borderRadius: 3,
-    backgroundColor: "#DDE6EA",
-  },
-  progressSegmentActive: { backgroundColor: nwcColors.primary },
-  progressLabel: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_700Bold",
-  },
-  progressName: {
-    color: nwcColors.brandNavy,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  scrollContent: { flexGrow: 1, paddingHorizontal: 20, paddingTop: 18 },
-  kicker: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-  },
-  bookingTitle: {
-    color: nwcColors.foreground,
-    fontSize: 27,
-    lineHeight: 34,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: -0.45,
-    marginTop: 4,
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 14,
-    lineHeight: 21,
-    fontFamily: "Poppins_500Medium",
-    marginTop: 5,
-  },
-  content: { marginTop: 22, gap: 18 },
-  footer: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: nwcColors.border,
-    backgroundColor: nwcColors.surface,
-  },
-  secondaryFooterButton: { marginBottom: 9 },
-  fieldWrap: { gap: 7 },
-  fieldLabel: {
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_700Bold",
-  },
-  inputFrame: {
-    minHeight: 58,
-    borderRadius: 19,
-    borderWidth: 1,
-    borderColor: nwcColors.border,
-    backgroundColor: nwcColors.surface,
-    paddingHorizontal: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  input: {
-    color: nwcColors.foreground,
-    flex: 1,
-    minHeight: 54,
-    fontSize: 16,
-    lineHeight: 21,
-    fontFamily: "Poppins_600SemiBold",
-    paddingVertical: 0,
-  },
-  bookingSection: { gap: 10 },
-  sectionLabel: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-    marginBottom: 2,
-  },
-  choiceTile: {
-    minHeight: 78,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    borderWidth: 1,
-    borderColor: nwcColors.border,
-    borderRadius: 21,
-    backgroundColor: nwcColors.surface,
-    padding: 13,
-  },
-  choiceTileSelected: {
-    borderColor: nwcColors.brandNavy,
-    backgroundColor: "#F2F8FA",
-  },
-  choiceIcon: {
-    width: 42,
-    height: 42,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 14,
-    backgroundColor: "#EAF1F4",
-  },
-  choiceIconSelected: { backgroundColor: nwcColors.primary },
-  choiceCopy: { flex: 1, gap: 2 },
-  choiceTitle: {
-    color: nwcColors.foreground,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  choiceDetail: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_500Medium",
-  },
-  radio: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: nwcColors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  radioSelected: { borderColor: nwcColors.brandNavy },
-  radioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: nwcColors.brandNavy,
-  },
-  summaryRow: {
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: nwcColors.border,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  summaryCopy: { flex: 1, gap: 3 },
-  summaryLabel: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: "800",
-  },
-  summaryValue: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontWeight: "700",
-  },
-  editButton: { minHeight: 38, justifyContent: "center", paddingHorizontal: 6 },
-  editButtonText: {
-    color: nwcColors.info,
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "800",
-  },
-  optionalWrap: { gap: 10 },
-  optionalToggle: {
-    minHeight: 48,
-    paddingHorizontal: 15,
-    borderRadius: 17,
-    backgroundColor: "#EEF3F5",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  optionalLabel: {
-    color: nwcColors.brandNavy,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  optionalContent: { gap: 12 },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: nwcColors.background },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 18,
+      paddingTop: 4,
+      paddingBottom: 8,
+    },
+    topBarTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    topBarSpacer: { height: 44, width: 44 },
+    progress: { paddingHorizontal: 20, paddingBottom: 13, gap: 7 },
+    progressMeta: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    progressTrack: { flexDirection: "row", gap: 5 },
+    progressSegment: {
+      height: 3,
+      flex: 1,
+      borderRadius: 3,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    progressSegmentActive: { backgroundColor: nwcColors.primary },
+    progressLabel: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_700Bold",
+    },
+    progressName: {
+      color: nwcColors.foreground,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    scrollContent: { flexGrow: 1, paddingHorizontal: 20, paddingTop: 18 },
+    kicker: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+    },
+    bookingTitle: {
+      color: nwcColors.foreground,
+      fontSize: 27,
+      lineHeight: 34,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: -0.45,
+      marginTop: 4,
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 14,
+      lineHeight: 21,
+      fontFamily: "Poppins_500Medium",
+      marginTop: 5,
+    },
+    content: { marginTop: 22, gap: 20 },
+    footer: {
+      paddingHorizontal: 20,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+      backgroundColor: nwcColors.surface,
+    },
+    secondaryFooterButton: { minHeight: 44, marginBottom: 9 },
+    fieldWrap: { gap: 7 },
+    fieldLabel: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_700Bold",
+    },
+    inputFrame: {
+      minHeight: 58,
+      borderRadius: 19,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surface,
+      paddingHorizontal: 15,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    input: {
+      color: nwcColors.foreground,
+      flex: 1,
+      minHeight: 54,
+      fontSize: 16,
+      lineHeight: 21,
+      fontFamily: "Poppins_600SemiBold",
+      paddingVertical: 0,
+    },
+    bookingSection: { gap: 10 },
+    sectionLabel: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.5,
+      textTransform: "uppercase",
+      marginBottom: 2,
+    },
+    choiceTile: {
+      minHeight: 78,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      borderRadius: 21,
+      backgroundColor: nwcColors.surface,
+      padding: 13,
+    },
+    choiceTileSelected: {
+      borderColor: nwcColors.brandNavy,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    choiceIcon: {
+      width: 42,
+      height: 42,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 14,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    choiceIconSelected: { backgroundColor: nwcColors.primary },
+    choiceCopy: { flex: 1, gap: 2 },
+    choiceTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    choiceDetail: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_500Medium",
+    },
+    radio: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      borderWidth: 1.5,
+      borderColor: nwcColors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    radioSelected: { borderColor: nwcColors.brandNavy },
+    radioDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: nwcColors.brandNavy,
+    },
+    summaryRow: {
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    summaryCopy: { flex: 1, gap: 3 },
+    summaryLabel: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: "800",
+    },
+    summaryValue: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontWeight: "700",
+    },
+    editButton: {
+      minHeight: 44,
+      justifyContent: "center",
+      paddingHorizontal: 6,
+    },
+    editButtonText: {
+      color: nwcColors.info,
+      fontSize: 13,
+      lineHeight: 18,
+      fontWeight: "800",
+    },
+    optionalWrap: { gap: 10 },
+    optionalToggle: {
+      minHeight: 48,
+      paddingHorizontal: 15,
+      borderRadius: 17,
+      backgroundColor: nwcColors.surfaceRaised,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    optionalLabel: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    optionalContent: { gap: 12 },
+  });
 
-const contactSuggestionStyles = StyleSheet.create({
-  dropdown: {
-    marginTop: 4,
-    borderRadius: 16,
-    backgroundColor: nwcColors.white,
-    borderWidth: 1,
-    borderColor: nwcColors.border,
-    shadowColor: nwcColors.brandNavy,
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 12,
-    zIndex: 50,
-  },
-  row: {
-    minHeight: 58,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  name: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 14,
-    color: nwcColors.foreground,
-  },
-  phone: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 12,
-    color: nwcColors.muted,
-  },
-});
+const createThemedStyles_contactSuggestionStyles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    dropdown: {
+      marginTop: 4,
+      borderRadius: 16,
+      backgroundColor: nwcColors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      shadowColor: nwcColors.brandNavy,
+      shadowOpacity: 0.06,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 5 },
+      elevation: 2,
+      zIndex: 50,
+    },
+    row: {
+      minHeight: 58,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    name: {
+      fontFamily: "Poppins_600SemiBold",
+      fontSize: 14,
+      color: nwcColors.foreground,
+    },
+    phone: {
+      fontFamily: "Poppins_500Medium",
+      fontSize: 12,
+      color: nwcColors.muted,
+    },
+  });

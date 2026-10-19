@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { router, type Href } from "expo-router";
@@ -10,10 +11,13 @@ import {
 import { AppIcon } from "@/components/ui/app-icon";
 import { useAppToast } from "@/components/ui/app-toast";
 import { isValidPhoneInput } from "@/lib/auth-flow";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useCustomerAuth } from "@/stores/customer-auth";
 
 export default function SignInScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -118,77 +122,78 @@ export default function SignInScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  rememberRow: {
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 9,
-  },
-  checkbox: {
-    width: 21,
-    height: 21,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: nwcColors.border,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.white,
-  },
-  checkboxChecked: {
-    borderColor: nwcColors.brandNavy,
-    backgroundColor: nwcColors.brandNavy,
-  },
-  rememberText: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  footer: { alignItems: "center", gap: 12, marginTop: 2 },
-  accountPrompt: { flexDirection: "row", alignItems: "center", gap: 5 },
-  promptText: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  linkText: {
-    color: nwcColors.info,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  divider: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    marginVertical: 4,
-  },
-  line: { flex: 1, height: 1, backgroundColor: nwcColors.border },
-  or: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-  },
-  googleButton: {
-    width: "100%",
-    minHeight: 52,
-    borderWidth: 1,
-    borderColor: nwcColors.border,
-    borderRadius: 18,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    backgroundColor: nwcColors.white,
-  },
-  googleText: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: "Poppins_700Bold",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    rememberRow: {
+      alignSelf: "flex-start",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 9,
+    },
+    checkbox: {
+      width: 21,
+      height: 21,
+      borderRadius: 6,
+      borderWidth: 1.5,
+      borderColor: nwcColors.border,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceElevated,
+    },
+    checkboxChecked: {
+      borderColor: nwcColors.brandNavy,
+      backgroundColor: nwcColors.brandNavy,
+    },
+    rememberText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    footer: { alignItems: "center", gap: 12, marginTop: 2 },
+    accountPrompt: { flexDirection: "row", alignItems: "center", gap: 5 },
+    promptText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    linkText: {
+      color: nwcColors.info,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    divider: {
+      width: "100%",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      marginVertical: 4,
+    },
+    line: { flex: 1, height: 1, backgroundColor: nwcColors.border },
+    or: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+    },
+    googleButton: {
+      width: "100%",
+      minHeight: 52,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      borderRadius: 18,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 10,
+      backgroundColor: nwcColors.surfaceElevated,
+    },
+    googleText: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 20,
+      fontFamily: "Poppins_700Bold",
+    },
+  });

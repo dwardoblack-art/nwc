@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { InvoiceSkeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import {
@@ -17,12 +18,15 @@ import {
   Screen,
 } from "@/components/ui/nwc-ui";
 import { formatMoney } from "@/lib/domain/money";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
 
 const topUpOptions = [100, 250, 500];
 
 export default function WalletScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const {
     walletLoading,
     walletError,
@@ -219,158 +223,162 @@ export default function WalletScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    backgroundColor: nwcColors.background,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-  },
-  header: {
-    minHeight: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerTitle: {
-    color: nwcColors.brandNavy,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  headerSpacer: { width: 44, height: 44 },
-  content: { paddingTop: 22, paddingBottom: 48, gap: 24 },
-  hero: {
-    minHeight: 200,
-    borderRadius: 27,
-    padding: 19,
-    backgroundColor: nwcColors.brandNavy,
-    gap: 8,
-  },
-  heroTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  walletIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  mockTag: {
-    color: "#BCD0D9",
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.45,
-  },
-  heroLabel: {
-    marginTop: 3,
-    color: "#B3C4CE",
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  balance: {
-    color: nwcColors.white,
-    fontSize: 33,
-    lineHeight: 41,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: -0.7,
-  },
-  heroDetail: {
-    marginTop: "auto",
-    paddingTop: 11,
-    borderTopWidth: 1,
-    borderTopColor: "#28465C",
-    color: "#D6E3E8",
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  section: { gap: 9 },
-  sectionTitle: {
-    color: nwcColors.foreground,
-    fontSize: 18,
-    lineHeight: 24,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  sectionDetail: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_500Medium",
-  },
-  amounts: { flexDirection: "row", gap: 8 },
-  amountOption: {
-    flex: 1,
-    minHeight: 47,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: "#E0E8EA",
-  },
-  amountOptionActive: {
-    backgroundColor: "#FFF1CA",
-    borderColor: nwcColors.primary,
-  },
-  amountText: {
-    color: nwcColors.brandNavy,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  amountTextActive: { color: nwcColors.primaryInk },
-  confirmation: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_600SemiBold",
-    textAlign: "center",
-  },
-  confirmationSuccess: { color: nwcColors.success },
-  activityCard: { paddingVertical: 0 },
-  activity: {
-    minHeight: 65,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingVertical: 10,
-  },
-  activityDivider: { borderBottomWidth: 1, borderBottomColor: "#E8EEEF" },
-  activityIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#EAF7F0",
-  },
-  activityIconPayment: { backgroundColor: "#FFF1CA" },
-  activityCopy: { flex: 1, gap: 1 },
-  activityLabel: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  activityDetail: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  activityAmount: {
-    color: nwcColors.success,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  activityAmountPayment: { color: nwcColors.primaryInk },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      backgroundColor: nwcColors.background,
+      paddingHorizontal: 20,
+      paddingTop: 16,
+    },
+    header: {
+      minHeight: 44,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    headerTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    headerSpacer: { width: 44, height: 44 },
+    content: { paddingTop: 22, paddingBottom: 48, gap: 24 },
+    hero: {
+      minHeight: 200,
+      borderRadius: 27,
+      padding: 19,
+      backgroundColor: nwcColors.brandNavy,
+      gap: 8,
+    },
+    heroTop: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    walletIcon: {
+      width: 44,
+      height: 44,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    mockTag: {
+      color: nwcColors.tintBCD0D9,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.45,
+    },
+    heroLabel: {
+      marginTop: 3,
+      color: nwcColors.tintB3C4CE,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    balance: {
+      color: nwcColors.white,
+      fontSize: 33,
+      lineHeight: 41,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: -0.7,
+    },
+    heroDetail: {
+      marginTop: "auto",
+      paddingTop: 11,
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+      color: nwcColors.tintD6E3E8,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    section: { gap: 9 },
+    sectionTitle: {
+      color: nwcColors.foreground,
+      fontSize: 18,
+      lineHeight: 24,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    sectionDetail: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_500Medium",
+    },
+    amounts: { flexDirection: "row", gap: 8 },
+    amountOption: {
+      flex: 1,
+      minHeight: 47,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    amountOptionActive: {
+      backgroundColor: nwcColors.surfaceRaised,
+      borderColor: nwcColors.primary,
+    },
+    amountText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    amountTextActive: { color: nwcColors.primaryInk },
+    confirmation: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+      textAlign: "center",
+    },
+    confirmationSuccess: { color: nwcColors.success },
+    activityCard: { paddingVertical: 0 },
+    activity: {
+      minHeight: 65,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      paddingVertical: 10,
+    },
+    activityDivider: {
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
+    },
+    activityIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: 13,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    activityIconPayment: { backgroundColor: nwcColors.surfaceRaised },
+    activityCopy: { flex: 1, gap: 1 },
+    activityLabel: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    activityDetail: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    activityAmount: {
+      color: nwcColors.success,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    activityAmountPayment: { color: nwcColors.primaryInk },
+  });

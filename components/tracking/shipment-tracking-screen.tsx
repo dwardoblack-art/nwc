@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useState } from "react";
 import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
@@ -13,7 +14,7 @@ import {
 import { IconButton, Screen } from "@/components/ui/nwc-ui";
 import { getLiveTrackingHistory } from "@/lib/live-tracking-history";
 import { trackingRouteOverview } from "@/lib/maps/tracking-route";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import type { Shipment } from "@/types/cargo";
 
 export function ShipmentTrackingScreen({
@@ -27,6 +28,9 @@ export function ShipmentTrackingScreen({
   onRefresh: () => void;
   customerActions?: boolean;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [historyOpen, setHistoryOpen] = useState(true);
   const route = trackingRouteOverview(shipment);
   const service =
@@ -115,27 +119,28 @@ export function ShipmentTrackingScreen({
     </Screen>
   );
 }
-const styles = StyleSheet.create({
-  page: { paddingBottom: 32 },
-  map: { height: 328 },
-  controls: {
-    position: "absolute",
-    top: 16,
-    left: 20,
-    flexDirection: "row",
-    gap: 10,
-  },
-  content: { padding: 20, gap: 16 },
-  service: {
-    fontFamily: "Poppins_800ExtraBold",
-    fontSize: 20,
-    lineHeight: 28,
-    color: nwcColors.brandNavy,
-  },
-  note: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 12,
-    lineHeight: 18,
-    color: nwcColors.muted,
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: { paddingBottom: 32 },
+    map: { height: 328 },
+    controls: {
+      position: "absolute",
+      top: 16,
+      left: 20,
+      flexDirection: "row",
+      gap: 10,
+    },
+    content: { padding: 20, gap: 20 },
+    service: {
+      fontFamily: "Poppins_600SemiBold",
+      fontSize: 20,
+      lineHeight: 28,
+      color: nwcColors.foreground,
+    },
+    note: {
+      fontFamily: "Poppins_500Medium",
+      fontSize: 12,
+      lineHeight: 18,
+      color: nwcColors.muted,
+    },
+  });

@@ -8,5 +8,12 @@ export default function SessionExpiredScreen() {
     await signOut();
     router.replace("/auth/phone" as Href);
   };
-  return <AuthScreen title="Session expired" detail="For your account safety, please sign in again to continue managing your cargo." primaryLabel="Sign in again" onPrimary={continueToLogin} />;
+  return (
+    <AuthScreen
+      title="Session expired"
+      detail="For your account safety, please sign in again to continue managing your cargo."
+      primaryLabel="Sign in again"
+      onPrimary={continueToLogin}
+    />
+  );
 }

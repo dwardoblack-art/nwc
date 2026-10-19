@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MapLoadingOverlay } from "./map-loading-overlay";
 import { Skeleton, SkeletonGroup } from "@/components/ui/skeleton";
 import { BrandedMapPin } from "./branded-map-pin";
@@ -12,7 +13,7 @@ import {
   type DeviceLocation,
 } from "@/lib/services/device/location-service";
 import { isInLocalCity } from "@/lib/maps/local-city";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import type { Address } from "@/types/cargo";
 import type { LocalLocationPickerProps } from "./local-location-picker";
 
@@ -25,6 +26,9 @@ export function LocalLocationPicker({
   onClose,
   onConfirm,
 }: LocalLocationPickerProps) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const insets = useSafeAreaInsets();
   const map = useRef<MapView>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -257,34 +261,40 @@ export function LocalLocationPicker({
     </Modal>
   );
 }
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: "white" },
-  header: { flexDirection: "row", alignItems: "center", gap: 12, padding: 16 },
-  title: {
-    fontSize: 23,
-    fontFamily: "Poppins_700Bold",
-    color: nwcColors.brandNavy,
-  },
-  map: { flex: 1 },
-  centerPin: {
-    position: "absolute",
-    left: "50%",
-    top: "50%",
-    marginLeft: -26,
-    marginTop: -59,
-  },
-  controls: { position: "absolute", right: 16, top: 16, gap: 8 },
-  footer: {
-    padding: 20,
-    gap: 12,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    backgroundColor: nwcColors.surfaceAccent,
-  },
-  hint: { color: nwcColors.muted, fontSize: 14 },
-  address: {
-    fontSize: 17,
-    color: nwcColors.foreground,
-    fontFamily: "Poppins_600SemiBold",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: { flex: 1, backgroundColor: "white" },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      padding: 16,
+    },
+    title: {
+      fontSize: 23,
+      fontFamily: "Poppins_700Bold",
+      color: nwcColors.foreground,
+    },
+    map: { flex: 1 },
+    centerPin: {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      marginLeft: -26,
+      marginTop: -59,
+    },
+    controls: { position: "absolute", right: 16, top: 16, gap: 8 },
+    footer: {
+      padding: 20,
+      gap: 12,
+      borderTopLeftRadius: 28,
+      borderTopRightRadius: 28,
+      backgroundColor: nwcColors.surfaceAccent,
+    },
+    hint: { color: nwcColors.muted, fontSize: 14 },
+    address: {
+      fontSize: 17,
+      color: nwcColors.foreground,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

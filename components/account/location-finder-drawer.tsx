@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { LocalLocationPicker } from "@/components/map/local-location-picker";
 import { useAppToast } from "@/components/ui/app-toast";
 import { mobileInputStyles, MobileInput } from "@/components/ui/mobile-input";
@@ -17,7 +18,6 @@ import {
   searchRouteSuggestions,
   type RouteSuggestion,
 } from "@/lib/route-autocomplete";
-import { nwcColors } from "@/lib/nwc-theme";
 
 type LocationFinderDrawerProps = {
   visible: boolean;
@@ -32,6 +32,9 @@ export function LocationFinderDrawer({
   onDismiss,
   onSave,
 }: LocationFinderDrawerProps) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [mapOpen, setMapOpen] = useState(false);
   const toast = useAppToast();
   const [label, setLabel] = useState("");
@@ -162,7 +165,7 @@ export function LocationFinderDrawer({
               setSelected(null);
             }}
             placeholder="Find a nearby location"
-            placeholderTextColor="#91A0AE"
+            placeholderTextColor={nwcColors.tint91A0AE}
             returnKeyType="search"
             style={[styles.searchInput, mobileInputStyles.text]}
           />
@@ -178,7 +181,7 @@ export function LocationFinderDrawer({
                       : "map-marker-outline"
                   }
                   size={18}
-                  color={nwcColors.brandNavy}
+                  color={nwcColors.foreground}
                 />
               </View>
               <View style={styles.resultCopy}>
@@ -244,60 +247,61 @@ export function LocationFinderDrawer({
   );
 }
 
-const styles = StyleSheet.create({
-  map: { borderRadius: 20 },
-  input: {
-    minHeight: 50,
-    paddingHorizontal: 13,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#DCE6E8",
-    backgroundColor: nwcColors.surfaceElevated,
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  search: {
-    minHeight: 50,
-    paddingHorizontal: 13,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#DCE6E8",
-    backgroundColor: nwcColors.surfaceElevated,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  searchInput: {
-    flex: 1,
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  results: { gap: 7 },
-  result: {
-    minHeight: 53,
-    borderRadius: 15,
-    paddingLeft: 9,
-    paddingRight: 7,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: nwcColors.surface,
-  },
-  resultIcon: {
-    width: 35,
-    height: 35,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.surfaceNavyTint,
-  },
-  resultCopy: { flex: 1 },
-  resultLabelRow: { flex: 1 },
-  useAction: { minHeight: 39, borderRadius: 13 },
-  actions: { flexDirection: "row", gap: 9 },
-  action: { flex: 1 },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    map: { borderRadius: 20 },
+    input: {
+      minHeight: 50,
+      paddingHorizontal: 13,
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceElevated,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    search: {
+      minHeight: 50,
+      paddingHorizontal: 13,
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceElevated,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    searchInput: {
+      flex: 1,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    results: { gap: 7 },
+    result: {
+      minHeight: 53,
+      borderRadius: 15,
+      paddingLeft: 9,
+      paddingRight: 7,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      backgroundColor: nwcColors.surface,
+    },
+    resultIcon: {
+      width: 35,
+      height: 35,
+      borderRadius: 12,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceNavyTint,
+    },
+    resultCopy: { flex: 1 },
+    resultLabelRow: { flex: 1 },
+    useAction: { minHeight: 44, borderRadius: 13 },
+    actions: { flexDirection: "row", gap: 9 },
+    action: { minHeight: 44, flex: 1 },
+  });

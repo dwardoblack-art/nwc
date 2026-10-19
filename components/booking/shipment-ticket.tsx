@@ -1,7 +1,8 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { Skeleton, SkeletonGroup } from "@/components/ui/skeleton";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AppIcon } from "@/components/ui/app-icon";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { cargoItemsSummary } from "@/lib/booking-cargo";
 import type {
   ImportBookingDraft,
@@ -26,6 +27,9 @@ export function ShipmentTicket({
   onEditContacts?: () => void;
   onEditCargo?: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const local = draft.service === "local";
   const international = draft.service === "import";
   const origin = local
@@ -187,7 +191,11 @@ export function ShipmentTicket({
         accessibilityLabel="Edit cargo"
         style={styles.cargo}
       >
-        <AppIcon name="package-variant" size={23} color={nwcColors.brandNavy} />
+        <AppIcon
+          name="package-variant"
+          size={23}
+          color={nwcColors.foreground}
+        />
         <View style={{ flex: 1 }}>
           <Text style={styles.cargoTitle}>
             {cargoItemsSummary(items, "Add package details")}
@@ -207,7 +215,7 @@ export function ShipmentTicket({
           <AppIcon
             name="pencil-outline"
             size={18}
-            color={nwcColors.brandNavy}
+            color={nwcColors.foreground}
           />
         ) : null}
       </TouchableOpacity>
@@ -223,6 +231,9 @@ export function ShipmentCharges({
   loading?: boolean;
   error?: string;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   if (loading)
     return (
       <View style={styles.charges}>
@@ -263,119 +274,125 @@ export function ShipmentCharges({
     </View>
   );
 }
-const styles = StyleSheet.create({
-  ticket: {
-    backgroundColor: nwcColors.brandNavy,
-    borderRadius: 24,
-    overflow: "hidden",
-  },
-  top: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#365366",
-    gap: 8,
-  },
-  brand: { flexDirection: "row", gap: 10, alignItems: "center" },
-  brandName: {
-    color: "white",
-    fontFamily: "Poppins_700Bold",
-    fontSize: 15,
-    letterSpacing: 0.6,
-  },
-  service: {
-    color: nwcColors.primary,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 13,
-  },
-  body: { padding: 20, gap: 24 },
-  referenceRow: { gap: 10 },
-  reference: {
-    color: "white",
-    fontSize: 21,
-    fontFamily: "Poppins_700Bold",
-    marginTop: 5,
-  },
-  chip: {
-    alignSelf: "flex-start",
-    borderRadius: 20,
-    backgroundColor: "#294757",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  chipText: {
-    color: nwcColors.primary,
-    fontSize: 11,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  label: { color: "#BCD0DA", fontSize: 11, fontFamily: "Poppins_500Medium" },
-  route: { flexDirection: "row", gap: 12 },
-  routeMarks: { alignItems: "center", paddingTop: 7, paddingBottom: 4 },
-  dot: {
-    width: 12,
-    height: 12,
-    borderWidth: 3,
-    borderColor: nwcColors.primary,
-    borderRadius: 8,
-  },
-  line: {
-    flex: 1,
-    borderLeftWidth: 2,
-    borderColor: "#8B823F",
-    minHeight: 30,
-    marginVertical: 5,
-  },
-  place: {
-    color: "white",
-    fontSize: 19,
-    lineHeight: 27,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  perforation: {
-    borderTopWidth: 1,
-    borderStyle: "dashed",
-    borderColor: "#617788",
-  },
-  contacts: { flexDirection: "row", gap: 14 },
-  contact: { flex: 1, gap: 4 },
-  value: { color: "white", fontSize: 14, fontFamily: "Poppins_600SemiBold" },
-  phone: { color: "#D8E3E8", fontSize: 12 },
-  cargo: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: nwcColors.primary,
-  },
-  cargoTitle: {
-    color: nwcColors.brandNavy,
-    fontSize: 15,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  cargoMeta: { color: nwcColors.brandNavy, fontSize: 12, marginTop: 3 },
-  charges: {
-    padding: 18,
-    borderWidth: 1,
-    borderColor: nwcColors.border,
-    borderRadius: 20,
-    gap: 14,
-  },
-  chargesTitle: {
-    fontSize: 16,
-    color: nwcColors.foreground,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  totalRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  totalLabel: { fontSize: 14, color: nwcColors.muted },
-  total: {
-    fontSize: 24,
-    color: nwcColors.brandNavy,
-    fontFamily: "Poppins_700Bold",
-  },
-  note: { fontSize: 12, lineHeight: 18, color: nwcColors.muted },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    ticket: {
+      backgroundColor: nwcColors.brandNavy,
+      borderRadius: 24,
+      overflow: "hidden",
+    },
+    top: {
+      padding: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
+      gap: 8,
+    },
+    brand: { flexDirection: "row", gap: 10, alignItems: "center" },
+    brandName: {
+      color: "white",
+      fontFamily: "Poppins_700Bold",
+      fontSize: 15,
+      letterSpacing: 0.6,
+    },
+    service: {
+      color: nwcColors.primary,
+      fontFamily: "Poppins_500Medium",
+      fontSize: 13,
+    },
+    body: { padding: 20, gap: 24 },
+    referenceRow: { gap: 10 },
+    reference: {
+      color: "white",
+      fontSize: 21,
+      fontFamily: "Poppins_700Bold",
+      marginTop: 5,
+    },
+    chip: {
+      minHeight: 44,
+      alignSelf: "flex-start",
+      borderRadius: 20,
+      backgroundColor: nwcColors.tint294757,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+    },
+    chipText: {
+      color: nwcColors.primary,
+      fontSize: 11,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    label: {
+      color: nwcColors.tintBCD0DA,
+      fontSize: 11,
+      fontFamily: "Poppins_500Medium",
+    },
+    route: { flexDirection: "row", gap: 12 },
+    routeMarks: { alignItems: "center", paddingTop: 7, paddingBottom: 4 },
+    dot: {
+      width: 12,
+      height: 12,
+      borderWidth: 3,
+      borderColor: nwcColors.primary,
+      borderRadius: 8,
+    },
+    line: {
+      flex: 1,
+      borderLeftWidth: 2,
+      borderColor: nwcColors.border,
+      minHeight: 30,
+      marginVertical: 5,
+    },
+    place: {
+      color: "white",
+      fontSize: 19,
+      lineHeight: 27,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    perforation: {
+      borderTopWidth: 1,
+      borderStyle: "dashed",
+      borderColor: nwcColors.border,
+    },
+    contacts: { flexDirection: "row", gap: 14 },
+    contact: { flex: 1, gap: 4 },
+    value: { color: "white", fontSize: 14, fontFamily: "Poppins_600SemiBold" },
+    phone: { color: nwcColors.tintD8E3E8, fontSize: 12 },
+    cargo: {
+      flexDirection: "row",
+      gap: 12,
+      alignItems: "center",
+      padding: 20,
+      backgroundColor: nwcColors.primary,
+    },
+    cargoTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    cargoMeta: { color: nwcColors.foreground, fontSize: 12, marginTop: 3 },
+    charges: {
+      padding: 18,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      borderRadius: 20,
+      gap: 14,
+    },
+    chargesTitle: {
+      fontSize: 16,
+      color: nwcColors.foreground,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    totalRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    totalLabel: { fontSize: 14, color: nwcColors.muted },
+    total: {
+      fontSize: 24,
+      color: nwcColors.foreground,
+      fontFamily: "Poppins_700Bold",
+    },
+    note: { fontSize: 12, lineHeight: 18, color: nwcColors.muted },
+  });

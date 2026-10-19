@@ -1,3 +1,5 @@
+import {
+  useNwcColors, } from "@/ui/use-nwc-colors";
 import { View, Text } from "react-native";
 import type { ComponentProps } from "react";
 
@@ -19,5 +21,18 @@ export type NativeMapSurfaceProps = {
 
 // Native targets provide the live map; unsupported targets explain availability.
 export function NativeMapSurface(_props: NativeMapSurfaceProps) {
-  return <View style={{height:_props.height ?? 328, backgroundColor:"#EEF2F2", alignItems:"center", justifyContent:"center"}}><Text>Open the mobile app to explore the map.</Text></View>;
+  const nwcColors = useNwcColors();
+
+  return (
+    <View
+      style={{
+        height: _props.height ?? 328,
+        backgroundColor: nwcColors.tintEEF2F2,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Text>Open the mobile app to explore the map.</Text>
+    </View>
+  );
 }

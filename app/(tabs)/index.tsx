@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/components/ui/skeleton";
 import {
   ScrollView,
@@ -19,11 +20,14 @@ import {
   firstActiveShipment,
   shipmentDestination,
 } from "@/lib/shipment-navigation";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useCustomerShipments } from "@/lib/use-cases/use-customer-shipments";
 import { useCustomerAuth } from "@/stores/customer-auth";
 
 export default function HomeScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { customer } = useCustomerAuth();
   const shipmentState = useCustomerShipments();
   const contentInsets = useCustomerContentInsets({
@@ -168,6 +172,9 @@ function HomeStateCard({
   compact?: boolean;
   onRetry: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const isError = status === "error";
   if (status === "idle" || status === "loading")
     return <ListSkeleton count={2} />;
@@ -208,96 +215,97 @@ function HomeStateCard({
   );
 }
 
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: nwcColors.background },
-  content: { gap: 24 },
-  activeSection: { gap: 10 },
-  servicesSection: { gap: 10 },
-  sectionHeader: {
-    minHeight: 33,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  sectionEyebrow: {
-    color: nwcColors.info,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: 0.7,
-    textTransform: "uppercase",
-  },
-  sectionTitle: {
-    color: nwcColors.foreground,
-    fontSize: 20,
-    lineHeight: 26,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: -0.25,
-  },
-  sectionAction: {
-    minHeight: 38,
-    paddingHorizontal: 5,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  sectionActionText: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  serviceGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-    justifyContent: "space-between",
-  },
-  ordersSection: { gap: 8 },
-  ordersList: { borderTopWidth: 1, borderTopColor: "#E9EEF0" },
-  stateCard: {
-    minHeight: 116,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    borderRadius: 24,
-    backgroundColor: "#F3F7F8",
-  },
-  stateCardCompact: { minHeight: 86 },
-  stateIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  stateCopy: { flex: 1, gap: 2 },
-  stateTitle: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  stateDetail: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  retryButton: {
-    minHeight: 36,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.brandNavy,
-  },
-  retryText: {
-    color: nwcColors.white,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: { flex: 1, backgroundColor: nwcColors.background },
+    content: { gap: 24 },
+    activeSection: { gap: 10 },
+    servicesSection: { gap: 10 },
+    sectionHeader: {
+      minHeight: 33,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    sectionEyebrow: {
+      color: nwcColors.info,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.7,
+      textTransform: "uppercase",
+    },
+    sectionTitle: {
+      color: nwcColors.foreground,
+      fontSize: 20,
+      lineHeight: 26,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: -0.25,
+    },
+    sectionAction: {
+      minHeight: 44,
+      paddingHorizontal: 5,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2,
+    },
+    sectionActionText: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    serviceGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 10,
+      justifyContent: "space-between",
+    },
+    ordersSection: { gap: 8 },
+    ordersList: { borderTopWidth: 1, borderTopColor: nwcColors.border },
+    stateCard: {
+      minHeight: 116,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      borderRadius: 24,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    stateCardCompact: { minHeight: 86 },
+    stateIcon: {
+      width: 44,
+      height: 44,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    stateCopy: { flex: 1, gap: 2 },
+    stateTitle: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    stateDetail: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    retryButton: {
+      minHeight: 44,
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.brandNavy,
+    },
+    retryText: {
+      color: nwcColors.white,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

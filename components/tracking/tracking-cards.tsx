@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { mobileInputStyles } from "@/components/ui/mobile-input";
 import { useState } from "react";
 import {
@@ -8,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { AppIcon, type AppIconName } from "@/components/ui/app-icon";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { statusPresentation } from "@/lib/shipment-status-presentation";
 import type { LiveTrackingHistoryEvent } from "@/lib/live-tracking-history";
 import {
@@ -18,6 +19,9 @@ import {
 import type { Shipment, TrackingContact } from "@/types/cargo";
 
 export function LiveShipmentContextCard({ shipment }: { shipment: Shipment }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const status = statusPresentation[shipment.status];
   return (
     <View style={styles.contextCard}>
@@ -76,6 +80,9 @@ export function TrackingHistoryPanel({
   open: boolean;
   onToggle: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <View style={styles.historyCard}>
       <TouchableOpacity
@@ -100,7 +107,7 @@ export function TrackingHistoryPanel({
           <AppIcon
             name={open ? "chevron-up" : "chevron-down"}
             size={20}
-            color={nwcColors.brandNavy}
+            color={nwcColors.foreground}
           />
         </View>
       </TouchableOpacity>
@@ -154,6 +161,9 @@ export function TrackingHistoryPanel({
 }
 
 export function TrackingReferenceActions({ reference }: { reference: string }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [feedback, setFeedback] = useState<string>();
   const copy = async () => {
     const result = await copyTrackingNumber(reference);
@@ -173,7 +183,7 @@ export function TrackingReferenceActions({ reference }: { reference: string }) {
           onPress={copy}
           style={styles.referenceAction}
         >
-          <AppIcon name="content-copy" size={18} color={nwcColors.brandNavy} />
+          <AppIcon name="content-copy" size={18} color={nwcColors.foreground} />
           <Text style={styles.referenceActionText}>Copy number</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -186,7 +196,7 @@ export function TrackingReferenceActions({ reference }: { reference: string }) {
           <AppIcon
             name="share-variant-outline"
             size={18}
-            color={nwcColors.brandNavy}
+            color={nwcColors.foreground}
           />
           <Text style={styles.referenceActionText}>Share tracking</Text>
         </TouchableOpacity>
@@ -207,6 +217,9 @@ export function TrackingContactCard({
   onMessage: () => void;
   onCall: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const initials = contact.name
     .split(" ")
     .map((part) => part[0])
@@ -238,7 +251,7 @@ export function TrackingContactCard({
             <AppIcon
               name="shield-check-outline"
               size={13}
-              color={nwcColors.brandNavy}
+              color={nwcColors.foreground}
             />
             <Text style={styles.verifiedText}>Verified</Text>
           </View>
@@ -261,6 +274,9 @@ export function TrackingContactCard({
 }
 
 export function DeliveryProgressCard({ shipment }: { shipment: Shipment }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const progress = shipment.trackingProgress ?? {
     fraction: 0,
     distanceLabel: "Awaiting shipment updates",
@@ -268,7 +284,8 @@ export function DeliveryProgressCard({ shipment }: { shipment: Shipment }) {
     arrivalTime: shipment.eta,
     stages: [],
   };
-  const status = shipment.statusLabel || statusPresentation[shipment.status].label;
+  const status =
+    shipment.statusLabel || statusPresentation[shipment.status].label;
   return (
     <View style={styles.progressCard}>
       <View style={styles.progressHeader}>
@@ -342,6 +359,9 @@ export function TrackingActionList({
   onPickup?: () => void;
   onDelivery?: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const rows: { label: string; icon: AppIconName; onPress: () => void }[] = [
     ...(onPickup
       ? [
@@ -388,7 +408,7 @@ export function TrackingActionList({
           ]}
         >
           <View style={styles.actionIcon}>
-            <AppIcon name={row.icon} size={21} color={nwcColors.brandNavy} />
+            <AppIcon name={row.icon} size={21} color={nwcColors.foreground} />
           </View>
           <Text style={styles.actionLabel}>{row.label}</Text>
           <AppIcon name="chevron-right" size={22} color={nwcColors.muted} />
@@ -405,6 +425,9 @@ export function DeliveryInstructionsCard({
   initialValue?: string;
   onSaved: (value: string) => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [value, setValue] = useState(initialValue ?? "");
   const [saved, setSaved] = useState(false);
   const save = () => {
@@ -436,7 +459,7 @@ export function DeliveryInstructionsCard({
           setSaved(false);
         }}
         placeholder="Delivery instructions"
-        placeholderTextColor="#90A0AA"
+        placeholderTextColor={nwcColors.tint90A0AA}
         multiline
         maxLength={140}
         style={[styles.instructionsInput, mobileInputStyles.text]}
@@ -471,6 +494,9 @@ export function ProofOfDeliveryCard({
   shipment: Shipment;
   onDownload?: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const recipient =
     shipment.service === "local" ? "M. Banda" : "Receiving contact";
   return (
@@ -508,7 +534,7 @@ export function ProofOfDeliveryCard({
           <AppIcon
             name="share-variant-outline"
             size={17}
-            color={nwcColors.brandNavy}
+            color={nwcColors.foreground}
           />
           <Text style={styles.proofDownloadText}>Download proof</Text>
         </TouchableOpacity>
@@ -526,6 +552,9 @@ function CircleAction({
   icon: AppIconName;
   onPress: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <TouchableOpacity
       accessibilityRole="button"
@@ -534,595 +563,604 @@ function CircleAction({
       onPress={onPress}
       style={styles.circleAction}
     >
-      <AppIcon name={icon} size={21} color={nwcColors.brandNavy} />
+      <AppIcon name={icon} size={21} color={nwcColors.foreground} />
     </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({
-  contactCard: {
-    minHeight: 110,
-    borderRadius: 23,
-    backgroundColor: nwcColors.surface,
-    padding: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 11,
-    borderWidth: 1,
-    borderColor: "#E5EBED",
-  },
-  contextCard: {
-    gap: 14,
-    padding: 15,
-    borderRadius: 23,
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: "#E3EAEC",
-  },
-  contextTop: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: 10,
-  },
-  contextReference: {
-    color: nwcColors.info,
-    fontSize: 10,
-    lineHeight: 14,
-    letterSpacing: 0.6,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  contextTitle: {
-    marginTop: 2,
-    maxWidth: 176,
-    color: nwcColors.foreground,
-    fontSize: 17,
-    lineHeight: 23,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  contextStatus: {
-    maxWidth: 126,
-    borderRadius: 11,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: nwcColors.primary,
-  },
-  contextStatusText: {
-    color: nwcColors.primaryInk,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  contextRoute: { flexDirection: "row", alignItems: "center", gap: 8 },
-  contextPlace: { flex: 1, gap: 1 },
-  contextPlaceEnd: { alignItems: "flex-end" },
-  contextPlaceLabel: {
-    color: nwcColors.muted,
-    fontSize: 9,
-    lineHeight: 12,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    fontFamily: "Poppins_700Bold",
-  },
-  contextPlaceValue: {
-    maxWidth: 104,
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  contextPlaceDetail: {
-    maxWidth: 104,
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  contextConnector: {
-    width: 39,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  contextLine: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: "#CAD8DD",
-  },
-  contactAvatar: {
-    width: 58,
-    height: 58,
-    borderRadius: 21,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.brandNavy,
-    borderWidth: 3,
-    borderColor: nwcColors.primary,
-  },
-  contactInitials: {
-    color: nwcColors.white,
-    fontSize: 16,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  contactCopy: { minWidth: 0, flex: 1, gap: 2 },
-  contactNameLine: { flexDirection: "row", alignItems: "center", gap: 7 },
-  contactName: {
-    maxWidth: 106,
-    color: nwcColors.foreground,
-    fontSize: 16,
-    lineHeight: 21,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  rating: { flexDirection: "row", alignItems: "center", gap: 2 },
-  ratingText: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 16,
-    fontFamily: "Poppins_700Bold",
-  },
-  contactRole: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_500Medium",
-  },
-  verified: {
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-    borderRadius: 7,
-    backgroundColor: "#EDF3F4",
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-  },
-  verifiedText: {
-    color: nwcColors.brandNavy,
-    fontSize: 9,
-    lineHeight: 12,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  contactActions: { flexDirection: "row", gap: 7 },
-  circleAction: {
-    width: 43,
-    height: 43,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F1F5F6",
-  },
-  progressCard: {
-    borderRadius: 24,
-    backgroundColor: nwcColors.surface,
-    padding: 17,
-    gap: 13,
-    borderWidth: 1,
-    borderColor: "#E5EBED",
-  },
-  progressHeader: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: 9,
-  },
-  destinationCopy: { flex: 1, gap: 1 },
-  progressEyebrow: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  destinationTitle: {
-    color: nwcColors.foreground,
-    fontSize: 18,
-    lineHeight: 24,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  destinationSubline: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_500Medium",
-  },
-  statusPill: {
-    maxWidth: 125,
-    borderRadius: 11,
-    backgroundColor: nwcColors.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 7,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  statusPillText: {
-    color: nwcColors.primaryInk,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  distance: { flexDirection: "row", alignItems: "center", gap: 5 },
-  distanceText: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 16,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  progressRail: {
-    position: "relative",
-    height: 24,
-    marginTop: 1,
-    justifyContent: "center",
-    backgroundColor: "transparent",
-  },
-  progressFill: {
-    position: "absolute",
-    left: 0,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: nwcColors.primary,
-  },
-  progressMarker: {
-    position: "absolute",
-    top: 2,
-    width: 21,
-    height: 21,
-    borderRadius: 11,
-    borderWidth: 4,
-    borderColor: nwcColors.primary,
-    backgroundColor: nwcColors.brandNavy,
-  },
-  progressEnd: {
-    position: "absolute",
-    right: 0,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: "#DDE3E5",
-  },
-  progressTimes: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  timeEnd: { alignItems: "flex-end", flex: 1 },
-  timeValue: {
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  timeLabel: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  actionList: {
-    borderRadius: 23,
-    overflow: "hidden",
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: "#E5EBED",
-    paddingHorizontal: 14,
-  },
-  historyCard: {
-    overflow: "hidden",
-    borderRadius: 23,
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: "#E5EBED",
-  },
-  historyToggle: {
-    minHeight: 72,
-    paddingHorizontal: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  historyTitle: {
-    color: nwcColors.foreground,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  historyDetail: {
-    marginTop: 2,
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  historyToggleIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#EDF3F4",
-  },
-  historyList: {
-    borderTopWidth: 1,
-    borderTopColor: "#E9EEEF",
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 4,
-  },
-  historyItem: {
-    position: "relative",
-    minHeight: 71,
-    flexDirection: "row",
-    gap: 12,
-  },
-  historyLine: {
-    position: "absolute",
-    left: 8,
-    top: 20,
-    bottom: -2,
-    width: 2,
-    backgroundColor: "#DCE4E7",
-  },
-  historyLineComplete: { backgroundColor: nwcColors.primary },
-  historyDot: {
-    zIndex: 1,
-    marginTop: 1,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.white,
-    borderWidth: 2,
-    borderColor: "#D0DADF",
-  },
-  historyDotComplete: {
-    backgroundColor: nwcColors.brandNavy,
-    borderColor: nwcColors.brandNavy,
-  },
-  historyDotCurrent: {
-    backgroundColor: nwcColors.primary,
-    borderColor: nwcColors.primary,
-  },
-  historyCopy: { flex: 1, gap: 1, paddingBottom: 14 },
-  historyLabelLine: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  historyEventTitle: {
-    flex: 1,
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  historyCurrent: {
-    borderRadius: 7,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    color: nwcColors.primaryInk,
-    backgroundColor: nwcColors.primary,
-    fontSize: 9,
-    lineHeight: 12,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  historyEventDetail: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  historyTime: {
-    marginTop: 2,
-    color: nwcColors.info,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  referenceActions: { gap: 7 },
-  referenceActionRow: { flexDirection: "row", gap: 9 },
-  referenceAction: {
-    flex: 1,
-    minHeight: 47,
-    paddingHorizontal: 12,
-    borderRadius: 16,
-    backgroundColor: "#F0F5F6",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 7,
-  },
-  referenceActionText: {
-    color: nwcColors.brandNavy,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  referenceFeedback: {
-    color: nwcColors.info,
-    textAlign: "center",
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  actionRow: {
-    minHeight: 66,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  actionDivider: { borderBottomWidth: 1, borderBottomColor: "#E9EEEF" },
-  actionIcon: { width: 32, alignItems: "center" },
-  actionLabel: {
-    flex: 1,
-    color: nwcColors.foreground,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_700Bold",
-  },
-  instructionsCard: {
-    gap: 12,
-    borderRadius: 23,
-    backgroundColor: nwcColors.surface,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: "#E5EBED",
-  },
-  instructionsHead: { flexDirection: "row", gap: 10, alignItems: "center" },
-  instructionsIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  instructionsCopy: { flex: 1, gap: 1 },
-  instructionsTitle: {
-    color: nwcColors.foreground,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  instructionsDetail: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_500Medium",
-  },
-  instructionsInput: {
-    minHeight: 66,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#DFE8EA",
-    backgroundColor: "#F8FAFA",
-    paddingHorizontal: 11,
-    paddingVertical: 10,
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_500Medium",
-    textAlignVertical: "top",
-  },
-  instructionsButton: {
-    alignSelf: "flex-start",
-    minHeight: 36,
-    borderRadius: 12,
-    paddingHorizontal: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: nwcColors.primary,
-  },
-  instructionsButtonSaved: { backgroundColor: "#DDF3E9" },
-  instructionsButtonText: {
-    color: nwcColors.primaryInk,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  proofCard: {
-    gap: 13,
-    borderRadius: 23,
-    backgroundColor: "#F0F8F4",
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#CFE9DB",
-  },
-  proofHead: { flexDirection: "row", alignItems: "center", gap: 10 },
-  proofIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.success,
-  },
-  proofCopy: { gap: 1 },
-  proofEyebrow: {
-    color: nwcColors.success,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.45,
-  },
-  proofTitle: {
-    color: nwcColors.foreground,
-    fontSize: 16,
-    lineHeight: 21,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  proofEvidence: { flexDirection: "row", gap: 10 },
-  proofPhoto: {
-    flex: 1,
-    minHeight: 88,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-    backgroundColor: "#DCE9EC",
-    borderWidth: 1,
-    borderColor: "#C7D9DD",
-  },
-  proofPhotoText: {
-    color: nwcColors.info,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-  },
-  signature: {
-    flex: 1,
-    minHeight: 88,
-    borderRadius: 16,
-    justifyContent: "center",
-    paddingHorizontal: 12,
-    backgroundColor: nwcColors.white,
-    borderWidth: 1,
-    borderColor: "#D7E8DE",
-  },
-  signatureName: {
-    color: nwcColors.brandNavy,
-    fontSize: 20,
-    lineHeight: 26,
-    fontFamily: "Poppins_500Medium",
-    fontStyle: "italic",
-  },
-  signatureCaption: {
-    marginTop: 6,
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  proofTime: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  proofDownload: {
-    alignSelf: "flex-start",
-    minHeight: 35,
-    paddingHorizontal: 10,
-    borderRadius: 11,
-    backgroundColor: nwcColors.surfaceElevated,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-  },
-  proofDownloadText: {
-    color: nwcColors.brandNavy,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    contactCard: {
+      minHeight: 110,
+      borderRadius: 23,
+      backgroundColor: nwcColors.surface,
+      padding: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 11,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    contextCard: {
+      gap: 14,
+      padding: 15,
+      borderRadius: 23,
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    contextTop: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: 10,
+    },
+    contextReference: {
+      color: nwcColors.info,
+      fontSize: 10,
+      lineHeight: 14,
+      letterSpacing: 0.6,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contextTitle: {
+      marginTop: 2,
+      maxWidth: 176,
+      color: nwcColors.foreground,
+      fontSize: 17,
+      lineHeight: 23,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contextStatus: {
+      maxWidth: 126,
+      borderRadius: 11,
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      backgroundColor: nwcColors.primary,
+    },
+    contextStatusText: {
+      color: nwcColors.primaryInk,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contextRoute: { flexDirection: "row", alignItems: "center", gap: 8 },
+    contextPlace: { flex: 1, gap: 1 },
+    contextPlaceEnd: { alignItems: "flex-end" },
+    contextPlaceLabel: {
+      color: nwcColors.muted,
+      fontSize: 9,
+      lineHeight: 12,
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+      fontFamily: "Poppins_700Bold",
+    },
+    contextPlaceValue: {
+      maxWidth: 104,
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contextPlaceDetail: {
+      maxWidth: 104,
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    contextConnector: {
+      width: 39,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    contextLine: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      height: 1,
+      backgroundColor: nwcColors.tintCAD8DD,
+    },
+    contactAvatar: {
+      width: 58,
+      height: 58,
+      borderRadius: 21,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.brandNavy,
+      borderWidth: 3,
+      borderColor: nwcColors.primary,
+    },
+    contactInitials: {
+      color: nwcColors.white,
+      fontSize: 16,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contactCopy: { minWidth: 0, flex: 1, gap: 2 },
+    contactNameLine: { flexDirection: "row", alignItems: "center", gap: 7 },
+    contactName: {
+      maxWidth: 106,
+      color: nwcColors.foreground,
+      fontSize: 16,
+      lineHeight: 21,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    rating: { flexDirection: "row", alignItems: "center", gap: 2 },
+    ratingText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: "Poppins_700Bold",
+    },
+    contactRole: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_500Medium",
+    },
+    verified: {
+      alignSelf: "flex-start",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 3,
+      borderRadius: 7,
+      backgroundColor: nwcColors.surfaceRaised,
+      paddingHorizontal: 6,
+      paddingVertical: 3,
+    },
+    verifiedText: {
+      color: nwcColors.foreground,
+      fontSize: 9,
+      lineHeight: 12,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    contactActions: { flexDirection: "row", gap: 7 },
+    circleAction: {
+      width: 44,
+      minHeight: 44,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    progressCard: {
+      borderRadius: 24,
+      backgroundColor: nwcColors.surface,
+      padding: 17,
+      gap: 13,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    progressHeader: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: 9,
+    },
+    destinationCopy: { flex: 1, gap: 1 },
+    progressEyebrow: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    destinationTitle: {
+      color: nwcColors.foreground,
+      fontSize: 18,
+      lineHeight: 24,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    destinationSubline: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_500Medium",
+    },
+    statusPill: {
+      maxWidth: 125,
+      borderRadius: 11,
+      backgroundColor: nwcColors.primary,
+      paddingHorizontal: 8,
+      paddingVertical: 7,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    statusPillText: {
+      color: nwcColors.primaryInk,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    distance: { flexDirection: "row", alignItems: "center", gap: 5 },
+    distanceText: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    progressRail: {
+      position: "relative",
+      height: 24,
+      marginTop: 1,
+      justifyContent: "center",
+      backgroundColor: "transparent",
+    },
+    progressFill: {
+      position: "absolute",
+      left: 0,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: nwcColors.primary,
+    },
+    progressMarker: {
+      position: "absolute",
+      top: 2,
+      width: 21,
+      height: 21,
+      borderRadius: 11,
+      borderWidth: 4,
+      borderColor: nwcColors.primary,
+      backgroundColor: nwcColors.brandNavy,
+    },
+    progressEnd: {
+      position: "absolute",
+      right: 0,
+      width: 14,
+      height: 14,
+      borderRadius: 7,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    progressTimes: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    timeEnd: { alignItems: "flex-end", flex: 1 },
+    timeValue: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    timeLabel: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    actionList: {
+      minHeight: 44,
+      borderRadius: 23,
+      overflow: "hidden",
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      paddingHorizontal: 14,
+    },
+    historyCard: {
+      overflow: "hidden",
+      borderRadius: 23,
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    historyToggle: {
+      minHeight: 72,
+      paddingHorizontal: 15,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    historyTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    historyDetail: {
+      marginTop: 2,
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    historyToggleIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: 13,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    historyList: {
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+      paddingHorizontal: 16,
+      paddingTop: 16,
+      paddingBottom: 4,
+    },
+    historyItem: {
+      position: "relative",
+      minHeight: 71,
+      flexDirection: "row",
+      gap: 12,
+    },
+    historyLine: {
+      position: "absolute",
+      left: 8,
+      top: 20,
+      bottom: -2,
+      width: 2,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    historyLineComplete: { backgroundColor: nwcColors.primary },
+    historyDot: {
+      zIndex: 1,
+      marginTop: 1,
+      width: 18,
+      height: 18,
+      borderRadius: 9,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceElevated,
+      borderWidth: 2,
+      borderColor: nwcColors.border,
+    },
+    historyDotComplete: {
+      backgroundColor: nwcColors.brandNavy,
+      borderColor: nwcColors.brandNavy,
+    },
+    historyDotCurrent: {
+      backgroundColor: nwcColors.primary,
+      borderColor: nwcColors.primary,
+    },
+    historyCopy: { flex: 1, gap: 1, paddingBottom: 14 },
+    historyLabelLine: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 8,
+    },
+    historyEventTitle: {
+      flex: 1,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    historyCurrent: {
+      borderRadius: 7,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      color: nwcColors.primaryInk,
+      backgroundColor: nwcColors.primary,
+      fontSize: 9,
+      lineHeight: 12,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    historyEventDetail: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    historyTime: {
+      marginTop: 2,
+      color: nwcColors.info,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    referenceActions: { gap: 7 },
+    referenceActionRow: { minHeight: 44, flexDirection: "row", gap: 9 },
+    referenceAction: {
+      flex: 1,
+      minHeight: 47,
+      paddingHorizontal: 12,
+      borderRadius: 16,
+      backgroundColor: nwcColors.surfaceRaised,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 7,
+    },
+    referenceActionText: {
+      color: nwcColors.foreground,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    referenceFeedback: {
+      color: nwcColors.info,
+      textAlign: "center",
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    actionRow: {
+      minHeight: 66,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    actionDivider: {
+      minHeight: 44,
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
+    },
+    actionIcon: { width: 32, alignItems: "center" },
+    actionLabel: {
+      flex: 1,
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_700Bold",
+    },
+    instructionsCard: {
+      gap: 12,
+      borderRadius: 23,
+      backgroundColor: nwcColors.surface,
+      padding: 15,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    instructionsHead: { flexDirection: "row", gap: 10, alignItems: "center" },
+    instructionsIcon: {
+      width: 38,
+      height: 38,
+      borderRadius: 13,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    instructionsCopy: { flex: 1, gap: 1 },
+    instructionsTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    instructionsDetail: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_500Medium",
+    },
+    instructionsInput: {
+      minHeight: 66,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceRaised,
+      paddingHorizontal: 11,
+      paddingVertical: 10,
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_500Medium",
+      textAlignVertical: "top",
+    },
+    instructionsButton: {
+      alignSelf: "flex-start",
+      minHeight: 44,
+      borderRadius: 12,
+      paddingHorizontal: 11,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: nwcColors.primary,
+    },
+    instructionsButtonSaved: {
+      minHeight: 44,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    instructionsButtonText: {
+      color: nwcColors.primaryInk,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    proofCard: {
+      gap: 13,
+      borderRadius: 23,
+      backgroundColor: nwcColors.surfaceRaised,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    proofHead: { flexDirection: "row", alignItems: "center", gap: 10 },
+    proofIcon: {
+      width: 42,
+      height: 42,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.success,
+    },
+    proofCopy: { gap: 1 },
+    proofEyebrow: {
+      color: nwcColors.success,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.45,
+    },
+    proofTitle: {
+      color: nwcColors.foreground,
+      fontSize: 16,
+      lineHeight: 21,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    proofEvidence: { flexDirection: "row", gap: 10 },
+    proofPhoto: {
+      flex: 1,
+      minHeight: 88,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 4,
+      backgroundColor: nwcColors.surfaceRaised,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    proofPhotoText: {
+      color: nwcColors.info,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+    },
+    signature: {
+      flex: 1,
+      minHeight: 88,
+      borderRadius: 16,
+      justifyContent: "center",
+      paddingHorizontal: 12,
+      backgroundColor: nwcColors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    signatureName: {
+      color: nwcColors.foreground,
+      fontSize: 20,
+      lineHeight: 26,
+      fontFamily: "Poppins_500Medium",
+      fontStyle: "italic",
+    },
+    signatureCaption: {
+      marginTop: 6,
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    proofTime: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    proofDownload: {
+      alignSelf: "flex-start",
+      minHeight: 35,
+      paddingHorizontal: 10,
+      borderRadius: 11,
+      backgroundColor: nwcColors.surfaceElevated,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+    },
+    proofDownloadText: {
+      color: nwcColors.foreground,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

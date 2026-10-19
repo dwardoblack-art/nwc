@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MobileInput } from "@/components/ui/mobile-input";
 import { CustomerBottomDrawer } from "@/components/ui/customer-bottom-drawer";
 import { ListSkeleton } from "@/components/ui/skeleton";
@@ -24,12 +25,15 @@ import {
   supportStatusTone,
   type SupportCase,
 } from "@/lib/domain/support";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useSupportCases } from "@/lib/use-cases/use-support-cases";
 
 const topics = ["Shipment question", "Bill or payment", "Other support"];
 
 export default function SupportScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { cases, createCase, errorMessage, refresh, status } =
     useSupportCases();
   const [selectedCase, setSelectedCase] = useState<SupportCase | null>(null);
@@ -190,7 +194,7 @@ export default function SupportScreen() {
               <AppIcon
                 name={topic === item ? "radiobox-marked" : "radiobox-blank"}
                 size={20}
-                color={nwcColors.brandNavy}
+                color={nwcColors.foreground}
               />
             </TouchableOpacity>
           ))}
@@ -232,6 +236,9 @@ function CaseDetail({
   onAddEvidence: () => void;
   onBack: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <Card style={styles.detailCard}>
       <View style={styles.detailHeader}>
@@ -282,227 +289,232 @@ function CaseDetail({
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    paddingTop: 16,
-    paddingHorizontal: 20,
-    backgroundColor: nwcColors.background,
-  },
-  header: {
-    minHeight: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerTitle: {
-    color: nwcColors.brandNavy,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  headerSpacer: { width: 44, height: 44 },
-  content: { paddingTop: 24, paddingBottom: 42, gap: 15 },
-  titleBlock: { gap: 4 },
-  title: {
-    color: nwcColors.foreground,
-    fontSize: 29,
-    lineHeight: 37,
-    letterSpacing: -0.5,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 13,
-    lineHeight: 19,
-    fontFamily: "Poppins_500Medium",
-  },
-  caseHeader: {
-    minHeight: 33,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  caseHeaderText: {
-    color: nwcColors.foreground,
-    fontSize: 16,
-    lineHeight: 22,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  newAction: { minHeight: 33, paddingHorizontal: 4, justifyContent: "center" },
-  newActionText: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  errorCard: {
-    minHeight: 45,
-    paddingHorizontal: 11,
-    borderRadius: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: "#FFF0EF",
-  },
-  errorText: {
-    flex: 1,
-    color: nwcColors.error,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_700Bold",
-  },
-  retryText: {
-    color: nwcColors.brandNavy,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  topicCard: { paddingVertical: 6 },
-  topicTitle: {
-    paddingHorizontal: 7,
-    paddingTop: 6,
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_700Bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  topic: {
-    minHeight: 50,
-    paddingHorizontal: 7,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderTopWidth: 1,
-    borderTopColor: "#E8EEEF",
-  },
-  topicText: {
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_700Bold",
-  },
-  list: { gap: 9 },
-  case: {
-    minHeight: 72,
-    padding: 12,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 10,
-  },
-  caseIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  caseCopy: { minWidth: 0, flex: 1, gap: 2 },
-  caseTitleLine: { flexDirection: "row", alignItems: "center", gap: 6 },
-  caseTitle: {
-    flexShrink: 1,
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  caseDetail: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  caseTime: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  empty: { alignItems: "center", gap: 5, paddingVertical: 24 },
-  emptyTitle: {
-    color: nwcColors.foreground,
-    fontSize: 15,
-    lineHeight: 21,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  emptyDetail: {
-    color: nwcColors.muted,
-    maxWidth: 260,
-    textAlign: "center",
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  detailCard: { gap: 11, backgroundColor: "#F2F7F8" },
-  detailHeader: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-  },
-  detailTitle: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  detailSub: {
-    marginTop: 2,
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-  closeAction: {
-    width: 28,
-    height: 28,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  event: { flexDirection: "row", gap: 9 },
-  eventDot: {
-    width: 9,
-    height: 9,
-    marginTop: 4,
-    borderRadius: 5,
-    backgroundColor: nwcColors.primary,
-  },
-  eventCopy: { flex: 1, gap: 1 },
-  eventTitle: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_700Bold",
-  },
-  eventDetail: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  eventTime: {
-    color: nwcColors.muted,
-    fontSize: 9,
-    lineHeight: 13,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  evidenceAction: {
-    minHeight: 42,
-    paddingHorizontal: 9,
-    borderRadius: 13,
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 7,
-    backgroundColor: nwcColors.surfaceElevated,
-  },
-  evidenceText: {
-    flex: 1,
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      paddingTop: 16,
+      paddingHorizontal: 20,
+      backgroundColor: nwcColors.background,
+    },
+    header: {
+      minHeight: 44,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    headerTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    headerSpacer: { width: 44, height: 44 },
+    content: { paddingTop: 24, paddingBottom: 42, gap: 20 },
+    titleBlock: { gap: 4 },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 29,
+      lineHeight: 37,
+      letterSpacing: -0.5,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 13,
+      lineHeight: 19,
+      fontFamily: "Poppins_500Medium",
+    },
+    caseHeader: {
+      minHeight: 33,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    caseHeaderText: {
+      color: nwcColors.foreground,
+      fontSize: 16,
+      lineHeight: 22,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    newAction: {
+      minHeight: 44,
+      paddingHorizontal: 4,
+      justifyContent: "center",
+    },
+    newActionText: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    errorCard: {
+      minHeight: 45,
+      paddingHorizontal: 11,
+      borderRadius: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    errorText: {
+      flex: 1,
+      color: nwcColors.error,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_700Bold",
+    },
+    retryText: {
+      color: nwcColors.foreground,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    topicCard: { paddingVertical: 6 },
+    topicTitle: {
+      paddingHorizontal: 7,
+      paddingTop: 6,
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    topic: {
+      minHeight: 50,
+      paddingHorizontal: 7,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+    },
+    topicText: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_700Bold",
+    },
+    list: { gap: 9 },
+    case: {
+      minHeight: 72,
+      padding: 12,
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: 10,
+    },
+    caseIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    caseCopy: { minWidth: 0, flex: 1, gap: 2 },
+    caseTitleLine: { flexDirection: "row", alignItems: "center", gap: 6 },
+    caseTitle: {
+      flexShrink: 1,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    caseDetail: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    caseTime: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    empty: { alignItems: "center", gap: 5, paddingVertical: 24 },
+    emptyTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 21,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    emptyDetail: {
+      color: nwcColors.muted,
+      maxWidth: 260,
+      textAlign: "center",
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    detailCard: { gap: 11, backgroundColor: nwcColors.surfaceRaised },
+    detailHeader: {
+      flexDirection: "row",
+      gap: 10,
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+    },
+    detailTitle: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    detailSub: {
+      marginTop: 2,
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_500Medium",
+    },
+    closeAction: {
+      width: 44,
+      minHeight: 44,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    event: { flexDirection: "row", gap: 9 },
+    eventDot: {
+      width: 9,
+      height: 9,
+      marginTop: 4,
+      borderRadius: 5,
+      backgroundColor: nwcColors.primary,
+    },
+    eventCopy: { flex: 1, gap: 1 },
+    eventTitle: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_700Bold",
+    },
+    eventDetail: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    eventTime: {
+      color: nwcColors.muted,
+      fontSize: 9,
+      lineHeight: 13,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    evidenceAction: {
+      minHeight: 44,
+      paddingHorizontal: 9,
+      borderRadius: 13,
+      alignItems: "center",
+      flexDirection: "row",
+      gap: 7,
+      backgroundColor: nwcColors.surfaceElevated,
+    },
+    evidenceText: {
+      flex: 1,
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { LocalLocationPicker } from "@/components/map/local-location-picker";
 import { isInLocalCity, type LocalCity } from "@/lib/maps/local-city";
 import { locationService } from "@/lib/services/device/location-service";
@@ -18,10 +19,7 @@ import { router, type Href } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { RouteEntryCard } from "@/components/booking/route-entry-card";
-import {
-  LocalDeliveryMapBackdrop,
-
-} from "@/components/map/local-delivery-map-backdrop";
+import { LocalDeliveryMapBackdrop } from "@/components/map/local-delivery-map-backdrop";
 import { AppIcon } from "@/components/ui/app-icon";
 import { IconButton, PrimaryButton, Screen } from "@/components/ui/nwc-ui";
 import { useAppToast } from "@/components/ui/app-toast";
@@ -34,13 +32,16 @@ import {
 } from "@/lib/local-delivery-route-sheet";
 import { useBookingDrawerSnap } from "@/lib/use-cases/use-booking-drawer-snap";
 import { savedPlaceToAddress } from "@/lib/account-directory-booking";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { routeSuggestionToAddress } from "@/lib/route-autocomplete";
 import { useBookingDraft } from "@/stores/booking-draft";
 import { useAddressBook } from "@/lib/use-cases/use-address-book";
 import type { BookingQuote, LocalDeliveryVehicle } from "@/types/cargo";
 
 export default function LocalDeliveryRouteScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { localDraft, updateLocalDraft, setBookingStep } = useBookingDraft();
@@ -71,20 +72,44 @@ export default function LocalDeliveryRouteScreen() {
       setLocating(false);
       setLocationError("Location is taking too long. Check GPS and try again.");
     }, 20000);
-    void locationService.getCurrentAddress().then((address) => {
-      if (!active) return;
-      setLocalCity({ city: address.city, cityDistrict: address.cityDistrict, latitude: address.latitude, longitude: address.longitude });
-      const { localDraft: draft, updateLocalDraft: update } = currentDraft.current;
-      if (!draft.pickup) update({ pickup: address, quote: undefined });
-    }).catch((error) => {
-      if (active) setLocationError(error instanceof Error ? error.message : "Unable to find your location. Please try again.");
-    }).finally(() => {
+    void locationService
+      .getCurrentAddress()
+      .then((address) => {
+        if (!active) return;
+        setLocalCity({
+          city: address.city,
+          cityDistrict: address.cityDistrict,
+          latitude: address.latitude,
+          longitude: address.longitude,
+        });
+        const { localDraft: draft, updateLocalDraft: update } =
+          currentDraft.current;
+        if (!draft.pickup) update({ pickup: address, quote: undefined });
+      })
+      .catch((error) => {
+        if (active)
+          setLocationError(
+            error instanceof Error
+              ? error.message
+              : "Unable to find your location. Please try again.",
+          );
+      })
+      .finally(() => {
+        clearTimeout(timeout);
+        if (active) setLocating(false);
+      });
+    return () => {
+      active = false;
       clearTimeout(timeout);
-      if (active) setLocating(false);
-    });
-    return () => { active = false; clearTimeout(timeout); };
+    };
   }, [locationVersion]);
-  const routeReady = !locating && !locationError && isRouteReady(localDraft) && [localDraft.pickup, localDraft.destination].every((point) => isInLocalCity(point, localCity));
+  const routeReady =
+    !locating &&
+    !locationError &&
+    isRouteReady(localDraft) &&
+    [localDraft.pickup, localDraft.destination].every((point) =>
+      isInLocalCity(point, localCity),
+    );
   const vehicle = localDraft.vehicle ?? "scooter";
   const quote = localDraft.quote ?? null;
   const sheetState = getLocalDeliveryRouteSheetState(
@@ -129,9 +154,10 @@ export default function LocalDeliveryRouteScreen() {
       .catch((error) => {
         if (!active) return;
         updateLocalDraft({ quote: undefined });
-        const message = error instanceof Error
-          ? error.message
-          : "We could not load a server quote. Check your connection and try again.";
+        const message =
+          error instanceof Error
+            ? error.message
+            : "We could not load a server quote. Check your connection and try again.";
         setQuoteError(message);
         toast.error(message);
         errorReporter.capture(error, {
@@ -163,18 +189,34 @@ export default function LocalDeliveryRouteScreen() {
     key: "pickup" | "destination",
   ) => {
     const address = savedPlaceToAddress(place);
-    if (!isInLocalCity(address, localCity)) { toast.error(localCity ? `Choose a saved place within ${localCity.city}.` : "Enable location to identify your city first."); return; }
+    if (!isInLocalCity(address, localCity)) {
+      toast.error(
+        localCity
+          ? `Choose a saved place within ${localCity.city}.`
+          : "Enable location to identify your city first.",
+      );
+      return;
+    }
     updateLocalDraft({ [key]: address, quote: undefined });
   };
   const continueBooking = () => {
-    if (quote?.expiresAt && Date.parse(quote.expiresAt) <= Date.now()) { setQuoteRequestVersion((version) => version + 1); toast.info("Refreshing your expired price. Review the updated amount before continuing."); return; }
+    if (quote?.expiresAt && Date.parse(quote.expiresAt) <= Date.now()) {
+      setQuoteRequestVersion((version) => version + 1);
+      toast.info(
+        "Refreshing your expired price. Review the updated amount before continuing.",
+      );
+      return;
+    }
     setBookingStep("parcel");
     router.push("/local-delivery/parcel" as Href);
   };
   const openPinAdjustment = (target: "pickup" | "destination") => {
     setActiveTarget(null);
 
-    if (!localCity) { toast.error("Enable location to identify your city first."); return; }
+    if (!localCity) {
+      toast.error("Enable location to identify your city first.");
+      return;
+    }
     setAdjustingTarget(target);
     setExpanded(false);
   };
@@ -185,17 +227,38 @@ export default function LocalDeliveryRouteScreen() {
       ? `Adjust ${adjustingTarget} pin`
       : "Set your route";
   const sheetDetail =
-    locationError || (locating ? "Finding your location..." : "") ||
-    (localCity && [localDraft.pickup, localDraft.destination].some((point) => point && !isInLocalCity(point, localCity)) ? `Select map locations within ${localCity.city} for pickup and delivery.` : "") || quoteError ||
+    locationError ||
+    (locating ? "Finding your location..." : "") ||
+    (localCity &&
+    [localDraft.pickup, localDraft.destination].some(
+      (point) => point && !isInLocalCity(point, localCity),
+    )
+      ? `Select map locations within ${localCity.city} for pickup and delivery.`
+      : "") ||
+    quoteError ||
     (isEditing
       ? "Search in your city or choose a location on the map."
       : adjustingTarget
         ? "Use the controls to nudge the map pin, then confirm its position."
-        : localCity ? `Pickup and delivery within ${localCity.city}.` : "Enable location to start your local delivery.");
+        : localCity
+          ? `Pickup and delivery within ${localCity.city}.`
+          : "Enable location to start your local delivery.");
 
   return (
     <Screen>
-      {adjustingTarget && localCity ? <LocalLocationPicker city={localCity} startAtCurrentLocation target={adjustingTarget} initial={localDraft[adjustingTarget]} onClose={() => setAdjustingTarget(null)} onConfirm={(address) => { updateLocalDraft({ [adjustingTarget]: address, quote: undefined }); setAdjustingTarget(null); }} /> : null}
+      {adjustingTarget && localCity ? (
+        <LocalLocationPicker
+          city={localCity}
+          startAtCurrentLocation
+          target={adjustingTarget}
+          initial={localDraft[adjustingTarget]}
+          onClose={() => setAdjustingTarget(null)}
+          onConfirm={(address) => {
+            updateLocalDraft({ [adjustingTarget]: address, quote: undefined });
+            setAdjustingTarget(null);
+          }}
+        />
+      ) : null}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={styles.page}
@@ -203,7 +266,6 @@ export default function LocalDeliveryRouteScreen() {
         <LocalDeliveryMapBackdrop
           pickup={localDraft.pickup}
           destination={localDraft.destination}
-
           adjustingTarget={adjustingTarget}
           routeReady={routeReady}
         />
@@ -243,8 +305,16 @@ export default function LocalDeliveryRouteScreen() {
               <Text style={styles.title}>{sheetTitle}</Text>
               <Text style={styles.detail}>{sheetDetail}</Text>
             </View>
-            {<>
-                {locationError ? <PrimaryButton label="Retry current location" icon="crosshairs-gps" loading={locating} onPress={() => setLocationVersion((v) => v + 1)} /> : null}
+            {
+              <>
+                {locationError ? (
+                  <PrimaryButton
+                    label="Retry current location"
+                    icon="crosshairs-gps"
+                    loading={locating}
+                    onPress={() => setLocationVersion((v) => v + 1)}
+                  />
+                ) : null}
                 <RouteEntryCard
                   scope="local"
                   localCity={localCity}
@@ -267,7 +337,11 @@ export default function LocalDeliveryRouteScreen() {
                     setExpanded(Boolean(target));
                     if (target) setAdjustingTarget(null);
                   }}
-                  onManualEntryPress={(target) => openPinAdjustment(target === "from" ? "pickup" : "destination")}
+                  onManualEntryPress={(target) =>
+                    openPinAdjustment(
+                      target === "from" ? "pickup" : "destination",
+                    )
+                  }
                   manualEntryLabel="Use map"
                   accessibilityHint="Search nearby local pickup and destination locations"
                 />
@@ -284,29 +358,31 @@ export default function LocalDeliveryRouteScreen() {
                         openPinAdjustment("destination")
                       }
                     />
-                    {savedPlaces.length > 0 ? <View style={styles.savedLine}>
-                      <Text style={styles.savedTitle}>Saved places</Text>
-                      <View style={styles.savedChips}>
-                        {savedPlaces.slice(0, 3).map((place) => (
-                          <TouchableOpacity
-                            key={place.id}
-                            accessibilityRole="button"
-                            accessibilityLabel={`Use ${place.label} as ${localDraft.pickup ? "destination" : "pickup"}`}
-                            onPress={() =>
-                              applySaved(
-                                place,
-                                localDraft.pickup ? "destination" : "pickup",
-                              )
-                            }
-                            style={styles.savedChip}
-                          >
-                            <Text style={styles.savedChipText}>
-                              {place.label}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
+                    {savedPlaces.length > 0 ? (
+                      <View style={styles.savedLine}>
+                        <Text style={styles.savedTitle}>Saved places</Text>
+                        <View style={styles.savedChips}>
+                          {savedPlaces.slice(0, 3).map((place) => (
+                            <TouchableOpacity
+                              key={place.id}
+                              accessibilityRole="button"
+                              accessibilityLabel={`Use ${place.label} as ${localDraft.pickup ? "destination" : "pickup"}`}
+                              onPress={() =>
+                                applySaved(
+                                  place,
+                                  localDraft.pickup ? "destination" : "pickup",
+                                )
+                              }
+                              style={styles.savedChip}
+                            >
+                              <Text style={styles.savedChipText}>
+                                {place.label}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
                       </View>
-                    </View> : null}
+                    ) : null}
                     <PrimaryButton
                       label={
                         routeReady
@@ -320,11 +396,17 @@ export default function LocalDeliveryRouteScreen() {
                       icon="arrow-right"
                       loading={quoteLoading}
                       disabled={!routeReady || quoteLoading}
-                      onPress={quote ? continueBooking : () => setQuoteRequestVersion((version) => version + 1)}
+                      onPress={
+                        quote
+                          ? continueBooking
+                          : () =>
+                              setQuoteRequestVersion((version) => version + 1)
+                      }
                     />
                   </>
                 )}
-              </>}
+              </>
+            }
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
@@ -345,6 +427,9 @@ function RoutePreview({
   onAdjustPickup: () => void;
   onAdjustDestination: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   if (!quote) return null;
   const distance = quote.distanceKm
     ? `${quote.distanceKm} km`
@@ -407,9 +492,7 @@ function RoutePreview({
           ),
         )}
       </View>
-      <Text style={styles.capacityText}>
-        {vehicleCapacity[vehicle]}
-      </Text>
+      <Text style={styles.capacityText}>{vehicleCapacity[vehicle]}</Text>
       <View style={styles.routePreviewFooter}>
         <Text style={styles.quoteArrival}>
           {quote.expiresAt
@@ -445,263 +528,265 @@ function RoutePreview({
   );
 }
 
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: "#EAF0F1" },
-  topBar: {
-    position: "absolute",
-    zIndex: 3,
-    top: 14,
-    left: 18,
-    right: 18,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  topPill: {
-    minHeight: 40,
-    paddingHorizontal: 13,
-    borderRadius: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    backgroundColor: "rgba(255,255,255,0.95)",
-  },
-  topPillDot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    backgroundColor: nwcColors.primary,
-  },
-  topPillText: {
-    color: nwcColors.brandNavy,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  sheet: {
-    position: "absolute",
-    zIndex: 5,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    overflow: "hidden",
-    backgroundColor: nwcColors.background,
-    shadowColor: "#012642",
-    shadowOffset: { width: 0, height: -7 },
-    shadowOpacity: 0.15,
-    shadowRadius: 18,
-    elevation: 13,
-  },
-  handleArea: {
-    minHeight: 28,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  grabber: {
-    alignSelf: "center",
-    width: 43,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: "#C5D1D6",
-  },
-  sheetContent: { flexGrow: 1, paddingHorizontal: 20, gap: 14 },
-  overline: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  title: {
-    color: nwcColors.foreground,
-    fontSize: 25,
-    lineHeight: 31,
-    fontFamily: "Poppins_800ExtraBold",
-    marginTop: 1,
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 13,
-    lineHeight: 19,
-    fontFamily: "Poppins_500Medium",
-    marginTop: 2,
-  },
-  routePreview: {
-    gap: 9,
-    padding: 13,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "#DCE8EC",
-    backgroundColor: "#F4F9FA",
-  },
-  routePreviewTop: { flexDirection: "row", alignItems: "center", gap: 9 },
-  quoteIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  quoteCopy: { flex: 1 },
-  quoteLabel: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 16,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  quoteMeta: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  quotePrice: {
-    color: nwcColors.brandNavy,
-    fontSize: 19,
-    lineHeight: 25,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  vehicleChoices: { flexDirection: "row", gap: 6 },
-  vehicleChoice: {
-    flex: 1,
-    minHeight: 55,
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: "#DDE7EA",
-    backgroundColor: nwcColors.white,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 2,
-  },
-  vehicleChoiceActive: {
-    borderColor: nwcColors.primary,
-    backgroundColor: "#FFF3CC",
-  },
-  vehicleName: {
-    color: nwcColors.info,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  vehicleNameActive: { color: nwcColors.primaryInk },
-  capacityText: {
-    color: nwcColors.muted,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  routePreviewFooter: {
-    paddingTop: 9,
-    borderTopWidth: 1,
-    borderTopColor: "#E1EAED",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  quoteArrival: {
-    flex: 1,
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_700Bold",
-  },
-  pinLinks: { flexDirection: "row", gap: 5 },
-  adjustLink: {
-    minHeight: 32,
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    gap: 4,
-    backgroundColor: nwcColors.white,
-  },
-  adjustLinkText: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  manualToggle: {
-    minHeight: 42,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    backgroundColor: "#EAF4F8",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  manualToggleText: {
-    flex: 1,
-    color: nwcColors.info,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  manualArea: { gap: 11 },
-  savedLine: { gap: 8 },
-  savedTitle: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  savedChips: { flexDirection: "row", gap: 7 },
-  savedChip: {
-    minHeight: 34,
-    borderRadius: 12,
-    paddingHorizontal: 11,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.surface,
-    borderWidth: 1,
-    borderColor: nwcColors.border,
-  },
-  savedChipText: {
-    color: nwcColors.brandNavy,
-    fontSize: 12,
-    lineHeight: 16,
-    fontFamily: "Poppins_700Bold",
-  },
-  pinPanel: { gap: 12 },
-  pinHint: {
-    minHeight: 43,
-    paddingHorizontal: 11,
-    borderRadius: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: "#EAF4F8",
-  },
-  pinHintText: {
-    flex: 1,
-    color: nwcColors.info,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_700Bold",
-  },
-  nudgeGrid: { alignItems: "center", gap: 7 },
-  nudgeMiddle: { flexDirection: "row", gap: 7 },
-  nudgeButton: {
-    width: 43,
-    height: 37,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 12,
-    backgroundColor: nwcColors.white,
-    borderWidth: 1,
-    borderColor: nwcColors.border,
-  },
-  nudgeButtonActive: {
-    borderColor: nwcColors.primary,
-    backgroundColor: "#FFF1C5",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: { flex: 1, backgroundColor: nwcColors.background },
+    topBar: {
+      position: "absolute",
+      zIndex: 3,
+      top: 14,
+      left: 18,
+      right: 18,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    topPill: {
+      minHeight: 40,
+      paddingHorizontal: 13,
+      borderRadius: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      backgroundColor: "rgba(255,255,255,0.95)",
+    },
+    topPillDot: {
+      height: 8,
+      width: 8,
+      borderRadius: 4,
+      backgroundColor: nwcColors.primary,
+    },
+    topPillText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    sheet: {
+      position: "absolute",
+      zIndex: 5,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      overflow: "hidden",
+      backgroundColor: nwcColors.background,
+      shadowColor: nwcColors.brandNavy,
+      shadowOffset: { width: 0, height: -7 },
+      shadowOpacity: 0.06,
+      shadowRadius: 18,
+      elevation: 2,
+    },
+    handleArea: {
+      minHeight: 44,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    grabber: {
+      alignSelf: "center",
+      width: 43,
+      height: 5,
+      borderRadius: 3,
+      backgroundColor: nwcColors.tintC5D1D6,
+    },
+    sheetContent: { flexGrow: 1, paddingHorizontal: 20, gap: 14 },
+    overline: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      letterSpacing: 0.8,
+      textTransform: "uppercase",
+      fontFamily: "Poppins_600SemiBold",
+    },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 25,
+      lineHeight: 31,
+      fontFamily: "Poppins_600SemiBold",
+      marginTop: 1,
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 13,
+      lineHeight: 19,
+      fontFamily: "Poppins_500Medium",
+      marginTop: 2,
+    },
+    routePreview: {
+      gap: 9,
+      padding: 13,
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    routePreviewTop: { flexDirection: "row", alignItems: "center", gap: 9 },
+    quoteIcon: {
+      width: 38,
+      height: 38,
+      borderRadius: 13,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    quoteCopy: { flex: 1 },
+    quoteLabel: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    quoteMeta: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    quotePrice: {
+      color: nwcColors.foreground,
+      fontSize: 19,
+      lineHeight: 25,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    vehicleChoices: { flexDirection: "row", gap: 6 },
+    vehicleChoice: {
+      flex: 1,
+      minHeight: 55,
+      borderRadius: 13,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceElevated,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 2,
+    },
+    vehicleChoiceActive: {
+      borderColor: nwcColors.primary,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    vehicleName: {
+      color: nwcColors.info,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    vehicleNameActive: { color: nwcColors.primaryInk },
+    capacityText: {
+      color: nwcColors.muted,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    routePreviewFooter: {
+      paddingTop: 9,
+      borderTopWidth: 1,
+      borderTopColor: nwcColors.border,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 8,
+    },
+    quoteArrival: {
+      flex: 1,
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_700Bold",
+    },
+    pinLinks: { flexDirection: "row", gap: 5 },
+    adjustLink: {
+      minHeight: 32,
+      borderRadius: 10,
+      paddingHorizontal: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+      gap: 4,
+      backgroundColor: nwcColors.surfaceElevated,
+    },
+    adjustLinkText: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    manualToggle: {
+      minHeight: 42,
+      borderRadius: 14,
+      paddingHorizontal: 12,
+      backgroundColor: nwcColors.surfaceRaised,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    manualToggleText: {
+      flex: 1,
+      color: nwcColors.info,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    manualArea: { gap: 11 },
+    savedLine: { gap: 8 },
+    savedTitle: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    savedChips: { minHeight: 44, flexDirection: "row", gap: 7 },
+    savedChip: {
+      minHeight: 44,
+      borderRadius: 12,
+      paddingHorizontal: 11,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surface,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    savedChipText: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: "Poppins_700Bold",
+    },
+    pinPanel: { gap: 12 },
+    pinHint: {
+      minHeight: 43,
+      paddingHorizontal: 11,
+      borderRadius: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    pinHintText: {
+      flex: 1,
+      color: nwcColors.info,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_700Bold",
+    },
+    nudgeGrid: { alignItems: "center", gap: 7 },
+    nudgeMiddle: { flexDirection: "row", gap: 7 },
+    nudgeButton: {
+      width: 44,
+      minHeight: 44,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 12,
+      backgroundColor: nwcColors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+    },
+    nudgeButtonActive: {
+      minHeight: 44,
+      borderColor: nwcColors.primary,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+  });
 
 const vehicleLabels: Record<LocalDeliveryVehicle, string> = {
   scooter: "Bike",
@@ -713,6 +798,3 @@ const vehicleCapacity: Record<LocalDeliveryVehicle, string> = {
   small_van: "Up to 50 kg",
   cargo_van: "Up to 300 kg",
 };
-
-
-

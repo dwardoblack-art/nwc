@@ -1,6 +1,4 @@
-import {
-  useNwcColors, type NwcPalette,
-} from "@/ui/use-nwc-colors";
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   useRef,
   useState,
@@ -224,13 +222,13 @@ export function StatusBadge({
       backgroundColor: nwcColors.surfaceRaised,
       color: nwcColors.muted,
     },
-    info: { backgroundColor: nwcColors.tintE6F3F8, color: nwcColors.info },
+    info: { backgroundColor: nwcColors.surfaceRaised, color: nwcColors.info },
     success: {
-      backgroundColor: nwcColors.tintE5F4EE,
+      backgroundColor: nwcColors.surfaceRaised,
       color: nwcColors.success,
     },
     warning: {
-      backgroundColor: nwcColors.tintFBF0D8,
+      backgroundColor: nwcColors.surfaceRaised,
       color: nwcColors.warning,
     },
   }[tone];
@@ -265,22 +263,22 @@ export function AppNotice({
 
   const palette = {
     info: {
-      backgroundColor: nwcColors.tintE6F3F8,
+      backgroundColor: nwcColors.surfaceRaised,
       color: nwcColors.info,
       icon: "information-outline" as const,
     },
     success: {
-      backgroundColor: nwcColors.tintE5F4EE,
+      backgroundColor: nwcColors.surfaceRaised,
       color: nwcColors.success,
       icon: "check-circle-outline" as const,
     },
     warning: {
-      backgroundColor: nwcColors.tintFBF0D8,
+      backgroundColor: nwcColors.surfaceRaised,
       color: nwcColors.warning,
       icon: "alert-outline" as const,
     },
     error: {
-      backgroundColor: nwcColors.tintFFF0EF,
+      backgroundColor: nwcColors.surfaceRaised,
       color: nwcColors.error,
       icon: "alert-circle-outline" as const,
     },
@@ -346,7 +344,8 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
     primaryButton: {
       minHeight: 52,
-      borderRadius: 14, backgroundColor: nwcColors.primary,
+      borderRadius: 14,
+      backgroundColor: nwcColors.primary,
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "row",
@@ -377,7 +376,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       lineHeight: 20,
       fontFamily: "Poppins_700Bold",
     },
-    disabledButton: { opacity: 0.48 },
+    disabledButton: { minHeight: 44, opacity: 0.48 },
     iconButton: {
       width: 44,
       height: 44,
@@ -403,7 +402,8 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       backgroundColor: nwcColors.surface,
       borderWidth: 1,
       borderColor: nwcColors.border,
-      borderRadius: 20, padding: 20,
+      borderRadius: 20,
+      padding: 20,
     },
     sectionHeader: {
       alignItems: "center",

@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { MobileMoneyFields } from "@/components/billing/mobile-money-fields";
 import { isValidInternationalMobile } from "@/lib/auth-flow";
 import { InvoiceSkeleton } from "@/components/ui/skeleton";
@@ -23,10 +24,13 @@ import {
   formatMockKwacha,
   paymentMethodLabel,
 } from "@/lib/mock-billing";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
 
 export default function PaymentScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const {
     billingLoading,
     billingError,
@@ -188,6 +192,9 @@ function PaymentMethod({
   selected?: boolean;
   onPress: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <TouchableOpacity
       accessibilityRole="radio"
@@ -218,156 +225,157 @@ function PaymentMethod({
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    backgroundColor: nwcColors.background,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerTitle: {
-    color: nwcColors.brandNavy,
-    fontSize: 15,
-    lineHeight: 20,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  headerSpacer: { height: 44, width: 44 },
-  content: { flexGrow: 1, paddingTop: 24, gap: 20 },
-  titleBlock: { gap: 3 },
-  title: {
-    color: nwcColors.foreground,
-    fontSize: 30,
-    lineHeight: 38,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: -0.5,
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_500Medium",
-  },
-  invoice: {
-    minHeight: 80,
-    gap: 9,
-    borderRadius: 22,
-    backgroundColor: "#F3F7F8",
-  },
-  invoiceTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  invoiceReference: {
-    color: nwcColors.brandNavy,
-    fontSize: 12,
-    lineHeight: 16,
-    fontFamily: "Poppins_800ExtraBold",
-    letterSpacing: 0.6,
-  },
-  shipment: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  methods: { gap: 9 },
-  methodsHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  manageMethods: {
-    minHeight: 32,
-    paddingHorizontal: 5,
-    justifyContent: "center",
-  },
-  manageMethodsText: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  methodsTitle: {
-    color: nwcColors.foreground,
-    fontSize: 17,
-    lineHeight: 23,
-    fontFamily: "Poppins_800ExtraBold",
-    marginBottom: 1,
-  },
-  method: {
-    minHeight: 64,
-    borderWidth: 1,
-    borderColor: nwcColors.border,
-    borderRadius: 19,
-    padding: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 11,
-    backgroundColor: nwcColors.surface,
-  },
-  methodSelected: {
-    borderColor: nwcColors.brandNavy,
-    backgroundColor: "#F2F8FA",
-  },
-  methodIcon: {
-    height: 42,
-    width: 42,
-    borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#EAF1F4",
-  },
-  methodIconSelected: { backgroundColor: nwcColors.primary },
-  methodCopy: { flex: 1, gap: 1 },
-  methodTitle: {
-    color: nwcColors.foreground,
-    fontSize: 14,
-    lineHeight: 19,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  methodSubtitle: {
-    color: nwcColors.muted,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_500Medium",
-  },
-  radio: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: nwcColors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  radioSelected: { borderColor: nwcColors.brandNavy },
-  radioDot: {
-    height: 10,
-    width: 10,
-    borderRadius: 5,
-    backgroundColor: nwcColors.brandNavy,
-  },
-  walletWarning: {
-    borderRadius: 15,
-    padding: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    backgroundColor: "#FFF4DA",
-  },
-  walletWarningText: {
-    flex: 1,
-    color: "#745100",
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_700Bold",
-  },
-  actions: { gap: 10, marginTop: "auto", paddingBottom: 16 },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: {
+      flex: 1,
+      backgroundColor: nwcColors.background,
+      paddingHorizontal: 20,
+      paddingTop: 16,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    headerTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 20,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    headerSpacer: { height: 44, width: 44 },
+    content: { flexGrow: 1, paddingTop: 24, gap: 20 },
+    titleBlock: { gap: 3 },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 30,
+      lineHeight: 38,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: -0.5,
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_500Medium",
+    },
+    invoice: {
+      minHeight: 80,
+      gap: 9,
+      borderRadius: 22,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    invoiceTop: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    invoiceReference: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+      letterSpacing: 0.6,
+    },
+    shipment: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    methods: { gap: 9 },
+    methodsHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    manageMethods: {
+      minHeight: 32,
+      paddingHorizontal: 5,
+      justifyContent: "center",
+    },
+    manageMethodsText: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    methodsTitle: {
+      color: nwcColors.foreground,
+      fontSize: 17,
+      lineHeight: 23,
+      fontFamily: "Poppins_600SemiBold",
+      marginBottom: 1,
+    },
+    method: {
+      minHeight: 64,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      borderRadius: 19,
+      padding: 11,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 11,
+      backgroundColor: nwcColors.surface,
+    },
+    methodSelected: {
+      borderColor: nwcColors.brandNavy,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    methodIcon: {
+      height: 42,
+      width: 42,
+      borderRadius: 14,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    methodIconSelected: { backgroundColor: nwcColors.primary },
+    methodCopy: { flex: 1, gap: 1 },
+    methodTitle: {
+      color: nwcColors.foreground,
+      fontSize: 14,
+      lineHeight: 19,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    methodSubtitle: {
+      color: nwcColors.muted,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_500Medium",
+    },
+    radio: {
+      height: 20,
+      width: 20,
+      borderRadius: 10,
+      borderWidth: 1.5,
+      borderColor: nwcColors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    radioSelected: { borderColor: nwcColors.brandNavy },
+    radioDot: {
+      height: 10,
+      width: 10,
+      borderRadius: 5,
+      backgroundColor: nwcColors.brandNavy,
+    },
+    walletWarning: {
+      borderRadius: 15,
+      padding: 11,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    walletWarningText: {
+      flex: 1,
+      color: nwcColors.tint745100,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_700Bold",
+    },
+    actions: { gap: 10, marginTop: "auto", paddingBottom: 16 },
+  });

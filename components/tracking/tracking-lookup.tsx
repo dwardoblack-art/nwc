@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ListSkeleton } from "@/components/ui/skeleton";
 import { mobileInputStyles } from "@/components/ui/mobile-input";
 import { useEffect, useState } from "react";
@@ -16,7 +17,7 @@ import { useCustomerAuth } from "@/stores/customer-auth";
 
 import { AppIcon } from "@/components/ui/app-icon";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/nwc-ui";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { usePublicTracking } from "@/lib/use-cases/use-public-tracking";
 
 type TrackingLookupContentProps = {
@@ -28,6 +29,9 @@ function TrackingLookupContent({
   onDismiss,
   mode,
 }: TrackingLookupContentProps) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const params = useLocalSearchParams<{ code?: string }>();
   const initialCode = typeof params.code === "string" ? params.code : "";
   const [code, setCode] = useState(initialCode);
@@ -169,7 +173,7 @@ function TrackingLookupContent({
             }}
             autoCapitalize="characters"
             placeholder="Tracking number"
-            placeholderTextColor="#91A0AE"
+            placeholderTextColor={nwcColors.tint91A0AE}
             returnKeyType="go"
             onSubmitEditing={search}
             style={[styles.input, mobileInputStyles.text]}
@@ -232,6 +236,9 @@ export function TrackingLookupOverlay({
   visible: boolean;
   onDismiss: () => void;
 }) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <Modal
       visible={visible}
@@ -251,6 +258,9 @@ export function TrackingLookupOverlay({
 }
 
 export function PublicTrackingLookupScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   return (
     <View style={styles.screen}>
       <TrackingLookupContent mode="screen" />
@@ -258,154 +268,155 @@ export function PublicTrackingLookupScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  modal: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 20,
-    backgroundColor: "rgba(1,38,66,0.26)",
-  },
-  dim: { ...StyleSheet.absoluteFillObject },
-  overlayPanel: { maxWidth: 480, alignSelf: "center", width: "100%" },
-  screen: {
-    flex: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    backgroundColor: nwcColors.background,
-  },
-  panel: {
-    borderRadius: 28,
-    padding: 20,
-    gap: 18,
-    backgroundColor: "rgba(255,255,255,0.96)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.84)",
-    shadowColor: "#012642",
-    shadowOpacity: 0.18,
-    shadowRadius: 30,
-    shadowOffset: { width: 0, height: 14 },
-    elevation: 8,
-  },
-  panelScreen: {
-    maxWidth: 480,
-    alignSelf: "center",
-    backgroundColor: nwcColors.surface,
-    borderColor: "#E2EAEC",
-    shadowOpacity: 0.06,
-  },
-  headingRow: {
-    minHeight: 43,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  brandIcon: {
-    width: 43,
-    height: 43,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: nwcColors.primary,
-  },
-  close: {
-    width: 42,
-    height: 42,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F1F5F6",
-  },
-  copy: { gap: 4 },
-  overline: {
-    color: nwcColors.info,
-    fontSize: 10,
-    lineHeight: 14,
-    letterSpacing: 0.7,
-    textTransform: "uppercase",
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  title: {
-    color: nwcColors.foreground,
-    fontSize: 28,
-    lineHeight: 36,
-    letterSpacing: -0.45,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_500Medium",
-  },
-  form: { gap: 8 },
-  label: {
-    color: nwcColors.foreground,
-    fontSize: 12,
-    lineHeight: 17,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  inputFrame: {
-    minHeight: 55,
-    paddingHorizontal: 13,
-    gap: 9,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: "#DCE7EA",
-    backgroundColor: "#FBFDFD",
-  },
-  inputError: { borderColor: nwcColors.error },
-  input: {
-    flex: 1,
-    minHeight: 53,
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  error: {
-    color: nwcColors.error,
-    fontSize: 11,
-    lineHeight: 16,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  secondaryActions: { gap: 8 },
-  demo: {
-    minHeight: 38,
-    paddingHorizontal: 10,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
-    backgroundColor: "#F4F8F9",
-  },
-  demoText: {
-    color: nwcColors.info,
-    fontSize: 10,
-    lineHeight: 14,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  loading: {
-    minHeight: 42,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    backgroundColor: nwcColors.surfaceNavyTint,
-    borderRadius: 14,
-  },
-  loadingText: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_700Bold",
-  },
-  support: {
-    color: nwcColors.muted,
-    textAlign: "center",
-    fontSize: 10,
-    lineHeight: 15,
-    fontFamily: "Poppins_500Medium",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    modal: {
+      flex: 1,
+      justifyContent: "center",
+      paddingHorizontal: 20,
+      backgroundColor: "rgba(1,38,66,0.26)",
+    },
+    dim: { ...StyleSheet.absoluteFillObject },
+    overlayPanel: { maxWidth: 480, alignSelf: "center", width: "100%" },
+    screen: {
+      flex: 1,
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      backgroundColor: nwcColors.background,
+    },
+    panel: {
+      borderRadius: 28,
+      padding: 20,
+      gap: 18,
+      backgroundColor: "rgba(255,255,255,0.96)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.84)",
+      shadowColor: nwcColors.brandNavy,
+      shadowOpacity: 0.06,
+      shadowRadius: 30,
+      shadowOffset: { width: 0, height: 14 },
+      elevation: 2,
+    },
+    panelScreen: {
+      maxWidth: 480,
+      alignSelf: "center",
+      backgroundColor: nwcColors.surface,
+      borderColor: nwcColors.border,
+      shadowOpacity: 0.06,
+    },
+    headingRow: {
+      minHeight: 43,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    brandIcon: {
+      width: 43,
+      height: 43,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.primary,
+    },
+    close: {
+      width: 44,
+      minHeight: 44,
+      borderRadius: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    copy: { gap: 4 },
+    overline: {
+      color: nwcColors.info,
+      fontSize: 10,
+      lineHeight: 14,
+      letterSpacing: 0.7,
+      textTransform: "uppercase",
+      fontFamily: "Poppins_600SemiBold",
+    },
+    title: {
+      color: nwcColors.foreground,
+      fontSize: 28,
+      lineHeight: 36,
+      letterSpacing: -0.45,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_500Medium",
+    },
+    form: { gap: 8 },
+    label: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 17,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    inputFrame: {
+      minHeight: 55,
+      paddingHorizontal: 13,
+      gap: 9,
+      flexDirection: "row",
+      alignItems: "center",
+      borderRadius: 17,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    inputError: { borderColor: nwcColors.error },
+    input: {
+      flex: 1,
+      minHeight: 53,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    error: {
+      color: nwcColors.error,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    secondaryActions: { gap: 8 },
+    demo: {
+      minHeight: 38,
+      paddingHorizontal: 10,
+      borderRadius: 13,
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexDirection: "row",
+      backgroundColor: nwcColors.surfaceRaised,
+    },
+    demoText: {
+      color: nwcColors.info,
+      fontSize: 10,
+      lineHeight: 14,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    loading: {
+      minHeight: 42,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      backgroundColor: nwcColors.surfaceNavyTint,
+      borderRadius: 14,
+    },
+    loadingText: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_700Bold",
+    },
+    support: {
+      color: nwcColors.muted,
+      textAlign: "center",
+      fontSize: 10,
+      lineHeight: 15,
+      fontFamily: "Poppins_500Medium",
+    },
+  });

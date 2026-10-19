@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import {
   ScrollView,
   StyleSheet,
@@ -9,9 +10,11 @@ import { router, type Href } from "expo-router";
 import { ServiceCard } from "@/components/domain/cargo-cards";
 import { useFloatingNavigationClearance } from "@/components/navigation/use-floating-navigation-clearance";
 import { Screen, SectionHeader } from "@/components/ui/nwc-ui";
-import { nwcColors } from "@/lib/nwc-theme";
 
 export default function SendScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const floatingNavigationClearance = useFloatingNavigationClearance();
   const openLocalRoute = () => router.push("/local-delivery/route" as Href);
   return (
@@ -71,53 +74,54 @@ export default function SendScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: nwcColors.background },
-  content: { paddingHorizontal: 20, paddingTop: 22, gap: 22 },
-  headingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  draftsAction: {
-    minHeight: 30,
-    justifyContent: "center",
-    paddingHorizontal: 4,
-  },
-  draftsText: {
-    color: nwcColors.info,
-    fontSize: 11,
-    lineHeight: 15,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  eyebrow: {
-    color: nwcColors.info,
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: "800",
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    marginBottom: 2,
-  },
-  detail: {
-    color: nwcColors.muted,
-    fontSize: 15,
-    lineHeight: 22,
-    fontWeight: "500",
-    marginTop: -4,
-  },
-  services: { gap: 12 },
-  footerNote: { gap: 3, paddingHorizontal: 4 },
-  footerTitle: {
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_800ExtraBold",
-  },
-  footerDetail: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_500Medium",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    page: { flex: 1, backgroundColor: nwcColors.background },
+    content: { paddingHorizontal: 24, paddingTop: 22, gap: 22 },
+    headingRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    draftsAction: {
+      minHeight: 44,
+      justifyContent: "center",
+      paddingHorizontal: 4,
+    },
+    draftsText: {
+      color: nwcColors.info,
+      fontSize: 11,
+      lineHeight: 15,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    eyebrow: {
+      color: nwcColors.info,
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: "800",
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      marginBottom: 2,
+    },
+    detail: {
+      color: nwcColors.muted,
+      fontSize: 15,
+      lineHeight: 22,
+      fontWeight: "500",
+      marginTop: -4,
+    },
+    services: { gap: 12 },
+    footerNote: { gap: 3, paddingHorizontal: 4 },
+    footerTitle: {
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    footerDetail: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_500Medium",
+    },
+  });

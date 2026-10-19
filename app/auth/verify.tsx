@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { router, type Href } from "expo-router";
@@ -5,13 +6,23 @@ import { router, type Href } from "expo-router";
 import { AuthScreen, OtpInput } from "@/components/auth/auth-shell";
 import { useAppToast } from "@/components/ui/app-toast";
 import { isValidFrontendOtp } from "@/lib/auth-flow";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import { useCustomerAuth } from "@/stores/customer-auth";
 
 export default function VerifyScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(30);
-  const { pendingAuth, authChallenge, authError, completeVerification, clearPendingAuth, resendVerification } = useCustomerAuth();
+  const {
+    pendingAuth,
+    authChallenge,
+    authError,
+    completeVerification,
+    clearPendingAuth,
+    resendVerification,
+  } = useCustomerAuth();
   const toast = useAppToast();
   const isValid = isValidFrontendOtp(code);
 
@@ -37,7 +48,8 @@ export default function VerifyScreen() {
     const completedRegistration = pendingAuth?.mode === "register";
     const verified = await completeVerification(code);
     if (verified) {
-      if (completedRegistration) toast.success("Account verified. Welcome to Newworld Cargo.");
+      if (completedRegistration)
+        toast.success("Account verified. Welcome to Newworld Cargo.");
       router.dismissAll();
       router.replace("/(tabs)" as Href);
     }
@@ -45,7 +57,9 @@ export default function VerifyScreen() {
 
   const changeDestination = () => {
     clearPendingAuth();
-    router.replace(pendingAuth?.mode === "register" ? "/auth/register" : "/auth/phone");
+    router.replace(
+      pendingAuth?.mode === "register" ? "/auth/register" : "/auth/phone",
+    );
   };
 
   const resend = async () => {
@@ -58,18 +72,91 @@ export default function VerifyScreen() {
     }
   };
 
-  const destination = authChallenge?.destination ?? pendingAuth?.destination ?? "your account";
-  const channel = (authChallenge?.channel ?? pendingAuth?.channel) === "email" ? "email" : "mobile number";
+  const destination =
+    authChallenge?.destination ?? pendingAuth?.destination ?? "your account";
+  const channel =
+    (authChallenge?.channel ?? pendingAuth?.channel) === "email"
+      ? "email"
+      : "mobile number";
 
-  return <AuthScreen showBack title="Check your messages" detail={`Enter the six-digit code sent to your ${channel} ${destination}.`} primaryLabel="Verify and continue" onPrimary={verify} primaryDisabled={code.length < 6} secondaryLabel="Use a different phone or email" onSecondary={changeDestination}><OtpInput value={code} onChange={setCode} /><View style={styles.resendRow}><Text style={styles.resendText}>Didn’t receive a code?</Text><TouchableOpacity accessibilityRole="button" disabled={seconds > 0} onPress={resend}><Text style={[styles.resendAction, seconds > 0 && styles.resendDisabled]}>{seconds > 0 ? `Resend in 0:${String(seconds).padStart(2, "0")}` : "Resend code"}</Text></TouchableOpacity></View><View style={styles.helpCard}><Text style={styles.helpTitle}>Security check</Text><Text style={styles.helpDetail}>This confirms the contact on your customer account before opening shipment and payment details.</Text></View></AuthScreen>;
+  return (
+    <AuthScreen
+      showBack
+      title="Check your messages"
+      detail={`Enter the six-digit code sent to your ${channel} ${destination}.`}
+      primaryLabel="Verify and continue"
+      onPrimary={verify}
+      primaryDisabled={code.length < 6}
+      secondaryLabel="Use a different phone or email"
+      onSecondary={changeDestination}
+    >
+      <OtpInput value={code} onChange={setCode} />
+      <View style={styles.resendRow}>
+        <Text style={styles.resendText}>Didn’t receive a code?</Text>
+        <TouchableOpacity
+          accessibilityRole="button"
+          disabled={seconds > 0}
+          onPress={resend}
+        >
+          <Text
+            style={[styles.resendAction, seconds > 0 && styles.resendDisabled]}
+          >
+            {seconds > 0
+              ? `Resend in 0:${String(seconds).padStart(2, "0")}`
+              : "Resend code"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.helpCard}>
+        <Text style={styles.helpTitle}>Security check</Text>
+        <Text style={styles.helpDetail}>
+          This confirms the contact on your customer account before opening
+          shipment and payment details.
+        </Text>
+      </View>
+    </AuthScreen>
+  );
 }
 
-const styles = StyleSheet.create({
-  resendRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", flexWrap: "wrap", gap: 5 },
-  resendText: { color: nwcColors.muted, fontSize: 12, lineHeight: 18, fontFamily: "Poppins_500Medium" },
-  resendAction: { color: nwcColors.info, fontSize: 12, lineHeight: 18, fontFamily: "Poppins_800ExtraBold" },
-  resendDisabled: { color: nwcColors.muted },
-  helpCard: { borderRadius: 16, padding: 13, backgroundColor: "#FFF7E2", gap: 3 },
-  helpTitle: { color: nwcColors.warning, fontSize: 11, lineHeight: 16, fontFamily: "Poppins_800ExtraBold" },
-  helpDetail: { color: nwcColors.foreground, fontSize: 12, lineHeight: 18, fontFamily: "Poppins_600SemiBold" },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    resendRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 5,
+    },
+    resendText: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_500Medium",
+    },
+    resendAction: {
+      minHeight: 44,
+      color: nwcColors.info,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    resendDisabled: { color: nwcColors.muted },
+    helpCard: {
+      borderRadius: 16,
+      padding: 13,
+      backgroundColor: nwcColors.surfaceAccent,
+      gap: 3,
+    },
+    helpTitle: {
+      color: nwcColors.warning,
+      fontSize: 11,
+      lineHeight: 16,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    helpDetail: {
+      color: nwcColors.foreground,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+  });

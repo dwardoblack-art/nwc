@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { PickupScheduleControl } from "@/components/booking/pickup-schedule-control";
 import { isPickupTimeValid } from "@/lib/pickup-schedule";
 import {
@@ -11,13 +12,15 @@ import { router, type Href } from "expo-router";
 
 import { hasCompleteCargoItems } from "@/lib/booking-cargo";
 
-import { nwcColors } from "@/lib/nwc-theme";
 import { useSubmitBooking } from "@/lib/use-cases/use-submit-booking";
 import { useBookingDraft } from "@/stores/booking-draft";
 
 import { isValidPhoneInput } from "@/lib/auth-flow";
 
 export default function LocalDeliveryReviewScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const { localDraft, updateLocalDraft, setBookingStep } = useBookingDraft();
   const submission = useSubmitBooking();
   const detailsComplete = Boolean(
@@ -135,37 +138,42 @@ export default function LocalDeliveryReviewScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  reviewCard: { paddingVertical: 2 },
-  quoteState: {
-    borderRadius: 18,
-    backgroundColor: "#EAF4F8",
-    padding: 16,
-    gap: 9,
-  },
-  quoteTitle: {
-    color: nwcColors.foreground,
-    fontSize: 15,
-    lineHeight: 21,
-    fontWeight: "800",
-  },
-  quoteDetail: {
-    color: nwcColors.info,
-    fontSize: 13,
-    lineHeight: 19,
-    fontWeight: "600",
-  },
-  errorText: {
-    color: nwcColors.error,
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: "Poppins_700Bold",
-  },
-  terms: { borderRadius: 14, backgroundColor: "#F4F7F8", padding: 14 },
-  termsText: {
-    color: nwcColors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    fontWeight: "600",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    reviewCard: { paddingVertical: 2 },
+    quoteState: {
+      borderRadius: 18,
+      backgroundColor: nwcColors.surfaceRaised,
+      padding: 16,
+      gap: 9,
+    },
+    quoteTitle: {
+      color: nwcColors.foreground,
+      fontSize: 15,
+      lineHeight: 21,
+      fontWeight: "800",
+    },
+    quoteDetail: {
+      color: nwcColors.info,
+      fontSize: 13,
+      lineHeight: 19,
+      fontWeight: "600",
+    },
+    errorText: {
+      color: nwcColors.error,
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_700Bold",
+    },
+    terms: {
+      borderRadius: 14,
+      backgroundColor: nwcColors.surfaceRaised,
+      padding: 14,
+    },
+    termsText: {
+      color: nwcColors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      fontWeight: "600",
+    },
+  });

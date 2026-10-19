@@ -1,3 +1,5 @@
+import {
+  useNwcColors, } from "@/ui/use-nwc-colors";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { router } from "expo-router";
@@ -15,8 +17,10 @@ import {
 import { useCustomerBillingAccount } from "@/stores/customer-billing-account";
 import { isValidInternationalMobile } from "@/lib/auth-flow";
 import type { MobileMoneyDetails } from "@/lib/domain/billing";
-import { nwcColors } from "@/lib/nwc-theme";
+
 export default function PaymentMethodsScreen() {
+  const nwcColors = useNwcColors();
+
   const billing = useCustomerBillingAccount();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -49,8 +53,8 @@ export default function PaymentMethodsScreen() {
           <Text
             style={{
               fontSize: 22,
-              fontFamily: "Poppins_800ExtraBold",
-              color: nwcColors.brandNavy,
+              fontFamily: "Poppins_600SemiBold",
+              color: nwcColors.foreground,
             }}
           >
             Payment methods
@@ -90,14 +94,14 @@ export default function PaymentMethodsScreen() {
                 <AppIcon
                   name="wallet-outline"
                   size={36}
-                  color={nwcColors.brandNavy}
+                  color={nwcColors.foreground}
                 />
               </View>
               <Text
                 style={{
-                  fontFamily: "Poppins_800ExtraBold",
+                  fontFamily: "Poppins_600SemiBold",
                   fontSize: 18,
-                  color: nwcColors.brandNavy,
+                  color: nwcColors.foreground,
                   textAlign: "center",
                 }}
               >
@@ -122,7 +126,7 @@ export default function PaymentMethodsScreen() {
                 <Text
                   style={{
                     fontFamily: "Poppins_700Bold",
-                    color: nwcColors.brandNavy,
+                    color: nwcColors.foreground,
                   }}
                 >
                   {item.label}

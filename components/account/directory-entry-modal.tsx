@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { ContactPickerAction } from "@/components/ui/contact-picker-action";
 import { MobileInput } from "@/components/ui/mobile-input";
 import { useEffect, useState } from "react";
@@ -6,7 +7,6 @@ import { StyleSheet, Text, View } from "react-native";
 import { CustomerBottomDrawer } from "@/components/ui/customer-bottom-drawer";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/nwc-ui";
 import type { AddressBookItem } from "@/lib/domain/address-book";
-import { nwcColors } from "@/lib/nwc-theme";
 
 type DirectoryEntryModalProps = {
   visible: boolean;
@@ -25,6 +25,9 @@ export function DirectoryEntryModal({
   onDismiss,
   onSave,
 }: DirectoryEntryModalProps) {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [label, setLabel] = useState("");
   const [detail, setDetail] = useState("");
   useEffect(() => {
@@ -67,7 +70,7 @@ export function DirectoryEntryModal({
       }
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-        <Text style={{ flex: 1, color: nwcColors.brandNavy }}>
+        <Text style={{ flex: 1, color: nwcColors.foreground }}>
           Select from phone contacts
         </Text>
         <ContactPickerAction
@@ -94,19 +97,20 @@ export function DirectoryEntryModal({
   );
 }
 
-const styles = StyleSheet.create({
-  input: {
-    minHeight: 50,
-    paddingHorizontal: 13,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#DCE6E8",
-    backgroundColor: nwcColors.surfaceElevated,
-    color: nwcColors.foreground,
-    fontSize: 13,
-    lineHeight: 18,
-    fontFamily: "Poppins_600SemiBold",
-  },
-  actions: { flexDirection: "row", gap: 9 },
-  action: { flex: 1 },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    input: {
+      minHeight: 50,
+      paddingHorizontal: 13,
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: nwcColors.border,
+      backgroundColor: nwcColors.surfaceElevated,
+      color: nwcColors.foreground,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+    },
+    actions: { flexDirection: "row", gap: 9 },
+    action: { minHeight: 44, flex: 1 },
+  });

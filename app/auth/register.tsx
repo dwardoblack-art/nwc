@@ -1,3 +1,4 @@
+import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { router, type Href } from "expo-router";
@@ -9,7 +10,7 @@ import {
 } from "@/components/auth/auth-shell";
 import { useAppToast } from "@/components/ui/app-toast";
 import { isValidEmailInput, isValidInternationalMobile } from "@/lib/auth-flow";
-import { nwcColors } from "@/lib/nwc-theme";
+
 import {
   clearRegistrationDraft,
   readRegistrationDraft,
@@ -18,6 +19,9 @@ import {
 import { useCustomerAuth } from "@/stores/customer-auth";
 
 export default function RegisterScreen() {
+  const nwcColors = useNwcColors();
+  const styles = createThemedStyles_styles(nwcColors);
+
   const [givenName, setGivenName] = useState("");
   const [lastName, setLastName] = useState("");
   const name = `${givenName.trim()} ${lastName.trim()}`.trim();
@@ -196,13 +200,14 @@ export default function RegisterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  terms: { paddingHorizontal: 4 },
-  termsText: {
-    color: nwcColors.muted,
-    textAlign: "center",
-    fontSize: 11,
-    lineHeight: 17,
-    fontFamily: "Poppins_500Medium",
-  },
-});
+const createThemedStyles_styles = (nwcColors: NwcPalette) =>
+  StyleSheet.create({
+    terms: { paddingHorizontal: 4 },
+    termsText: {
+      color: nwcColors.muted,
+      textAlign: "center",
+      fontSize: 11,
+      lineHeight: 17,
+      fontFamily: "Poppins_500Medium",
+    },
+  });
