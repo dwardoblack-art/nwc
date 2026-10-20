@@ -19,7 +19,6 @@ import {
 } from "react-native";
 import { ScreenContainer } from "@/ui/screen-container";
 import { AppIcon, type AppIconName } from "@/ui/app-icon";
-import { nwcRadii } from "@/lib/nwc-theme";
 
 export type AppButtonProps = {
   label: string;
@@ -29,6 +28,7 @@ export type AppButtonProps = {
   icon?: AppIconName;
   style?: StyleProp<ViewStyle>;
   accessibilityHint?: string;
+  inverse?: boolean;
 };
 
 function useButtonAction(onPress: AppButtonProps["onPress"], loading = false) {
@@ -80,8 +80,8 @@ export function PrimaryButton({
       activeOpacity={0.84}
       onPress={handlePress}
       style={[
-        [styles.primaryButton, unavailable && styles.disabledButton, style],
         minimumTouchTarget,
+        [styles.primaryButton, unavailable && styles.disabledButton, style],
       ]}
     >
       {busy ? (
@@ -103,6 +103,7 @@ export function SecondaryButton({
   icon,
   style,
   accessibilityHint,
+  inverse = false,
 }: AppButtonProps) {
   const nwcColors = useNwcColors();
   const styles = createThemedStyles_styles(nwcColors);
@@ -119,16 +120,35 @@ export function SecondaryButton({
       activeOpacity={0.76}
       onPress={handlePress}
       style={[
-        [styles.secondaryButton, unavailable && styles.disabledButton, style],
         minimumTouchTarget,
+        [
+          styles.secondaryButton,
+          inverse && styles.inverseButton,
+          unavailable && styles.disabledButton,
+          style,
+        ],
       ]}
     >
       {busy ? (
-        <ActivityIndicator size="small" color={nwcColors.foreground} />
+        <ActivityIndicator
+          size="small"
+          color={inverse ? nwcColors.white : nwcColors.foreground}
+        />
       ) : null}
-      <Text style={styles.secondaryButtonText}>{label}</Text>
+      <Text
+        style={[
+          styles.secondaryButtonText,
+          inverse && { color: nwcColors.white },
+        ]}
+      >
+        {label}
+      </Text>
       {icon && !busy ? (
-        <AppIcon name={icon} size={19} color={nwcColors.foreground} />
+        <AppIcon
+          name={icon}
+          size={19}
+          color={inverse ? nwcColors.white : nwcColors.foreground}
+        />
       ) : null}
     </TouchableOpacity>
   );
@@ -341,9 +361,14 @@ export function RouteLine({ from, to }: { from: string; to: string }) {
 
 const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
+    inverseButton: {
+      backgroundColor: nwcColors.brandNavy,
+      borderColor: nwcColors.tint2B4A60,
+    },
     primaryButton: {
-      minHeight: 52,
-      borderRadius: 14,
+      paddingVertical: 14,
+      minHeight: 56,
+      borderRadius: 10,
       backgroundColor: nwcColors.primary,
       alignItems: "center",
       justifyContent: "center",
@@ -360,8 +385,9 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       fontFamily: "Poppins_600SemiBold",
     },
     secondaryButton: {
-      minHeight: 50,
-      borderRadius: 20,
+      paddingVertical: 14,
+      minHeight: 56,
+      borderRadius: 10,
       borderWidth: 1,
       borderColor: nwcColors.border,
       backgroundColor: nwcColors.surfaceElevated,
@@ -383,7 +409,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     iconButton: {
       width: 44,
       height: 44,
-      borderRadius: 22,
+      borderRadius: 10,
       borderWidth: 1,
       borderColor: nwcColors.border,
       backgroundColor: nwcColors.surfaceElevated,
@@ -405,7 +431,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       backgroundColor: nwcColors.surface,
       borderWidth: 1,
       borderColor: nwcColors.border,
-      borderRadius: 20,
+      borderRadius: 12,
       padding: 20,
     },
     sectionHeader: {
@@ -427,15 +453,15 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     },
     sectionTitle: {
       color: nwcColors.foreground,
-      fontSize: 19,
-      lineHeight: 25,
+      fontSize: 22,
+      lineHeight: 30,
       fontFamily: "Poppins_600SemiBold",
     },
     statusBadge: {
       flexDirection: "row",
       alignItems: "center",
       gap: 5,
-      borderRadius: nwcRadii.pill,
+      borderRadius: 5,
       alignSelf: "flex-start",
       paddingVertical: 5,
       paddingHorizontal: 9,
@@ -462,10 +488,10 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     },
     heading: {
       color: nwcColors.foreground,
-      fontSize: 29,
-      lineHeight: 36,
+      fontSize: 36,
+      lineHeight: 44,
       fontFamily: "Poppins_600SemiBold",
-      letterSpacing: -0.6,
+      letterSpacing: -1.2,
     },
     body: {
       color: nwcColors.muted,

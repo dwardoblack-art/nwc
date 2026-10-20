@@ -17,12 +17,12 @@ import { ContactPickerAction } from "@/ui/contact-picker-action";
 export const createThemedStyles_mobileInputStyles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
     frame: {
-      minHeight: 56,
-      borderRadius: 16,
+      minHeight: 60,
+      borderRadius: 8,
       borderWidth: 1,
       borderColor: nwcColors.border,
-      backgroundColor: nwcColors.surface,
-      paddingHorizontal: 14,
+      backgroundColor: nwcColors.surfaceRaised,
+      paddingHorizontal: 16,
       flexDirection: "row",
       alignItems: "center",
       gap: 10,
@@ -30,7 +30,7 @@ export const createThemedStyles_mobileInputStyles = (nwcColors: NwcPalette) =>
     text: {
       color: nwcColors.foreground,
       fontSize: 16,
-      lineHeight: 22,
+      lineHeight: 24,
       fontFamily: "Poppins_500Medium",
       paddingVertical: 10,
     },

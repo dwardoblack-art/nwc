@@ -33,6 +33,7 @@ export default function WelcomeScreen() {
         </View>
 
         <SecondaryButton
+          inverse
           label="Track a shipment"
           icon="barcode-scan"
           onPress={() => router.push("/tracking" as Href)}
@@ -52,43 +53,47 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
     screen: {
       flex: 1,
-      backgroundColor: nwcColors.background,
+      backgroundColor: nwcColors.brandNavy,
     },
     content: {
+      gap: 14,
       flexGrow: 1,
       paddingHorizontal: 24,
-      paddingTop: 20,
-      paddingBottom: 18,
+      paddingTop: 32,
+      paddingBottom: 28,
     },
     header: {
+      paddingBottom: 24,
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.tint2B4A60,
       alignItems: "flex-start",
     },
     logo: {
-      width: 190,
-      height: 76,
+      width: 166,
+      height: 66,
     },
     message: {
       flex: 1,
-      minHeight: 340,
+      minHeight: 360,
       alignItems: "flex-start",
       justifyContent: "center",
-      gap: 12,
-      paddingVertical: 32,
+      gap: 24,
+      paddingVertical: 40,
     },
     title: {
-      color: nwcColors.foreground,
+      color: nwcColors.white,
       textAlign: "left",
-      fontSize: 34,
-      lineHeight: 42,
-      letterSpacing: -0.8,
+      fontSize: 44,
+      lineHeight: 53,
+      letterSpacing: -1.7,
       fontFamily: "Poppins_600SemiBold",
     },
     detail: {
       maxWidth: 310,
-      color: nwcColors.muted,
+      color: nwcColors.tintC9D7E1,
       textAlign: "left",
       fontSize: 15,
-      lineHeight: 23,
+      lineHeight: 25,
       fontFamily: "Poppins_500Medium",
     },
     continueButton: { minHeight: 44, width: "100%" },

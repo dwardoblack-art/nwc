@@ -83,3 +83,10 @@ The workspace began with unrelated uncommitted changes in `lib/config/env.ts`, `
 - [ ] Add `com.nwcargo.app` and its Play app-signing SHA-256 to `assetlinks.json` on `app.newworldcargo.com`. Keep the existing host and legacy associations needed by installed apps.
 - [ ] Register `com.nwcargo.app` in the Apple Developer account if shipping iOS, then validate iOS signing, permissions and links on a device.
 - [ ] Review authenticated screens in both modes and at larger system text sizes; smoke-test every booking service, uploads, billing, tracking, denied permissions, notifications and account recovery/deletion before submission.
+# Cargo-desk composition update — 2026-10-20
+
+The first reskin was too close to the existing Play Store presentation. This pass changes the composition: navy identity mastheads, large editorial headings, numbered full-width service rows, vertical shipment routes, a statement-style balance panel, flat invoice lists, and consistently labelled visible navigation tabs. Auth, account and booking forms inherit the same spacing and surface language. The original palette and business callbacks remain in place.
+
+Review [the standalone before/after comparison](cargo-desk-comparison.html), [design rationale](cargo-desk-design.md), and light/dark captures in `cargo-desk-screens/`. Before images are the existing Play Store assets. Authenticated layouts use clearly marked sample data rendered through the actual UI components; they are visual evidence, not certification of authenticated device flows. The temporary preview route was removed before production export.
+
+Validation: TypeScript passes; 214 tests pass with one skipped. Lint retains two existing warnings. The accessibility scan covers 140 controls with shared minimum targets and no missing labels. Frozen source hashes remain unchanged. The attribute-order audit flags the redesigned home header: manual review confirms the same tracking, notification and account callbacks, unchanged notification unread logic, and unchanged name derivation. Earlier zero-difference audit statements below describe the preceding reskin pass.

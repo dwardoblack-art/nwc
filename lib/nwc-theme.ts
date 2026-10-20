@@ -19,9 +19,9 @@ export const nwcColors = {
 } as const;
 
 export const nwcRadii = {
-  control: 14,
-  card: 20,
-  sheet: 28,
+  control: 10,
+  card: 12,
+  sheet: 36,
   pill: 999,
 } as const;
 

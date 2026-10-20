@@ -50,31 +50,31 @@ export function AccountRow({
 const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
     row: {
-      minHeight: 70,
+      minHeight: 88,
       flexDirection: "row",
       alignItems: "center",
-      gap: 12,
-      paddingVertical: 10,
+      gap: 16,
+      paddingVertical: 18,
     },
     iconWrap: {
-      height: 42,
-      width: 42,
+      height: 44,
+      width: 44,
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 14,
+      borderRadius: 8,
       backgroundColor: nwcColors.surfaceRaised,
     },
     copy: { flex: 1, gap: 2 },
     title: {
       color: nwcColors.foreground,
-      fontSize: 15,
-      lineHeight: 20,
+      fontSize: 16,
+      lineHeight: 24,
       fontFamily: "Poppins_600SemiBold",
     },
     detail: {
       color: nwcColors.muted,
       fontSize: 12,
-      lineHeight: 17,
+      lineHeight: 19,
       fontFamily: "Poppins_500Medium",
     },
   });

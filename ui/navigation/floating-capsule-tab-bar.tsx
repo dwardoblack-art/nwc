@@ -72,29 +72,15 @@ export function FloatingCapsuleTabBar({
               onLongPress={onLongPress}
               activeOpacity={0.74}
               style={[
+                minimumTouchTarget,
                 [
                   styles.item,
                   focused ? styles.itemActive : styles.itemInactive,
                 ],
-                minimumTouchTarget,
               ]}
             >
-              {focused ? (
-                <>
-                  <AppIcon
-                    name={item.icon}
-                    size={24}
-                    color={nwcColors.primaryInk}
-                  />
-                  <Text style={styles.activeLabel}>{item.label}</Text>
-                </>
-              ) : (
-                <AppIcon
-                  name={item.icon}
-                  size={25}
-                  color={nwcColors.foreground}
-                />
-              )}
+              <AppIcon name={item.icon} size={22} color={focused ? nwcColors.primaryInk : nwcColors.muted} />
+              <Text style={[styles.activeLabel, !focused && { color: nwcColors.muted }]}>{item.label}</Text>
             </TouchableOpacity>
           );
         })}
@@ -116,47 +102,50 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       width: "auto",
       alignSelf: "stretch",
       minHeight: floatingNavigationDockHeight,
-      marginHorizontal: 16,
-      padding: 7,
-      gap: 7,
+      marginHorizontal: 20,
+      padding: 5,
+      gap: 3,
       flexDirection: "row",
       alignItems: "center",
-      borderRadius: 37,
+      borderRadius: 16,
       backgroundColor: nwcColors.surfaceElevated,
       borderWidth: 1,
       borderColor: nwcColors.border,
       shadowColor: nwcColors.tint001624,
       shadowOffset: { width: 0, height: 12 },
-      shadowOpacity: 0.06,
-      shadowRadius: 22,
+      shadowOpacity: 0.04,
+      shadowRadius: 8,
       elevation: 2,
     },
     item: {
       minHeight: 58,
-      borderRadius: 29,
+      borderRadius: 10,
       alignItems: "center",
       justifyContent: "center",
-      flexDirection: "row",
-      gap: 8,
+      flexDirection: "column",
+      gap: 3,
     },
     itemActive: {
       flex: 1,
-      minWidth: 110,
+      minWidth: 0,
       backgroundColor: nwcColors.primary,
-      paddingHorizontal: 15,
+      paddingHorizontal: 6,
     },
     itemInactive: {
-      width: 58,
-      borderWidth: 1,
+      flex: 1,
+      borderRadius: 10,
+      width: "auto",
+      borderWidth: 0,
       borderColor: nwcColors.border,
-      backgroundColor: nwcColors.surfaceRaised,
+      backgroundColor: nwcColors.surfaceElevated,
     },
     activeLabel: {
+      letterSpacing: 0.1,
       flexShrink: 1,
       textAlign: "center",
       color: nwcColors.primaryInk,
-      fontSize: 15,
-      lineHeight: 20,
+      fontSize: 10,
+      lineHeight: 15,
       fontFamily: "Poppins_600SemiBold",
     },
   });

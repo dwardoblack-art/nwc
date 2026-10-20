@@ -129,23 +129,33 @@ export function AccountSettingsScreen({
 export default AccountSettingsScreen;
 const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
-    content: { gap: 22 },
-    heading: { gap: 5 },
+    content: { gap: 28 },
+    heading: {
+      backgroundColor: nwcColors.brandNavy,
+      marginHorizontal: -20,
+      padding: 24,
+      borderBottomRightRadius: 40,
+      minHeight: 180,
+      justifyContent: "flex-end",
+      gap: 10,
+    },
     title: {
-      fontSize: 28,
-      lineHeight: 36,
+      letterSpacing: -1.5,
+      fontSize: 42,
+      lineHeight: 50,
       fontFamily: "Poppins_600SemiBold",
-      color: nwcColors.foreground,
+      color: nwcColors.white,
     },
     subtitle: {
-      fontSize: 14,
+      lineHeight: 24,
+      fontSize: 16,
       fontFamily: "Poppins_500Medium",
-      color: nwcColors.muted,
+      color: nwcColors.tintC9D7E1,
     },
     group: {
-      backgroundColor: nwcColors.surface,
-      borderRadius: 24,
-      paddingHorizontal: 16,
+      backgroundColor: nwcColors.background,
+      borderRadius: 0,
+      paddingHorizontal: 0,
     },
     row: {
       borderBottomWidth: StyleSheet.hairlineWidth,

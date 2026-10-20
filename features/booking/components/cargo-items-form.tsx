@@ -316,9 +316,11 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     items: { gap: 10 },
     itemCard: {
       gap: 12,
-      padding: 14,
-      borderRadius: 22,
-      borderWidth: 1,
+      padding: 0,
+      paddingVertical: 20,
+      borderRadius: 0,
+      borderWidth: 0,
+      borderTopWidth: 1,
       borderColor: nwcColors.border,
       backgroundColor: nwcColors.surface,
     },
@@ -366,7 +368,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     input: {
       minHeight: 49,
       paddingHorizontal: 12,
-      borderRadius: 15,
+      borderRadius: 8,
       borderWidth: 1,
       borderColor: nwcColors.border,
       backgroundColor: nwcColors.surfaceElevated,

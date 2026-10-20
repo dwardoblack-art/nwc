@@ -14,7 +14,6 @@ export function HomeServiceTile({
   title,
   subtitle,
   capacity,
-  icon,
   image,
   variant = "half",
   onPress,
@@ -39,8 +38,19 @@ export function HomeServiceTile({
       accessibilityHint={subtitle}
       onPress={onPress}
       activeOpacity={0.76}
-      style={[[styles.tile, styles[variant]], minimumTouchTarget]}
+      style={[minimumTouchTarget, styles.tile, styles[variant]]}
     >
+      <View style={styles.serviceNumber}>
+        <Text style={[styles.number, dark && styles.darkText]}>
+          {title === "International Imports"
+            ? "01"
+            : title === "City-to-City"
+              ? "02"
+              : title === "Local Delivery"
+                ? "03"
+                : "04"}
+        </Text>
+      </View>
       <View style={styles.copy}>
         <Text
           numberOfLines={2}
@@ -66,32 +76,29 @@ export function HomeServiceTile({
           {capacity}
         </Text>
       ) : null}
-      {accent ? (
-        <AppIcon
-          name="arrow-top-right"
-          size={variant === "custom" ? 42 : 31}
-          color={dark ? nwcColors.white : nwcColors.brandNavy}
-          style={
-            variant === "custom" ? styles.customIcon : styles.compactCustomIcon
-          }
-        />
-      ) : image ? (
+      {image ? (
         <Image
           accessibilityIgnoresInvertColors
           source={image}
           contentFit="contain"
           cachePolicy="memory-disk"
-          style={[
-            styles.vehicleImage,
-            variant === "wide" && styles.wideVehicleImage,
-            variant === "compact" && styles.compactVehicleImage,
-          ]}
+          style={styles.thumbnail}
+        />
+      ) : null}
+      {accent ? (
+        <AppIcon
+          name="arrow-top-right"
+          size={22}
+          color={nwcColors.foreground}
+          style={
+            variant === "custom" ? styles.customIcon : styles.compactCustomIcon
+          }
         />
       ) : (
         <AppIcon
-          name={icon}
-          size={variant === "wide" ? 60 : variant === "compact" ? 40 : 53}
-          color={nwcColors.primaryInk}
+          name="arrow-top-right"
+          size={22}
+          color={nwcColors.foreground}
           style={styles.vehicleIcon}
         />
       )}
@@ -101,57 +108,84 @@ export function HomeServiceTile({
 
 const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
+    serviceNumber: {
+      width: 30,
+      alignSelf: "stretch",
+      justifyContent: "center",
+    },
+    number: {
+      fontSize: 13,
+      lineHeight: 20,
+      fontFamily: "Poppins_500Medium",
+      color: nwcColors.muted,
+    },
+    thumbnail: { width: 54, height: 50 },
     tile: {
+      paddingVertical: 18,
+      borderBottomWidth: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
       position: "relative",
-      overflow: "hidden",
-      borderRadius: 24,
-      padding: 15,
-      backgroundColor: nwcColors.surface,
-      borderWidth: 1,
+      overflow: "visible",
+      borderRadius: 0,
+      padding: 0,
+      backgroundColor: nwcColors.background,
+      borderWidth: 0,
       borderColor: nwcColors.border,
-      justifyContent: "space-between",
+      justifyContent: "flex-start",
     },
-    half: { width: "48.4%", minHeight: 145 },
-    wide: { width: "64.8%", minHeight: 142 },
+    half: { width: "100%", minHeight: 100 },
+    wide: { width: "100%", minHeight: 100 },
     custom: {
-      width: "32%",
-      minHeight: 142,
-      backgroundColor: nwcColors.brandNavy,
-      borderColor: nwcColors.brandNavy,
-    },
-    compact: { width: "48.4%", minHeight: 116, borderRadius: 20, padding: 13 },
-    compactDark: {
-      width: "48.4%",
-      minHeight: 116,
-      borderRadius: 20,
-      padding: 13,
-      backgroundColor: nwcColors.surfaceNavyTint,
+      width: "100%",
+      minHeight: 100,
+      backgroundColor: nwcColors.background,
       borderColor: nwcColors.border,
     },
-    copy: { maxWidth: "82%", gap: 1 },
+    compact: {
+      paddingVertical: 18,
+      width: "100%",
+      minHeight: 100,
+      borderRadius: 0,
+      padding: 0,
+    },
+    compactDark: {
+      paddingVertical: 18,
+      width: "100%",
+      minHeight: 100,
+      borderRadius: 0,
+      padding: 0,
+      backgroundColor: nwcColors.background,
+      borderColor: nwcColors.border,
+    },
+    copy: { flex: 1, maxWidth: "100%", gap: 4 },
     title: {
       color: nwcColors.foreground,
-      fontSize: 16,
-      lineHeight: 21,
+      fontSize: 18,
+      lineHeight: 25,
       fontFamily: "Poppins_600SemiBold",
-      letterSpacing: -0.25,
+      letterSpacing: -0.4,
     },
-    compactTitle: { fontSize: 14, lineHeight: 18 },
+    compactTitle: { fontSize: 18, lineHeight: 25 },
     subtitle: {
       color: nwcColors.muted,
       fontSize: 12,
-      lineHeight: 17,
+      lineHeight: 18,
       fontFamily: "Poppins_500Medium",
     },
     capacity: {
+      position: "absolute",
+      left: 44,
+      bottom: 4,
       color: nwcColors.foreground,
-      fontSize: 11,
-      lineHeight: 15,
+      fontSize: 10,
+      lineHeight: 14,
       fontFamily: "Poppins_600SemiBold",
     },
-    darkText: { color: nwcColors.white },
-    darkSubtext: { color: nwcColors.tintC9D7E1 },
-    vehicleIcon: { position: "absolute", right: -8, bottom: 5, opacity: 0.94 },
+    darkText: { color: nwcColors.foreground },
+    darkSubtext: { color: nwcColors.muted },
+    vehicleIcon: { position: "relative", right: 0, bottom: 0, opacity: 0.94 },
     vehicleImage: {
       position: "absolute",
       right: -10,
@@ -161,6 +195,6 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     },
     wideVehicleImage: { right: -30, bottom: -10, height: 128, width: 166 },
     compactVehicleImage: { right: -6, bottom: -6, width: 78, height: 58 },
-    customIcon: { position: "absolute", right: 11, bottom: 12 },
-    compactCustomIcon: { position: "absolute", right: 12, bottom: 12 },
+    customIcon: { position: "relative", right: 0, bottom: 0 },
+    compactCustomIcon: { position: "relative", right: 0, bottom: 0 },
   });

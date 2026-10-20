@@ -16,6 +16,7 @@ import { ShipmentCard } from "@/features/booking/components/cargo-cards";
 import { useFloatingNavigationClearance } from "@/ui/navigation/use-floating-navigation-clearance";
 import { AppIcon } from "@/ui/app-icon";
 import { IconButton, Screen } from "@/ui/nwc-ui";
+import { DeskHeading } from "@/ui/desk-heading";
 import { customerSafeMessageFor } from "@/lib/api/errors";
 import { toUiShipments } from "@/lib/mappers/shipment-ui-mapper";
 import { shipmentDestination } from "@/lib/shipment-navigation";
@@ -64,10 +65,11 @@ export default function ShipmentsScreen() {
       <View style={styles.page}>
         <View style={styles.header}>
           <View style={styles.headerCopy}>
-            <Text style={styles.title}>Shipments</Text>
-            <Text style={styles.description}>
-              Every package, one calm view.
-            </Text>
+            <DeskHeading
+              eyebrow="YOUR ACTIVITY / 02"
+              title="Shipments"
+              detail="Every package, one calm view."
+            />
           </View>
           <View style={styles.headerActions}>
             <IconButton
@@ -227,6 +229,9 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       paddingTop: 20,
     },
     header: {
+      paddingBottom: 22,
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
       flexDirection: "row",
       alignItems: "flex-start",
       justifyContent: "space-between",
@@ -236,10 +241,10 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     headerCopy: { flex: 1, gap: 4 },
     title: {
       color: nwcColors.foreground,
-      fontSize: 30,
-      lineHeight: 38,
+      fontSize: 42,
+      lineHeight: 50,
       fontFamily: "Poppins_600SemiBold",
-      letterSpacing: -0.5,
+      letterSpacing: -1.6,
     },
     description: {
       color: nwcColors.muted,
@@ -247,7 +252,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       lineHeight: 20,
       fontFamily: "Poppins_500Medium",
     },
-    list: { paddingTop: 18, gap: 11 },
+    list: { paddingTop: 18, gap: 12 },
     listHeader: { gap: 12, marginBottom: 6 },
     stateBanner: {
       minHeight: 38,
@@ -270,7 +275,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       paddingHorizontal: 14,
       borderWidth: 1,
       borderColor: nwcColors.border,
-      borderRadius: 19,
+      borderRadius: 8,
       backgroundColor: nwcColors.surfaceRaised,
     },
     searchInput: {
@@ -283,24 +288,33 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       fontFamily: "Poppins_600SemiBold",
     },
     filterRail: {
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
       width: "100%",
       flexDirection: "row",
       alignItems: "center",
       gap: 4,
-      backgroundColor: nwcColors.surfaceRaised,
-      padding: 4,
-      borderRadius: 999,
+      backgroundColor: nwcColors.background,
+      padding: 0,
+      borderRadius: 0,
     },
     filterChip: {
+      backgroundColor: nwcColors.background,
+      borderBottomWidth: 3,
+      borderBottomColor: nwcColors.background,
       flex: 1,
       minHeight: 44,
       paddingVertical: 10,
-      paddingHorizontal: 8,
+      paddingHorizontal: 18,
       justifyContent: "center",
       alignItems: "center",
-      borderRadius: 999,
+      borderRadius: 0,
     },
-    filterChipSelected: { minHeight: 44, backgroundColor: nwcColors.surface },
+    filterChipSelected: {
+      borderBottomColor: nwcColors.primary,
+      minHeight: 44,
+      backgroundColor: nwcColors.background,
+    },
     filterText: {
       color: nwcColors.muted,
       fontSize: 13,

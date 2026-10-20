@@ -1,6 +1,11 @@
 {
   "comparedAttributes": 787,
-  "changedCallbackOrInputFiles": [],
+  "changedCallbackOrInputFiles": [
+    "components/home/customer-home-header.tsx"
+  ],
+  "manualBindingReview": {
+    "components/home/customer-home-header.tsx": "Presentation reorders the three original actions and extracts HeaderNotification. onTracking, onNotifications and onAccount still invoke their original supplied callbacks. The unread predicate and first-name derivation are unchanged."
+  },
   "frozenFilesChanged": [],
   "frozenImportPathsOnly": [
     "lib/booking-review-edits.ts",

@@ -54,21 +54,13 @@ export function ServiceCard({
   const active = status === "available" && onPress;
   const body = (
     <>
+      <View style={styles.serviceRail}>
+        <Text style={styles.serviceNumber}>
+          {service === "local" ? "01" : service === "intercity" ? "02" : "03"}
+        </Text>
+        <AppIcon name={item.icon} size={22} color={nwcColors.foreground} />
+      </View>
       <View style={styles.serviceCopy}>
-        <View
-          style={[
-            styles.serviceIcon,
-            service === "local" && styles.serviceIconPrimary,
-          ]}
-        >
-          <AppIcon
-            name={item.icon}
-            size={21}
-            color={
-              service === "local" ? nwcColors.primaryInk : nwcColors.brandNavy
-            }
-          />
-        </View>
         <Text style={styles.serviceTitle}>{item.label}</Text>
         <Text style={styles.serviceDetail}>{item.detail}</Text>
       </View>
@@ -103,7 +95,7 @@ export function ServiceCard({
         accessibilityHint={item.detail}
         activeOpacity={0.78}
         onPress={onPress}
-        style={[styles.serviceCard, minimumTouchTarget]}
+        style={[minimumTouchTarget, styles.serviceCard]}
       >
         {body}
       </TouchableOpacity>
@@ -151,10 +143,6 @@ export function ShipmentCard({
           isImport ? styles.airCard : styles.seaCard,
         ]}
       >
-        <View
-          pointerEvents="none"
-          style={[styles.cardHalo, isImport ? styles.airHalo : styles.seaHalo]}
-        />
         <View style={styles.shipmentHeader}>
           <View
             style={[
@@ -289,21 +277,6 @@ export function ShipmentCard({
           </View>
         </View>
       </View>
-      <View
-        pointerEvents="none"
-        style={[
-          styles.cardLayer,
-          isDark ? styles.cardLayerDark : styles.cardLayerLight,
-        ]}
-      />
-      <View
-        pointerEvents="none"
-        style={[
-          styles.cardLayer,
-          styles.cardLayerBack,
-          isDark ? styles.cardLayerBackDark : styles.cardLayerBackLight,
-        ]}
-      />
     </Pressable>
   );
 }
@@ -346,15 +319,27 @@ export function ActionRequiredCard({
 
 const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
+    serviceRail: { width: 34, gap: 16, alignItems: "flex-start" },
+    serviceNumber: {
+      fontSize: 12,
+      lineHeight: 18,
+      fontFamily: "Poppins_600SemiBold",
+      color: nwcColors.muted,
+    },
     serviceCard: {
-      minHeight: 126,
-      borderWidth: 1,
+      paddingVertical: 24,
+      borderBottomWidth: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 18,
+      minHeight: 152,
+      borderWidth: 0,
       borderColor: nwcColors.border,
-      backgroundColor: nwcColors.surface,
-      borderRadius: 24,
-      padding: 15,
+      backgroundColor: nwcColors.background,
+      borderRadius: 0,
+      padding: 0,
       overflow: "hidden",
-      justifyContent: "space-between",
+      justifyContent: "flex-start",
     },
     serviceCardInactive: { opacity: 0.76 },
     serviceIcon: {
@@ -366,31 +351,33 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       justifyContent: "center",
     },
     serviceIconPrimary: { backgroundColor: nwcColors.primary },
-    serviceCopy: { flex: 1, gap: 5, maxWidth: "63%" },
+    serviceCopy: { minWidth: 0, paddingRight: 0, flex: 1, gap: 8, maxWidth: "100%" },
     serviceTitle: {
+      letterSpacing: -0.7,
       color: nwcColors.foreground,
-      fontSize: 18,
-      lineHeight: 23,
+      fontSize: 22,
+      lineHeight: 29,
       fontFamily: "Poppins_600SemiBold",
     },
     serviceDetail: {
       color: nwcColors.muted,
-      fontSize: 12,
-      lineHeight: 17,
+      fontSize: 13,
+      lineHeight: 20,
       fontFamily: "Poppins_500Medium",
     },
     serviceArtwork: {
-      position: "absolute",
-      right: -4,
-      bottom: -7,
-      width: 122,
-      height: 102,
+      opacity: 0.9,
+      position: "relative",
+      right: 0,
+      bottom: 0,
+      width: 64,
+      height: 58,
     },
-    localArtwork: { right: -23, bottom: -14, width: 154, height: 119 },
+    localArtwork: { right: 0, bottom: 0, width: 64, height: 58 },
     serviceEnd: {
       position: "absolute",
-      right: 13,
-      top: 13,
+      right: 0,
+      top: 22,
       alignItems: "flex-end",
       justifyContent: "center",
     },
@@ -400,21 +387,29 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       lineHeight: 14,
       fontFamily: "Poppins_600SemiBold",
     },
-    shipmentButton: { minHeight: 44, position: "relative", paddingBottom: 8 },
+    shipmentButton: {
+      marginBottom: 14,
+      minHeight: 44,
+      position: "relative",
+      paddingBottom: 0,
+    },
     shipmentButtonPressed: {
       minHeight: 44,
       opacity: 0.92,
       transform: [{ scale: 0.985 }],
     },
     shipmentCard: {
+      borderWidth: 1,
+      borderColor: nwcColors.border,
       overflow: "hidden",
-      gap: 16,
-      padding: 18,
-      borderRadius: 27,
+      gap: 18,
+      padding: 20,
+      borderRadius: 12,
     },
-    airCard: { backgroundColor: nwcColors.primary },
+    airCard: { backgroundColor: nwcColors.surface },
     seaCard: { backgroundColor: nwcColors.brandNavy },
     cardHalo: {
+      opacity: 0,
       position: "absolute",
       right: -40,
       bottom: -45,
@@ -426,6 +421,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     airHalo: { borderColor: "rgba(13,13,13,0.14)" },
     seaHalo: { borderColor: "rgba(255,200,61,0.3)" },
     cardLayer: {
+      opacity: 0,
       position: "absolute",
       height: 11,
       borderBottomLeftRadius: 17,
@@ -435,7 +431,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       bottom: 4,
       zIndex: -1,
     },
-    cardLayerBack: { left: 41, right: 41, bottom: 0 },
+    cardLayerBack: { opacity: 0, left: 41, right: 41, bottom: 0 },
     cardLayerLight: { backgroundColor: nwcColors.tintE8B72B },
     cardLayerBackLight: { backgroundColor: nwcColors.tintC99012 },
     cardLayerDark: { backgroundColor: nwcColors.tint0A4165 },
@@ -449,7 +445,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     serviceTag: {
       minHeight: 27,
       alignSelf: "flex-start",
-      borderRadius: 9,
+      borderRadius: 4,
       flexDirection: "row",
       alignItems: "center",
       gap: 5,
@@ -473,7 +469,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     statusChip: {
       minHeight: 44,
       alignSelf: "flex-start",
-      borderRadius: 9,
+      borderRadius: 4,
       paddingHorizontal: 8,
       gap: 5,
       flexDirection: "row",
@@ -491,23 +487,31 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       fontSize: 11,
       lineHeight: 15,
       fontFamily: "Poppins_600SemiBold",
-      letterSpacing: 0.65,
+      letterSpacing: 1.4,
     },
     shipmentTitle: {
-      fontSize: 19,
-      lineHeight: 25,
+      fontSize: 24,
+      lineHeight: 32,
       fontFamily: "Poppins_600SemiBold",
     },
     shipmentRoute: {
-      flexDirection: "row",
+      flexDirection: "column",
       alignItems: "flex-end",
-      gap: 8,
+      gap: 14,
       borderTopWidth: 1,
-      paddingTop: 14,
+      paddingTop: 18,
     },
-    endpoint: { flex: 1, minWidth: 0, gap: 2 },
-    destinationEndpoint: { alignItems: "flex-end" },
+    endpoint: {
+      width: "100%",
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+      minWidth: 0,
+      gap: 16,
+    },
+    destinationEndpoint: { alignItems: "center" },
     endpointLabel: {
+      width: 36,
       color: nwcColors.muted,
       fontSize: 10,
       lineHeight: 14,
@@ -516,20 +520,23 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       textTransform: "uppercase",
     },
     endpointText: {
+      flex: 1,
       color: nwcColors.foreground,
-      fontSize: 13,
-      lineHeight: 18,
+      fontSize: 16,
+      lineHeight: 24,
       fontFamily: "Poppins_700Bold",
     },
     routeConnector: {
-      width: 48,
-      height: 23,
+      alignSelf: "flex-start",
+      marginLeft: 5,
+      width: 1,
+      height: 18,
       paddingBottom: 3,
-      flexDirection: "row",
+      flexDirection: "column",
       alignItems: "center",
     },
     routeStart: { width: 7, height: 7, borderRadius: 4 },
-    routeLine: { flex: 1, height: 1.5 },
+    routeLine: { width: 1, flex: 1, height: 16 },
     routeEnd: { width: 8, height: 8, borderRadius: 2, borderWidth: 1.5 },
     routeEndDark: {
       backgroundColor: nwcColors.brandNavy,
@@ -565,7 +572,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     openControl: {
       width: 34,
       height: 34,
-      borderRadius: 12,
+      borderRadius: 8,
       alignItems: "center",
       justifyContent: "center",
     },

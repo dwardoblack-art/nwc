@@ -93,14 +93,18 @@ export function MyOrderRow({
 
 const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
+    title: { fontSize: 16, lineHeight: 24 },
     row: {
+      borderRadius: 0,
+      borderWidth: 0,
+      backgroundColor: nwcColors.background,
       minHeight: 75,
       flexDirection: "row",
       alignItems: "center",
       gap: 10,
       borderBottomWidth: 1,
       borderBottomColor: nwcColors.border,
-      paddingVertical: 10,
+      paddingVertical: 20,
     },
     routeMarks: { flexDirection: "row", alignItems: "center", gap: 4 },
     countryMark: {

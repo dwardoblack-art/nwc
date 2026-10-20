@@ -10,7 +10,8 @@ import {
 import { router, type Href } from "expo-router";
 import { ServiceCard } from "@/features/booking/components/cargo-cards";
 import { useFloatingNavigationClearance } from "@/ui/navigation/use-floating-navigation-clearance";
-import { Screen, SectionHeader } from "@/ui/nwc-ui";
+import { Screen } from "@/ui/nwc-ui";
+import { DeskHeading } from "@/ui/desk-heading";
 
 export default function SendScreen() {
   const nwcColors = useNwcColors();
@@ -39,11 +40,11 @@ export default function SendScreen() {
                 <Text style={styles.draftsText}>Saved drafts</Text>
               </TouchableOpacity>
             </View>
-            <SectionHeader title="Choose a servicess" />
-            <Text style={styles.detail}>
-              Start with the kind of cargo move you need. Add your route only
-              after choosing.
-            </Text>
+            <DeskHeading
+              eyebrow="BOOK A DELIVERY / 01"
+              title={"Make your\nnext move."}
+              detail="Choose a service. We’ll take care of the journey."
+            />
           </View>
           <View style={styles.services}>
             <ServiceCard
@@ -78,13 +79,14 @@ export default function SendScreen() {
 const createThemedStyles_styles = (nwcColors: NwcPalette) =>
   StyleSheet.create({
     page: { flex: 1, backgroundColor: nwcColors.background },
-    content: { paddingHorizontal: 24, paddingTop: 22, gap: 22 },
+    content: { paddingHorizontal: 24, paddingTop: 22, gap: 28 },
     headingRow: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
+      justifyContent: "flex-end",
     },
     draftsAction: {
+      alignSelf: "flex-end",
       minHeight: 44,
       justifyContent: "center",
       paddingHorizontal: 4,
@@ -111,12 +113,19 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       fontWeight: "500",
       marginTop: -4,
     },
-    services: { gap: 12 },
-    footerNote: { gap: 3, paddingHorizontal: 4 },
+    services: { gap: 0 },
+    footerNote: {
+      borderLeftWidth: 3,
+      borderLeftColor: nwcColors.primary,
+      paddingLeft: 16,
+      paddingVertical: 8,
+      gap: 8,
+      paddingHorizontal: 4,
+    },
     footerTitle: {
       color: nwcColors.foreground,
-      fontSize: 13,
-      lineHeight: 18,
+      fontSize: 16,
+      lineHeight: 23,
       fontFamily: "Poppins_600SemiBold",
     },
     footerDetail: {

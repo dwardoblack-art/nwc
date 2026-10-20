@@ -141,6 +141,10 @@ export function BookingMapDrawerFrame({
             <View style={styles.grabber} />
           </TouchableOpacity>
           <View style={styles.heading}>
+            <View style={styles.stepPill}>
+              <Text style={styles.stepPosition}>{stepPosition}</Text>
+              <Text style={styles.stepLabel}>{stepLabel}</Text>
+            </View>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.detail}>{detail}</Text>
           </View>
@@ -179,13 +183,14 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       justifyContent: "space-between",
     },
     servicePill: {
+      paddingVertical: 12,
       minHeight: 40,
       paddingHorizontal: 13,
-      borderRadius: 14,
+      borderRadius: 8,
       flexDirection: "row",
       alignItems: "center",
       gap: 7,
-      backgroundColor: nwcColors.surfaceElevated,
+      backgroundColor: nwcColors.brandNavy,
     },
     serviceDot: {
       height: 8,
@@ -194,7 +199,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       backgroundColor: nwcColors.primary,
     },
     serviceText: {
-      color: nwcColors.foreground,
+      color: nwcColors.white,
       fontSize: 12,
       lineHeight: 17,
       fontFamily: "Poppins_600SemiBold",
@@ -207,12 +212,12 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       right: 0,
       bottom: 0,
       overflow: "hidden",
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      backgroundColor: nwcColors.background,
+      borderTopLeftRadius: 0,
+      borderTopRightRadius: 36,
+      backgroundColor: nwcColors.surface,
       shadowColor: nwcColors.brandNavy,
       shadowOffset: { width: 0, height: -7 },
-      shadowOpacity: 0.06,
+      shadowOpacity: 0,
       shadowRadius: 18,
       elevation: 2,
     },
@@ -227,47 +232,60 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       borderRadius: 3,
       backgroundColor: nwcColors.tintB8C6CC,
     },
-    heading: { paddingHorizontal: 20, paddingBottom: 10, gap: 3 },
+    heading: {
+      marginHorizontal: 24,
+      borderLeftWidth: 4,
+      borderLeftColor: nwcColors.primary,
+      paddingHorizontal: 16,
+      paddingBottom: 18,
+      gap: 8,
+    },
     stepPill: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 7,
+      gap: 10,
       marginBottom: 2,
     },
     stepPosition: {
-      color: nwcColors.info,
+      color: nwcColors.muted,
       fontSize: 10,
-      lineHeight: 14,
+      lineHeight: 16,
       fontFamily: "Poppins_600SemiBold",
-      letterSpacing: 0.4,
+      letterSpacing: 1.2,
       textTransform: "uppercase",
     },
     stepLabel: {
       color: nwcColors.foreground,
       fontSize: 10,
-      lineHeight: 14,
+      lineHeight: 16,
       fontFamily: "Poppins_700Bold",
     },
     title: {
       color: nwcColors.foreground,
-      fontSize: 24,
-      lineHeight: 30,
+      fontSize: 28,
+      lineHeight: 36,
       fontFamily: "Poppins_600SemiBold",
-      letterSpacing: -0.35,
+      letterSpacing: -0.8,
     },
     detail: {
       color: nwcColors.muted,
-      fontSize: 12,
-      lineHeight: 17,
+      fontSize: 13,
+      lineHeight: 20,
       fontFamily: "Poppins_500Medium",
     },
-    body: { gap: 20, paddingHorizontal: 24, paddingTop: 8, paddingBottom: 22 },
+    body: {
+      backgroundColor: nwcColors.surface,
+      gap: 24,
+      paddingHorizontal: 24,
+      paddingTop: 20,
+      paddingBottom: 22,
+    },
     footer: {
       gap: 9,
       paddingHorizontal: 20,
-      paddingTop: 11,
+      paddingTop: 16,
       borderTopWidth: 1,
       borderTopColor: nwcColors.border,
-      backgroundColor: nwcColors.surfaceElevated,
+      backgroundColor: nwcColors.surface,
     },
   });

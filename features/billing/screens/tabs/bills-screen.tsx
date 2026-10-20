@@ -3,6 +3,7 @@ import { useNwcColors, type NwcPalette } from "@/ui/use-nwc-colors";
 import { InvoiceSkeleton, Skeleton, SkeletonGroup } from "@/ui/skeleton";
 import { useMobileInputStyles } from "@/ui/mobile-input";
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -16,6 +17,7 @@ import { router, useLocalSearchParams, type Href } from "expo-router";
 import { AppIcon } from "@/ui/app-icon";
 import { useFloatingNavigationClearance } from "@/ui/navigation/use-floating-navigation-clearance";
 import { Card, Screen, StatusBadge } from "@/ui/nwc-ui";
+import { DeskHeading } from "@/ui/desk-heading";
 import {
   calculateDisplayOutstandingBalance,
   filterDisplayInvoices,
@@ -109,39 +111,37 @@ export default function BillsScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>Bills</Text>
-            <Text style={styles.detail}>
-              Every cargo charge and receipt, in one place.
-            </Text>
+            <DeskHeading
+              eyebrow="YOUR FINANCES / 03"
+              title="Bills & wallet"
+              detail="Every cargo charge and receipt, in one place."
+            />
           </View>
-          <View style={styles.balanceHero}>
-            <View style={styles.balanceTop}>
-              <Text style={styles.balanceLabel}>
-                {outstanding ? "Outstanding balance" : "All bills paid"}
-              </Text>
-              <StatusBadge
-                label={
-                  outstanding
-                    ? `${invoices.filter((invoice) => invoice.status === "unpaid").length} due`
-                    : "Up to date"
-                }
-                tone={outstanding ? "warning" : "success"}
-              />
-            </View>
-            <Text style={styles.amount}>
-              {outstanding
+          <BillBalancePanel
+            label={outstanding ? "Outstanding balance" : "All bills paid"}
+            amount={
+              outstanding
                 ? outstandingLabel
                 : formatAggregateAmount(
                     0,
                     invoices.map((invoice) => invoice.amount),
-                  )}
-            </Text>
-            <Text style={styles.balanceFooter}>
-              {outstanding
+                  )
+            }
+            detail={
+              outstanding
                 ? "Review an invoice to see charges or pay."
-                : "Your paid receipts are ready when you need them."}
-            </Text>
-          </View>
+                : "Your paid receipts are ready when you need them."
+            }
+          >
+            <StatusBadge
+              label={
+                outstanding
+                  ? `${invoices.filter((invoice) => invoice.status === "unpaid").length} due`
+                  : "Up to date"
+              }
+              tone={outstanding ? "warning" : "success"}
+            />
+          </BillBalancePanel>
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Open Cargo Wallet"
@@ -266,6 +266,31 @@ export default function BillsScreen() {
   );
 }
 
+export function BillBalancePanel({
+  label,
+  amount,
+  detail,
+  children,
+}: {
+  label: string;
+  amount: string;
+  detail: string;
+  children?: ReactNode;
+}) {
+  const colors = useNwcColors();
+  const styles = createThemedStyles_styles(colors);
+  return (
+    <View style={styles.balanceHero}>
+      <View style={styles.balanceTop}>
+        <Text style={styles.balanceLabel}>{label}</Text>
+        {children}
+      </View>
+      <Text style={styles.amount}>{amount}</Text>
+      <Text style={styles.balanceFooter}>{detail}</Text>
+    </View>
+  );
+}
+
 function formatAggregateAmount(amount: number, formattedSamples: string[]) {
   const currencies = Array.from(
     new Set(
@@ -278,7 +303,7 @@ function formatAggregateAmount(amount: number, formattedSamples: string[]) {
   return `${currency} ${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-function InvoiceSection({
+export function InvoiceSection({
   title,
   eyebrow,
   invoices,
@@ -418,10 +443,10 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     header: { gap: 4 },
     title: {
       color: nwcColors.foreground,
-      fontSize: 30,
-      lineHeight: 38,
+      fontSize: 42,
+      lineHeight: 50,
       fontFamily: "Poppins_600SemiBold",
-      letterSpacing: -0.5,
+      letterSpacing: -1.6,
     },
     detail: {
       color: nwcColors.muted,
@@ -430,9 +455,13 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       fontFamily: "Poppins_500Medium",
     },
     balanceHero: {
-      minHeight: 151,
-      borderRadius: 28,
-      padding: 19,
+      borderBottomRightRadius: 40,
+      marginHorizontal: -24,
+      borderTopWidth: 4,
+      borderTopColor: nwcColors.primary,
+      minHeight: 220,
+      borderRadius: 0,
+      padding: 24,
       backgroundColor: nwcColors.brandNavy,
       justifyContent: "space-between",
     },
@@ -443,42 +472,46 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       gap: 12,
     },
     balanceLabel: {
+      letterSpacing: 1.2,
+      textTransform: "uppercase",
       color: nwcColors.tintD8E4E9,
-      fontSize: 12,
+      fontSize: 10,
       lineHeight: 16,
       fontFamily: "Poppins_700Bold",
     },
     amount: {
       color: nwcColors.white,
-      fontSize: 31,
-      lineHeight: 39,
+      fontSize: 46,
+      lineHeight: 58,
       fontFamily: "Poppins_600SemiBold",
-      letterSpacing: -0.6,
+      letterSpacing: -1.8,
     },
     balanceFooter: {
-      borderTopWidth: 1,
+      borderTopWidth: 0,
       borderTopColor: nwcColors.border,
       paddingTop: 11,
       color: nwcColors.tintC9D9E1,
       fontSize: 12,
-      lineHeight: 17,
+      lineHeight: 20,
       fontFamily: "Poppins_600SemiBold",
     },
     walletCard: {
+      paddingVertical: 16,
+      borderBottomWidth: 1,
       minHeight: 64,
-      borderRadius: 20,
-      paddingHorizontal: 13,
+      borderRadius: 0,
+      paddingHorizontal: 0,
       flexDirection: "row",
       alignItems: "center",
-      gap: 10,
+      gap: 16,
       backgroundColor: nwcColors.surface,
-      borderWidth: 1,
+      borderWidth: 0,
       borderColor: nwcColors.border,
     },
     walletIcon: {
-      width: 39,
-      height: 39,
-      borderRadius: 14,
+      width: 44,
+      height: 44,
+      borderRadius: 8,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: nwcColors.primary,
@@ -515,21 +548,28 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       fontFamily: "Poppins_600SemiBold",
     },
     filters: {
+      borderBottomWidth: 1,
+      borderBottomColor: nwcColors.border,
       alignSelf: "flex-start",
       flexDirection: "row",
-      gap: 3,
-      padding: 4,
-      borderRadius: 15,
-      backgroundColor: nwcColors.surfaceRaised,
+      gap: 4,
+      padding: 0,
+      borderRadius: 0,
+      backgroundColor: nwcColors.background,
     },
     filter: {
+      borderBottomWidth: 3,
+      borderBottomColor: nwcColors.background,
       minHeight: 34,
-      borderRadius: 11,
-      paddingHorizontal: 15,
+      borderRadius: 0,
+      paddingHorizontal: 16,
       alignItems: "center",
       justifyContent: "center",
     },
-    filterActive: { backgroundColor: nwcColors.surfaceElevated },
+    filterActive: {
+      borderBottomColor: nwcColors.primary,
+      backgroundColor: nwcColors.background,
+    },
     filterText: {
       color: nwcColors.muted,
       fontSize: 11,
@@ -564,13 +604,19 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       lineHeight: 14,
       fontFamily: "Poppins_600SemiBold",
     },
-    ledger: { paddingVertical: 0 },
+    ledger: {
+      borderRadius: 0,
+      padding: 0,
+      borderWidth: 0,
+      backgroundColor: nwcColors.background,
+      paddingVertical: 0,
+    },
     invoiceRow: {
       minHeight: 76,
       flexDirection: "row",
       alignItems: "center",
-      gap: 10,
-      paddingVertical: 11,
+      gap: 12,
+      paddingVertical: 22,
     },
     invoiceDivider: {
       borderBottomWidth: 1,
@@ -579,7 +625,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     invoiceIcon: {
       width: 42,
       height: 42,
-      borderRadius: 14,
+      borderRadius: 6,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: nwcColors.surfaceRaised,
@@ -590,8 +636,8 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     invoiceTitle: {
       flexShrink: 1,
       color: nwcColors.foreground,
-      fontSize: 13,
-      lineHeight: 18,
+      fontSize: 16,
+      lineHeight: 24,
       fontFamily: "Poppins_600SemiBold",
     },
     invoiceMeta: {
