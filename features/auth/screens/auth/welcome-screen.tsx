@@ -71,6 +71,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
     logo: {
       width: 166,
       height: 66,
+      tintColor: nwcColors.primary,
     },
     message: {
       flex: 1,

@@ -1,0 +1,16 @@
+Tablet-format placeholders
+
+7-inch folder: 1080 x 1920 PNG (9:16).
+10-inch folder: 1440 x 2560 PNG (9:16).
+Each folder contains eight images, each under 8 MB.
+Screens: booking, cargo details, home, shipments, bills, local route,
+international route, and cargo attachments.
+
+IMPORTANT: These are proportionally resized existing PHONE device captures,
+not verified tablet screenshots. Dimensions alone do not establish that an
+image accurately represents the app on a tablet. Replace them with captures
+from the submitted Android app on a tablet or tablet emulator before publishing.
+
+There was no connected Android device or installed emulator available.
+The web preview did not render native booking panels correctly and was rejected.
+No app code was changed to manufacture tablet screenshots.

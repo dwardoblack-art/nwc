@@ -1,7 +1,20 @@
 export type ApiMode = "laravel";
 export type AppEnvironment = "development" | "staging" | "production";
 
-const readPublicEnv = (key: string) => process.env[key]?.trim() ?? "";
+// Expo replaces only statically referenced EXPO_PUBLIC variables in native bundles.
+const publicEnv: Record<string, string | undefined> = {
+  EXPO_PUBLIC_APP_ENV: process.env.EXPO_PUBLIC_APP_ENV,
+  EXPO_PUBLIC_API_MODE: process.env.EXPO_PUBLIC_API_MODE,
+  EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
+  EXPO_PUBLIC_ADMIN_API_BASE_URL: process.env.EXPO_PUBLIC_ADMIN_API_BASE_URL,
+  EXPO_PUBLIC_PUBLIC_TRACKING_BASE_URL: process.env.EXPO_PUBLIC_PUBLIC_TRACKING_BASE_URL,
+  EXPO_PUBLIC_EXPO_PROJECT_ID: process.env.EXPO_PUBLIC_EXPO_PROJECT_ID,
+  EXPO_PUBLIC_OBSERVABILITY_DSN: process.env.EXPO_PUBLIC_OBSERVABILITY_DSN,
+  EXPO_PUBLIC_MAPS_PROVIDER: process.env.EXPO_PUBLIC_MAPS_PROVIDER,
+  EXPO_PUBLIC_PAYMENTS_PROVIDER: process.env.EXPO_PUBLIC_PAYMENTS_PROVIDER,
+  EXPO_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+};
+const readPublicEnv = (key: string) => publicEnv[key]?.trim() ?? "";
 const normalizeBaseUrl = (value: string) => value.replace(/\/+$/, "");
 const DEFAULT_API_BASE_URL = "https://api.newworldcargo.com/api/v1";
 const DEFAULT_ADMIN_API_BASE_URL = "https://admin.newworldcargo.com/api/v1";

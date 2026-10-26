@@ -24,13 +24,6 @@ export function CustomerHomeHeader({
     <View style={styles.header}>
       <View style={styles.topRow}>
         <View style={styles.brand}>
-          <View style={styles.brandMark}>
-            <AppIcon
-              name="arrow-top-right"
-              size={19}
-              color={nwcColors.primaryInk}
-            />
-          </View>
           <Image
             accessibilityLabel="Newworld Cargo"
             source={require("@/assets/images/new-world-cargo-logo-light.png")}
@@ -183,15 +176,7 @@ const createThemedStyles_styles = (nwcColors: NwcPalette) =>
       alignItems: "center",
       gap: 9,
     },
-    brandMark: {
-      height: 28,
-      width: 28,
-      borderRadius: 5,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: nwcColors.primary,
-    },
-    wordmark: { width: 115, height: 38 },
+    wordmark: { width: 152, height: 51, tintColor: nwcColors.white },
     actions: { flexDirection: "row", alignItems: "center", gap: 6 },
     avatar: {
       width: 38,

@@ -17,6 +17,12 @@ function normalize(status?: string): DevicePermissionStatus {
 
 function moduleFor(permission: DevicePermission): { get?: () => Promise<{ status?: string }>; request?: () => Promise<{ status?: string }> } | null {
   try {
+    if (permission === "photos" && Platform.OS === "android") {
+      return {
+        get: async () => ({ status: "granted" }),
+        request: async () => ({ status: "granted" }),
+      };
+    }
     if (permission === "location") {
       const location = require("expo-location");
       return { get: location.getForegroundPermissionsAsync, request: location.requestForegroundPermissionsAsync };

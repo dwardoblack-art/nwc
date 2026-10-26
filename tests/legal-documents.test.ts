@@ -5,7 +5,7 @@ describe("legal documents", () => {
   it("keeps all customer policy destinations populated with review treatment", () => {
     expect(Object.keys(legalDocuments)).toEqual(["terms", "privacy", "payments"]);
     Object.values(legalDocuments).forEach((document) => {
-      expect(document.effectiveDate).toContain("Legal approval required");
+      expect(document.effectiveDate).toBe("Effective 12 October 2026");
       expect(document.sections.length).toBeGreaterThan(3);
     });
   });

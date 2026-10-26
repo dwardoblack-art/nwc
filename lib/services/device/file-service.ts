@@ -68,12 +68,15 @@ export const fileService = {
         "Photo picking is available in the mobile app.",
       );
     const ImagePicker = await import("expo-image-picker");
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted)
-      return nativeUnavailable(
-        "permission-denied",
-        "Photo access is needed to choose an image.",
-      );
+    // Android's system photo picker grants access only to the selected image.
+    if (Platform.OS !== "android") {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted)
+        return nativeUnavailable(
+          "permission-denied",
+          "Photo access is needed to choose an image.",
+        );
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,

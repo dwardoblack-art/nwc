@@ -1,4 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { Platform } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 import { cameraService } from "../lib/services/device/camera-service";
 import { fileService, safeDownloadFilename } from "../lib/services/device/file-service";
@@ -8,6 +10,23 @@ import { nativeSuccess, nativeUnavailable } from "../lib/services/device/native-
 import { shareService } from "../lib/services/device/share-service";
 
 describe("mobile native-service adapter contracts", () => {
+  it("lets Android users select an image without broad library permission", async () => {
+    const descriptor = Object.getOwnPropertyDescriptor(Platform, "OS")!;
+    Object.defineProperty(Platform, "OS", { ...descriptor, value: "android" });
+    vi.mocked(ImagePicker.requestMediaLibraryPermissionsAsync).mockClear();
+    vi.mocked(ImagePicker.launchImageLibraryAsync).mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: "content://picker/selected-photo", fileName: "parcel.jpg", mimeType: "image/jpeg", width: 100, height: 100 }],
+    });
+    try {
+      await expect(fileService.pickImage()).resolves.toMatchObject({
+        ok: true, value: { uri: "content://picker/selected-photo", name: "parcel.jpg", type: "image/jpeg" },
+      });
+      expect(ImagePicker.requestMediaLibraryPermissionsAsync).not.toHaveBeenCalled();
+    } finally {
+      Object.defineProperty(Platform, "OS", descriptor);
+    }
+  });
   it("returns structured unavailable results for device features not installed in the browser-safe build", async () => {
     await expect(cameraService.capturePhoto()).resolves.toMatchObject({ ok: false, reason: "browser-preview" });
     await expect(cameraService.pickImage()).resolves.toMatchObject({ ok: false, reason: "browser-preview" });
